@@ -15,7 +15,9 @@ import androidx.core.app.NotificationCompat
 import  com.ucas.cloudenterprise.utils.*
 import com.ucas.cloudenterprise.MainActivity
 import com.ucas.cloudenterprise.R
-import com.ucas.cloudenterprise.app.BOOTSTRAPS
+import com.ucas.cloudenterprise.app.BOOTSTRAPS_ARRAY
+import com.ucas.cloudenterprise.app.CORE_SERVICE_ID
+import com.ucas.cloudenterprise.app.CORE_WORK_PRIVATE_KEY
 
 class DaemonService : Service() {
 
@@ -37,7 +39,7 @@ class DaemonService : Service() {
 
         install()
         start()
-        startForeground(1, notification.build())
+        startForeground(CORE_SERVICE_ID, notification.build())
     }
 
     fun install() {
@@ -77,12 +79,12 @@ class DaemonService : Service() {
             waitFor()
         }
 
-        store["swarm.key"].apply {
+        store[CORE_WORK_PRIVATE_KEY].apply {
             delete()
             createNewFile()
         }
-        val input_swarm_key = assets.open("swarm.key")
-        val output_swarm_key =store["swarm.key"].outputStream()
+        val input_swarm_key = assets.open(CORE_WORK_PRIVATE_KEY)
+        val output_swarm_key =store[CORE_WORK_PRIVATE_KEY].outputStream()
         try {
 
             input_swarm_key.copyTo(output_swarm_key)
@@ -119,7 +121,7 @@ class DaemonService : Service() {
             }
             array("Bootstrap").also {boots ->
                 boots.removeAll {true }
-                BOOTSTRAPS.forEach {
+                BOOTSTRAPS_ARRAY.forEach {
                     boots.add(json(it))
                 }
                }
@@ -168,12 +170,12 @@ class DaemonService : Service() {
             addAction(R.drawable.ic_launcher, "Open", open)
 
             if (daemon == null) {
-                setContentText("IPFS is not running")
+                setContentText("CORE is not running")
 
                 val start = pendingService(intent<DaemonService>().action("start"))
                 addAction(R.drawable.ic_launcher, "start", start)
             } else {
-                setContentText("IPFS is running")
+                setContentText("CORE is running")
 
                 val restart = pendingService(intent<DaemonService>().action("restart"))
                 addAction(R.drawable.ic_launcher, "restart", restart)
