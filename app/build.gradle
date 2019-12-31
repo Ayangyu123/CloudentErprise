@@ -15,6 +15,14 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    compileOptions {
+
+        sourceCompatibility JavaVersion.VERSION_1_8
+
+        targetCompatibility JavaVersion.VERSION_1_8
+
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -32,6 +40,10 @@ dependencies {
 
     //java client
     implementation 'com.github.ipfs:java-ipfs-http-client:v1.2.3'
+    //file文件浏览
+    implementation 'me.rosuh:AndroidFilePicker:0.6.0'
+//    implementation 'com.adityak:browsemyfiles:1.9'
+
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0"
 

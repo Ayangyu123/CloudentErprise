@@ -15,9 +15,7 @@ import androidx.core.app.NotificationCompat
 import  com.ucas.cloudenterprise.utils.*
 import com.ucas.cloudenterprise.MainActivity
 import com.ucas.cloudenterprise.R
-import com.ucas.cloudenterprise.app.BOOTSTRAPS_ARRAY
-import com.ucas.cloudenterprise.app.CORE_SERVICE_ID
-import com.ucas.cloudenterprise.app.CORE_WORK_PRIVATE_KEY
+import com.ucas.cloudenterprise.app.*
 
 class DaemonService : Service() {
 
@@ -37,7 +35,10 @@ class DaemonService : Service() {
                     .createNotificationChannel(this)
             }
 
-        install()
+        if(IS_FIRSTRUN){
+            install()
+        }
+
         start()
         startForeground(CORE_SERVICE_ID, notification.build())
     }
@@ -52,51 +53,23 @@ class DaemonService : Service() {
             }
         }
 
-        bin.apply {
-            delete()
-            createNewFile()
-        }
 
-        val input = assets.open(type)
-        val output = bin.outputStream()
-        try {
-            input.copyTo(output)
-        } finally {
-            input.close()
-            output.close()
-
-        }
-
+        AssetFileCP(this,type,bin)
         bin.setExecutable(true)
-        println("Installed binary")
-    }
+        Log.e("Installed binary","Installed binary")
 
-    fun start() {
         logs.clear()
 
         exec("init").apply {
-            read { logs.add(it) }
+            read {
+                Log.e("it","it="+it)
+                logs.add(it) }
             waitFor()
         }
 
-        store[CORE_WORK_PRIVATE_KEY].apply {
-            delete()
-            createNewFile()
-        }
-        val input_swarm_key = assets.open(CORE_WORK_PRIVATE_KEY)
-        val output_swarm_key =store[CORE_WORK_PRIVATE_KEY].outputStream()
-        try {
-
-            input_swarm_key.copyTo(output_swarm_key)
-
-        }finally {
-
-            input_swarm_key.close();
-            output_swarm_key.close()
 
 
-        }
-
+        AssetFileCP(this,CORE_WORK_PRIVATE_KEY)
 
         config {
             obj("API").obj("HTTPHeaders").apply {
@@ -124,8 +97,16 @@ class DaemonService : Service() {
                 BOOTSTRAPS_ARRAY.forEach {
                     boots.add(json(it))
                 }
-               }
+            }
         }
+        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
+            edit().putBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,false)
+        }
+
+    }
+
+    fun start() {
+
 
         exec("daemon").apply {
             daemon = this

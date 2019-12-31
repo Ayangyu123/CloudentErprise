@@ -18,9 +18,13 @@ package com.ucas.cloudenterprise.app
     val CORE_WORK_PRIVATE_KEY ="swarm.key"
   //</editor-fold>
 
-  //<editor-fold desc="core Service ID">
+  //<editor-fold desc="core Service（后台服务id） ID">
     val  CORE_SERVICE_ID = 1
 
+  //</editor-fold>
+
+    //<editor-fold desc="core 配置文件名称 ">
+    val    CORE_CONFIG_FILE_NAME = "config"
   //</editor-fold>
 
    //<editor-fold desc="core config文件 BOOTSTRAP 节点 数组">
@@ -35,8 +39,25 @@ package com.ucas.cloudenterprise.app
       ,"/ip4/47.95.145.45/tcp/14006/ipfs/QmUWhbxm4oRJZLaCzAqL8syx4HyLzNMp6MuLLFJsRBn2TB"
    )
     //</editor-fold>
+
+
     //<editor-fold desc=" FILE_CHOOSER_RESULT_CODE 文件选择">
     val FILE_CHOOSER_RESULT_CODE =1000
     //</editor-fold>
+    //<editor-fold desc=" APP 设置">
+    var IS_FIRSTRUN = true
+
+
+    //</editor-fold>
+    //<editor-fold desc=" CORE_PATH 环境变量">
+      val CORE_PATH = "SVBGU19QQVRI" // 需要base64 解密
+    //</editor-fold>
+    //<editor-fold desc=" sharedpreference 中 对应的存储名称 ">
+    val PREFERENCE__NAME__FOR_PREFERENCE = "AppSettings" //sharedpreference 名称
+    val FIRSTRUN_NAME_FOR_PREFERENCE = "isfirstrun"   //第一次运行
+   //</editor-fold>
+
+
+
 
 
