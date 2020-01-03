@@ -1,5 +1,7 @@
 package com.ucas.cloudenterprise.app
 
+import android.os.Environment
+
 /**
 @author simpler
 @create 2019年12月27日  14:51
@@ -11,6 +13,9 @@ package com.ucas.cloudenterprise.app
 
   val CORE_WORK_CONFIG = "config" //core工作目录名称
 
+  val CORE_CLIENT_ADDRESS ="/ip4/127.0.0.1/tcp/5001" //client 地址
+  val TEST_DOWN_FiLE_HASH ="QmU6yMLXAku4komAi1bGyh3UwLdDcrY1NQ12QijnKAiNQ8" //client 地址
+  val ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/" //client 地址
 
   //</editor-fold>
 
@@ -46,6 +51,7 @@ package com.ucas.cloudenterprise.app
     //</editor-fold>
     //<editor-fold desc=" APP 设置">
     var IS_FIRSTRUN = true
+    var IS_NOT_INSTALLED = true
 
 
     //</editor-fold>
@@ -55,6 +61,7 @@ package com.ucas.cloudenterprise.app
     //<editor-fold desc=" sharedpreference 中 对应的存储名称 ">
     val PREFERENCE__NAME__FOR_PREFERENCE = "AppSettings" //sharedpreference 名称
     val FIRSTRUN_NAME_FOR_PREFERENCE = "isfirstrun"   //第一次运行
+    val NOT_INSTALLEDE_FOR_PREFERENCE = "notinstall"   //未安装
    //</editor-fold>
 
 

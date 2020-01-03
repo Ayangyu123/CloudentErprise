@@ -36,15 +36,22 @@
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/tv_text"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="Hello World!"
-        android:gravity="left"
-        android:textSize="18sp"
-        />
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/tv_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="left"
+            android:textSize="18sp"
+            />
+    </ScrollView>
+
+
+
+
 
 
         <WebView

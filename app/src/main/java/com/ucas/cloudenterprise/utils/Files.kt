@@ -6,14 +6,13 @@ import com.google.gson.JsonParser
 import com.ucas.cloudenterprise.app.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileReader
-import java.io.InterruptedIOException
+import java.io.*
 import java.nio.charset.StandardCharsets
 import java.util.*
 
 operator fun File.get(path: String) = File(this, path)
 val Context.store get() = getExternalFilesDir(null)!![CORE_WORK_DIR]
+//val Context.cache get() = externalCacheDir(null)!![""]
 val Context.bin get() = filesDir[CORE_COMMAND_BIN]
 val Context.config get() = JsonParser().parse(FileReader(store[CORE_WORK_CONFIG])).asJsonObject
 
@@ -26,6 +25,7 @@ fun Context.config(consumer: JsonObject.() -> Unit) {
 fun Context.exec(cmd: String) = Runtime.getRuntime().exec(
     "${bin.absolutePath} $cmd",
     arrayOf(String(Base64.getDecoder().decode(CORE_PATH),StandardCharsets.UTF_8 )+"=${store.absolutePath}")//此处字符串为环境变量
+
 )
 
 fun Process.read(consumer: (String) -> Unit) {
@@ -38,20 +38,14 @@ fun Process.read(consumer: (String) -> Unit) {
         }
     }
 }
-fun AssetFileCP(context:Context,filename:String){
-    AssetFileCP(context,filename,context.store[filename])
-
-}
-fun AssetFileCP(context:Context,src:String,dest:File){
-    val input_swarm_key = context.assets.open(src)
-    val output_swarm_key =dest.outputStream()
+fun AssetFileCP(context:Context,filename:String)= AssetFileCP(context,filename,context.store[filename])
+fun AssetFileCP(context:Context,src:String,dest:File)= FileCP(context.assets.open(src),dest.outputStream())
+fun FileCP(inputStream: InputStream,outputStream: OutputStream){
     try {
-
-        input_swarm_key.copyTo(output_swarm_key)
-
+        inputStream.copyTo(outputStream)
     }finally {
-        input_swarm_key.close();
-        output_swarm_key.close()
+        inputStream.close();
+        outputStream.close()
     }
 
 }

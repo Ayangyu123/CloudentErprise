@@ -18,7 +18,7 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 
 class DaemonService : Service() {
-
+        val TAG="DaemonService"
     override fun onBind(intent: Intent) = null
     companion object {
         var daemon: Process? = null
@@ -35,7 +35,8 @@ class DaemonService : Service() {
                     .createNotificationChannel(this)
             }
 
-        if(IS_FIRSTRUN){
+
+        if(IS_NOT_INSTALLED){
             install()
         }
 
@@ -56,20 +57,20 @@ class DaemonService : Service() {
 
         AssetFileCP(this,type,bin)
         bin.setExecutable(true)
-        Log.e("Installed binary","Installed binary")
-
+            /*********core bin  复制 完成*******/
         logs.clear()
-
         exec("init").apply {
+            Log.e(TAG,"init 开始执行")
             read {
                 Log.e("it","it="+it)
                 logs.add(it) }
             waitFor()
         }
-
+        /*********core init   完成*******/
 
 
         AssetFileCP(this,CORE_WORK_PRIVATE_KEY)
+        /*********key 复制   完成*******/
 
         config {
             obj("API").obj("HTTPHeaders").apply {
@@ -78,15 +79,15 @@ class DaemonService : Service() {
 
                     origins.removeAll { true }
                     origins.add(json("*"))
+                    origins.add(json("https://sweetipfswebui.netlify.com"))
+                    origins.add(json("http://127.0.0.1:5001"))
                 }
 
                 array("Access-Control-Allow-Methods").also { methods ->
-                    val put = json("PUT")
-                    val get = json("GET")
-                    val post = json("POST")
-                    if (put !in methods) methods.add(put)
-                    if (get !in methods) methods.add(get)
-                    if (post !in methods) methods.add(post)
+                    methods.removeAll { true }
+                    methods.add(json("PUT"))
+                    methods.add(json("GET"))
+                    methods.add(json("POST"))
                 }
                 this.add("Access-Control-Allow-Credentials", json(arrayListOf<String>("true")))
 
@@ -99,18 +100,23 @@ class DaemonService : Service() {
                 }
             }
         }
-        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
-            edit().putBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,false)
-        }
 
+            /*********core config  复制 完成*******/
+
+
+        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
+            edit().putBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,false).commit()
+        }
+        /*********core install   完成  写入flag 下次直接执行 star*******/
     }
 
     fun start() {
-
-
+        logs.clear()
         exec("daemon").apply {
             daemon = this
-            read { logs.add(it) }
+            read {
+                Log.e("it","it="+it)
+                logs.add(it) }
         }
 
     }
@@ -144,7 +150,7 @@ class DaemonService : Service() {
             color = parseColor("#69c4cd")
             setSmallIcon(R.drawable.ic_launcher)
             setShowWhen(false)
-            setContentTitle("Sweet IPFS")
+            setContentTitle("Sweet Core")
 
             val open = pendingActivity<MainActivity>()
             setContentIntent(open)

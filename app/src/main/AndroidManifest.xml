@@ -11,13 +11,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
 
-    <!--  MyApplication      -->
+    <!--  MyApplication   usesCleartextTraffic 允许http请求    requestLegacyExternalStorage外部设备 -->
     <application
         android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:usesCleartextTraffic="true"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
