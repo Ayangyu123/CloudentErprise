@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="用户名称"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_user_name"
+            android:text="@string/test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="用户密码"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_user_password"
+            android:text="@string/test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:onClick="Login"
+        android:text="Login"
+        style="@style/TV_Action"
+        />
+
+    <TextView
+        android:onClick="ToRegisterActivity"
+        android:text="Register"
+        style="@style/TV_Action"
+        />
+    
+    
+
+</LinearLayout>

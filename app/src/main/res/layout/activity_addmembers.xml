@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="@string/team_name"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_team_name"
+            android:text="@string/team_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="@string/member_name"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_member_name"
+            android:text="@string/member_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_addmember"
+        android:text="@string/add_members"
+        android:onClick="AddMember"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"/>
+    <TextView
+        android:id="@+id/tv_deletet_member"
+        android:text="删除成员"
+        android:onClick="DeleteMember"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"/>
+    <TextView
+        android:id="@+id/tv_get_members"
+        android:text="获取成员列表"
+        android:onClick="GetMembers"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorAccent"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"/>
+
+
+</LinearLayout>

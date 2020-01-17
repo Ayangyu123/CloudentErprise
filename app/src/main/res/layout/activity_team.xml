@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="@string/team_name"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_team_name"
+            android:text="@string/team_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="@string/team_level"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_team_level"
+            android:text="@string/team_test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:id="@+id/tv_get_teams"
+                android:text="获取团队列表"
+                android:onClick="GetTeams"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
+
+            <TextView
+                android:id="@+id/tv_add_teams"
+                android:text="添加团队"
+                android:onClick="AddTeams"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
+            <TextView
+                android:id="@+id/tv_delete_teams"
+                android:text="删除团队列表"
+                android:onClick="DeleteTeams"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorAccent"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="删除teamID"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_delete_team"
+            android:hint="要删除的团队ID"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_result"
+        style="@style/TV_ShowResult"/>
+
+
+    <TextView
+        android:id="@+id/tv_register"
+        android:text="AddMemberActivity"
+        android:onClick="To_AddMemberActiviy"
+        style="@style/TV_To_Activity"/>
+
+</LinearLayout>

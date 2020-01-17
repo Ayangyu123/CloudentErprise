@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".adapter.FilesAdapter"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="80dp">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:src="@drawable/icon_list_folder"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        />
+    <TextView
+    android:id="@+id/tv_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:text="你猜猜啊"
+    android:textColor="#000"
+    android:maxLines="1"
+    android:textSize="16dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="10dp"
+    android:layout_toRightOf="@id/iv_icon"
+    />
+    <TextView
+     android:id="@+id/tv_time"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+     tools:text="2019-12-24"
+    android:textColor="#000"
+    android:maxLines="1"
+    android:textSize="12dp"
+    android:layout_marginLeft="10dp"
+        android:layout_marginBottom="20dp"
+    android:layout_toRightOf="@id/iv_icon"
+        android:layout_below="@id/tv_title"
+    />
+
+    <ImageView
+        android:id="@+id/iv_right_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_more_normal"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="#000"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

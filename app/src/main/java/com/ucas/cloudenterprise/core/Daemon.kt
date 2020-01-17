@@ -13,7 +13,7 @@ import android.os.Build.CPU_ABI
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import  com.ucas.cloudenterprise.utils.*
-import com.ucas.cloudenterprise.MainActivity
+import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 

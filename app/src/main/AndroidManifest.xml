@@ -23,6 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- 如果您项目中的所有页面都只需要以高或宽中的一个作为基准进行适配的话, 那就只需要填写高或宽中的一个设计图尺寸即可 -->
+
+        <meta-data
+            android:name="design_width_in_dp"
+            android:value="375"/>
+
         <!--  core   service  后台服务   -->
         <service
             android:name=".core.DaemonService"
@@ -31,14 +37,26 @@
         </service>
 
         <!--  第一个启动的   activity （页面）   -->
-        <activity android:name=".MainActivity">
+
+        <activity android:name=".ui.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+            <!--    Main     -->
+        <activity android:name=".ui.MainActivity" android:launchMode="singleTop"/>
 
+        <!--    注册页面     -->
+<!--        <activity android:name=".ui.SplashActivity" android:launchMode="singleTop"/>-->
+
+        <!-- 欢迎   页面-->
+        <activity android:name=".ui.WelcomeActivity"/>
+        <!-- 注册   页面-->
+          <activity android:name=".ui.RegisterActivity"/>
+
+        <activity android:name=".ui.FileInfoActivity"/>
 
 
 

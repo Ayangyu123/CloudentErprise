@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.FileInfoActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include
+        android:id="@+id/view_head"
+        layout="@layout/common_head"/>
+    <ImageView
+        android:id="@+id/iv_type"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/view_head"
+        android:layout_margin="10dp"
+        android:layout_marginLeft="20dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/icon_list_doc"
+        />
+        <TextView
+            android:id="@+id/tv_file_name"
+            android:layout_toRightOf="@id/iv_type"
+            android:layout_below="@id/view_head"
+            android:layout_margin="15dp"
+            tools:text="test.doc"
+            android:textSize="20dp"
+            android:textColor="#596974"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <include
+        android:layout_below="@id/iv_type"
+        android:id="@+id/view_line_top"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        layout="@layout/common_line"/>
+        <TextView
+            android:layout_below="@id/view_line_top"
+            android:id="@+id/tv_file_type_text"
+            android:text="类         型："
+            style="@style/file_info_text" />
+
+
+
+    <TextView
+        android:layout_below="@id/tv_file_type_text"
+        android:id="@+id/tv_file_size_text"
+        android:text="大         小："
+        style="@style/file_info_text"
+        />
+    <TextView
+        android:layout_below="@id/tv_file_size_text"
+        android:id="@+id/tv_file_owners_text"
+        style="@style/file_info_text"
+        android:text="所  有   者："
+        />
+    <TextView
+        android:layout_below="@id/tv_file_owners_text"
+        android:id="@+id/tv_file_create_time_text"
+        style="@style/file_info_text"
+        android:text="创建时间："
+        />
+    <TextView
+        android:layout_below="@id/tv_file_create_time_text"
+        android:id="@+id/tv_file_last_update_text"
+        style="@style/file_info_text"
+        android:text="上次修改："
+        />
+
+<!--  *********************************  -->
+    <TextView
+        android:id="@+id/tv_file_type"
+        android:layout_toRightOf="@id/tv_file_type_text"
+        android:layout_below="@id/view_line_top"
+        tools:text="文档"
+        style="@style/file_info" />
+
+    <TextView
+        android:id="@+id/tv_file_size"
+        android:layout_toRightOf="@id/tv_file_size_text"
+        android:layout_below="@id/tv_file_type_text"
+        tools:text="37.50KB"
+        style="@style/file_info" />
+    <TextView
+        android:id="@+id/tv_file_owners"
+        android:layout_toRightOf="@id/tv_file_owners_text"
+        android:layout_below="@id/tv_file_size_text"
+        tools:text="樊志攀"
+        style="@style/file_info" />
+
+    <TextView
+        android:id="@+id/tv_file_create_time"
+        android:layout_toRightOf="@id/tv_file_create_time_text"
+        android:layout_below="@id/tv_file_owners_text"
+        tools:text="2020.01.15"
+        style="@style/file_info" />
+    <TextView
+        android:id="@+id/tv_file_last_update"
+        android:layout_toRightOf="@id/tv_file_last_update_text"
+        android:layout_below="@id/tv_file_create_time_text"
+        tools:text="2020.01.15"
+        style="@style/file_info" />
+    <TextView
+        android:id="@+id/tv_file_last_update_persional"
+        android:layout_toRightOf="@id/tv_file_last_update"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/tv_file_create_time_text"
+        tools:text="樊志攀"
+        style="@style/file_info" />
+
+
+    <!--  *********************************  -->
+
+
+    <include
+        android:layout_below="@id/tv_file_last_update_text"
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_height="1px"
+        layout="@layout/common_line"
+        />
+
+
+</RelativeLayout>

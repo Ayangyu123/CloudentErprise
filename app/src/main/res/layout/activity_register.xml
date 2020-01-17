@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.RegisterActivity"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:text="公司名称"
+            android:layout_width="100dp"
+            android:gravity="center"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_comp_name"
+            android:text="@string/test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="公司联系邮箱"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_comp_con_email"
+            android:text="@string/test_email"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="公司联系电话"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_comp_con_tel"
+            android:text="@string/test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="密码"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_user_password"
+            android:text="@string/test"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_register"
+            android:text="注册"
+            android:onClick="register"
+            android:background="@color/colorAccent"
+            style="@style/TV_Action" />
+    <TextView
+        android:text="gettoken(登陆)"
+        android:onClick="GetToken"
+        android:background="@color/colorAccent"
+        style="@style/TV_Action" />
+
+    <TextView
+        android:id="@+id/tv_result"
+        style="@style/TV_ShowResult"
+        />
+
+
+    <TextView
+        android:id="@+id/To_TeamActivity"
+        style="@style/TV_To_Activity"
+        android:onClick="ToTeamActivity"
+        android:text="AddTeamActivity" />
+
+
+</LinearLayout>
