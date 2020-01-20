@@ -57,7 +57,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     fun Login(view: View) {
         val params = HashMap<String,Any>()
         params["mobile"] = "${et_user_name.text.toString()}"
-        params["password"] = MD5encode("${et_user_password.text.toString()}${Salt}")
+        params["password"] = MD5encode("${et_user_password.text.toString()}")
         NetRequest(URL_LOGIN, NET_POST,params,this,this)
     }
 

@@ -55,7 +55,7 @@ import org.json.JSONObject
 
 
         override fun onSuccess(response: Response<String>?) {
-            Log.e("BaseActivity",response?.body().toString())
+//            Log.e("BaseActivity",response?.body().toString())
             response?.let {
                 val json = JSONObject(it.body().toString())
                 val code = json.getInt("code")
@@ -64,8 +64,13 @@ import org.json.JSONObject
                     {
                         Log.e("BaseActivity","请求数据成功")
                         if (json.isNull("data")){
+                            if(URL_DELETE_FILE.equals(url)){
+                                onNetCallback?.OnNetPostSucces(mrequest,"")
+                                return
+                            }
                             Toastinfo("data is null")
                             //TODO
+
                             return
                         }
 

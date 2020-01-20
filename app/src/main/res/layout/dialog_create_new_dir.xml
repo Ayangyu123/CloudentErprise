@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragment.MyFilesFragment"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:background="@drawable/bg_create_new_dir_dialog"
+    >
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="新建文件夹"
+        android:maxLines="1"
+        android:gravity="center"
+        android:textSize="20dp"
+        />
+    <include layout="@layout/common_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginTop="10dp"
+        />
+    <EditText
+        android:id="@+id/et_dir_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:padding="5dp"
+        android:maxLines="1"
+        android:textSize="20dp"
+        android:background="@drawable/bg_create_new_dir_dialog_edittext"
+        android:hint="新建文件夹"
+        />
+    <CheckBox
+        android:id="@+id/checkbox_is_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:text="  设置为共享文件夹"
+        android:maxLines="1"
+        android:checked="false"
+        android:button="@drawable/checkbox"
+        android:gravity="center_vertical"
+        android:textSize="20dp"
+        />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="15dp"
+            >
+            <TextView
+                android:id="@+id/tv_cancle"
+                android:text="取消"
+                android:maxLines="1"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/bg_dialog_action_tv_canle"
+                style="@style/dialog_action_textview" />
+            <TextView
+                android:id="@+id/tv_commit"
+                android:text="创建"
+                android:maxLines="1"
+                android:textColor="#fff"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/bg_dialog_action_tv_commit"
+                style="@style/dialog_action_textview" />
+
+        </LinearLayout>
+
+</LinearLayout>

@@ -112,7 +112,7 @@ class FileActivity : AppCompatActivity(){
     }
 
     fun GetFile(view: View) {
-        if(checkPermission()==false){
+        if(checkPermission(this) == false){
 //            tv_text.text =  tv_text.text.toString()+"\n"+"没有写sd卡权限"
             Toastinfo("没有写sd卡权限")
             return
@@ -158,10 +158,11 @@ class FileActivity : AppCompatActivity(){
     }
 
     fun ChooseFile(view: View) {
-            if(!checkPermission()!!){
+            if(checkPermission(this)!! == false){
                 Toastinfo("没有sd卡读取权限")
               return
             }
+
 
 
         var i =  Intent(Intent.ACTION_GET_CONTENT);
@@ -170,31 +171,7 @@ class FileActivity : AppCompatActivity(){
             startActivityForResult(Intent.createChooser(i, "文件选择"), FILE_CHOOSER_RESULT_CODE);
 
     }
-    fun checkPermission(): Boolean? {
-        var isGranted = true
-        if (android.os.Build.VERSION.SDK_INT >= 23) {
-            if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                //如果没有写sd卡权限
-                isGranted = false
-            }
-            if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                isGranted = false
-            }
-            Log.e(TAG, "isGranted == $isGranted")
-            if (!isGranted) {
-                this.requestPermissions(
-                    arrayOf(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ),
-                    102
-                )
-            }
-        }
-        return isGranted
-    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

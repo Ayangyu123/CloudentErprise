@@ -2,7 +2,9 @@ package com.ucas.cloudenterprise.ui
 
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
@@ -19,6 +21,8 @@ import io.ipfs.multihash.Multihash
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import android.content.pm.PackageManager
+import android.os.Binder
+import android.os.IBinder
 import android.view.KeyEvent
 import android.widget.RadioGroup
 import com.ucas.cloudenterprise.R
@@ -38,6 +42,8 @@ import me.rosuh.filepicker.config.FilePickerManager
 class MainActivity : BaseActivity() {
 
     var  TAG ="MainActivity"
+    var  myBinder :Binder ?=  null
+    var mBound =false
     var  mLastFgIndex = 0
     var  lastBackPressedAt :Long  = 0
     lateinit  var mFragments:ArrayList<BaseFragemnt>
@@ -45,10 +51,26 @@ class MainActivity : BaseActivity() {
     lateinit  var mOthersShareFragment: OthersShareFragment
     lateinit  var mTransferListFragment: TransferListFragment
     lateinit  var mPersonalCenterFragment: PersonalCenterFragment
+    val con = object : ServiceConnection{
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            Log.e(TAG,"断开链接")
+            mBound =false
+
+        }
+
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            Log.e(TAG,"链接成功")
+            myBinder =p1 as DaemonService.MyBinder
+            mBound =true
+
+        }
+
+    }
 
     override fun GetContentViewId()=R.layout.activity_main
 
     override fun InitView() {
+
         rg_main_bottom.setOnCheckedChangeListener(object :RadioGroup.OnCheckedChangeListener{
             override fun onCheckedChanged(p0: RadioGroup?, id: Int) {
                 when(id){
@@ -124,6 +146,19 @@ class MainActivity : BaseActivity() {
       }
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bindService(Intent(this,DaemonService::class.java),con,BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(mBound){
+            unbindService(con)
+            mBound = false
+        }
     }
 
     fun GetFile(view: View) {

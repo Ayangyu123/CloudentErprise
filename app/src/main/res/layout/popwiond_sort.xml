@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragment.MyFilesFragment"
+    android:id="@+id/rg_sort"
+    android:orientation="vertical"
+    android:background="#fff"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RadioButton
+        android:id="@+id/rb_sort_by_name"
+        android:text="按名称排序"
+        android:button="@drawable/sort_by_time"
+        style="@style/checkbox_sort" />
+    <include layout="@layout/common_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        />
+    <RadioButton
+        android:id="@+id/rb_sort_by_time"
+        android:text="按时间排序"
+        android:button="@drawable/sort_by_name"
+        style="@style/checkbox_sort" />
+
+
+
+</RadioGroup>

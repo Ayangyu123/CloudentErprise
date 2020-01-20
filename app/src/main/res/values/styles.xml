@@ -92,13 +92,15 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="radiobutton_sort">
+    <style name="checkbox_sort">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">80dp</item>
         <item name="android:padding">20dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">16dp</item>
+        <item name="android:maxLines">1</item>
         <item name="android:layout_marginHorizontal">10dp</item>
+        <item name="android:drawableRight">@drawable/sort_is_selected</item>
 
     </style>
 

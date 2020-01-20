@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragment.MyFilesFragment"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择上传文件类型"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        android:textSize="20dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        >
+        <TextView
+            android:id="@+id/tv_image"
+            android:text="图片"
+            android:drawableTop="@drawable/upload_category_image_normal"
+            style="@style/upload_category_tv" />
+        <TextView
+            android:id="@+id/tv_doc"
+            android:text="文档"
+            android:drawableTop="@drawable/upload_category_document_normal"
+            style="@style/upload_category_tv"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        >
+        <TextView
+            android:id="@+id/tv_video"
+            android:text="视频"
+            android:drawableTop="@drawable/upload_category_video_normal"
+            style="@style/upload_category_tv" />
+        <TextView
+            android:id="@+id/tv_all"
+            android:text="全部"
+            android:drawableTop="@drawable/upload_category_all_normal"
+            style="@style/upload_category_tv"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+<ImageView
+    android:id="@+id/iv_close"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp"
+    android:src="@drawable/button_upload_cancel_normal"
+    android:background="#fff"
+    />
+</LinearLayout>

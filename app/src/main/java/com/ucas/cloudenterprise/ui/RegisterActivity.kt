@@ -48,7 +48,7 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
         params["comp_con_email"] = "${et_comp_con_email.text}"
         params["comp_con_tel"] = "${et_comp_con_tel.text}"
         params["vip_type"] = vip_type
-        params["password"] = "${et_user_password.text}"
+        params["password"] = MD5encode("${et_user_password.text}")
         val json = JSONObject(params as Map<String, Any>)
         NetRequest(URL_REGISTER_COMPANY, NET_POST,params,this,this)
 

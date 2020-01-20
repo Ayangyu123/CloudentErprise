@@ -1,9 +1,14 @@
 package com.ucas.cloudenterprise.app
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.os.Environment
+import android.util.Log
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.model.HttpHeaders
 import com.ucas.cloudenterprise.model.Company
+import java.security.AccessControlContext
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -21,7 +26,7 @@ import java.security.NoSuchAlgorithmException
 
   val CORE_CLIENT_ADDRESS ="/ip4/127.0.0.1/tcp/5001" //client 地址
   val TEST_DOWN_FiLE_HASH ="QmU6yMLXAku4komAi1bGyh3UwLdDcrY1NQ12QijnKAiNQ8" //client 地址
-  val ROOT_DIR_PATH= Environment.getDownloadCacheDirectory().absolutePath+"/ucas.cloudentErprise.down/" //client 地址
+  val ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/" //client 地址
 
   //</editor-fold>
 
@@ -104,15 +109,19 @@ fun AddToken( token:String){
 
 //<editor-fold desc=" 网络请求参数  ">
 //val user_name_param="221669671319900160"
-val user_name_param="18152173267"
-val password_param= "rdXRcM"
+//val user_name_param="18152173267"
+val user_name_param="test"
+//val password_param= "rdXRcM"
+val password_param= "test"
+
 val Salt="#$^^xsAd.."
 fun MD5encode(text: String): String {
+
     try {
         //获取md5加密对象
         val instance: MessageDigest = MessageDigest.getInstance("MD5")
         //对字符串加密，返回字节数组
-        val digest:ByteArray = instance.digest(text.toByteArray())
+        val digest:ByteArray = instance.digest(("${text}${Salt}").toByteArray())
         var sb : StringBuffer = StringBuffer()
         for (b in digest) {
             //获取低八位有效值
@@ -136,7 +145,31 @@ fun MD5encode(text: String): String {
 
 //</editor-fold>
 
-
+fun checkPermission(context: Activity): Boolean? {
+    var isGranted = true
+    if (android.os.Build.VERSION.SDK_INT >= 23) {
+        if (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            //如果没有写sd卡权限
+            isGranted = false
+        }
+        if (context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            isGranted = false
+        }
+        Log.e("appconfig", "isGranted == $isGranted")
+        if (!isGranted) {
+            context.requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                102
+            )
+        }
+    }
+    return isGranted
+}
 
 
 
