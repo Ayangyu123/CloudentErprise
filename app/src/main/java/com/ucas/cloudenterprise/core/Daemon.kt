@@ -12,6 +12,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
 import android.os.IBinder
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.core.app.NotificationCompat
@@ -218,6 +219,11 @@ class DaemonService : Service() {
     }
 
     fun GetFile(item:File_Bean) {
+        if (item.fidhash==null||TextUtils.isEmpty(item.fidhash)){
+            Toastinfo("该文件信息不规范")
+            //TODO filehash 为空
+            return
+        }
 
 
         daemon?.let {
