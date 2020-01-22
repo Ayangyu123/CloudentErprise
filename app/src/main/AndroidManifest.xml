@@ -55,8 +55,12 @@
         <activity android:name=".ui.WelcomeActivity"/>
         <!-- 注册   页面-->
           <activity android:name=".ui.RegisterActivity"/>
-
+        <!-- 文件详情        -->
         <activity android:name=".ui.FileInfoActivity"/>
+        <!-- 文件搜索        -->
+        <activity android:name=".ui.SearchFileActivity" />
+        <!-- 选择目标文件夹        -->
+        <activity android:name=".ui.ChooseDestDirActivity"/>
 
 
 

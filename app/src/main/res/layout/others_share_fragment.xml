@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragment.OthersShareFragment"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include layout="@layout/common_head"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/app_color"
+        >
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:text="搜索文件名称"
+            android:drawableLeft="@drawable/single_header_second_search_normal"
+            android:drawablePadding="10dp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_gravity="center"
+            />
+        <View
+            android:id="@+id/view_head_to_search_activity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_share_top_to_search_view"
+            />
+    </FrameLayout>
+   <include layout="@layout/swiperefreshlayout"/>
+
     <TextView
         android:id="@+id/tv_text"
         android:layout_width="match_parent"

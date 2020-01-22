@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -49,8 +50,9 @@ class FilesAdapter(var context: Context?, var list:ArrayList<File_Bean>) :Recycl
 
           var iv_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_icon)
           var iv_right_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_right_icon)
-          var tv_title =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_title)
-          var tv_time =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_time)
+          var checkbox_is_checked =itemView.findViewById<CheckBox>(com.ucas.cloudenterprise.R.id.checkbox_is_checked)
+          var tv_file_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
+          var tv_file_create_time =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_create_time)
 
 
 

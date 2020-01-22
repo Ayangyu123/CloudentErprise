@@ -2,9 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 
 import android.Manifest
-import android.content.ComponentName
 import android.content.Intent
-import android.content.ServiceConnection
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.util.Log
@@ -21,8 +19,6 @@ import io.ipfs.multihash.Multihash
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import android.content.pm.PackageManager
-import android.os.Binder
-import android.os.IBinder
 import android.view.KeyEvent
 import android.widget.RadioGroup
 import com.ucas.cloudenterprise.R
@@ -30,7 +26,7 @@ import com.ucas.cloudenterprise.app.CORE_CLIENT_ADDRESS
 import com.ucas.cloudenterprise.app.ROOT_DIR_PATH
 import com.ucas.cloudenterprise.app.TEST_DOWN_FiLE_HASH
 import com.ucas.cloudenterprise.base.BaseActivity
-import com.ucas.cloudenterprise.base.BaseFragemnt
+import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
 import com.ucas.cloudenterprise.ui.fragment.OthersShareFragment
 import com.ucas.cloudenterprise.ui.fragment.PersonalCenterFragment
@@ -42,30 +38,16 @@ import me.rosuh.filepicker.config.FilePickerManager
 class MainActivity : BaseActivity() {
 
     var  TAG ="MainActivity"
-    var  myBinder :Binder ?=  null
-    var mBound =false
+
+
     var  mLastFgIndex = 0
     var  lastBackPressedAt :Long  = 0
-    lateinit  var mFragments:ArrayList<BaseFragemnt>
+    lateinit  var mFragments:ArrayList<BaseFragment>
     lateinit  var mMyFilesFragment: MyFilesFragment
     lateinit  var mOthersShareFragment: OthersShareFragment
     lateinit  var mTransferListFragment: TransferListFragment
     lateinit  var mPersonalCenterFragment: PersonalCenterFragment
-    val con = object : ServiceConnection{
-        override fun onServiceDisconnected(p0: ComponentName?) {
-            Log.e(TAG,"断开链接")
-            mBound =false
 
-        }
-
-        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            Log.e(TAG,"链接成功")
-            myBinder =p1 as DaemonService.MyBinder
-            mBound =true
-
-        }
-
-    }
 
     override fun GetContentViewId()=R.layout.activity_main
 
@@ -148,18 +130,7 @@ class MainActivity : BaseActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        bindService(Intent(this,DaemonService::class.java),con,BIND_AUTO_CREATE)
-    }
 
-    override fun onStop() {
-        super.onStop()
-        if(mBound){
-            unbindService(con)
-            mBound = false
-        }
-    }
 
     fun GetFile(view: View) {
         if(checkPermission()==false){

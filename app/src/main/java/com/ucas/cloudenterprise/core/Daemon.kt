@@ -12,6 +12,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
 import android.os.IBinder
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.core.app.NotificationCompat
@@ -218,53 +219,60 @@ class DaemonService : Service() {
     }
 
     fun GetFile(item:File_Bean) {
-
-
-        daemon?.let {
-            Thread(object:Runnable{
-                override fun run() {
-                    var ipfs = IPFS( MultiAddress(CORE_CLIENT_ADDRESS))
-                    var filePointer = Multihash.fromBase58(item.fidhash)
-//                    var fileContents = ipfs.cat(filePointer)
-                    var fileInputStream = ipfs.catStream(filePointer)
-                    val root =  File(ROOT_DIR_PATH)
-                    if(!root.exists()){
-                        root.mkdirs()
-                    }
-//                    val dest  = File(ROOT_DIR_PATH+System.currentTimeMillis())
-                    val dest  = File(ROOT_DIR_PATH+item.file_name)
-                    val fileOutputStream = dest.outputStream()
-                    val buffer=ByteArray(1024*4)
-                    var sum:Long =0
-                    var len =0
-                    val off =0
-
-                    try {
-                        while (fileInputStream.read(buffer).apply { len =this }>0){
-                            fileOutputStream.write(buffer,off,len)
-                            sum+=len.toLong()
-                            val progression = (sum * 1.0f / item.size * 100 ).toInt()
-                            Log.e(TAG,"当前进度为${progression} ")
-
-                            runOnUiThread(){
-                                Toastinfo("当前进度为${progression} ")
-                            }
-                        }
-//                        fileOutputStream.write(fileContents)
-                    }finally {
-                        fileOutputStream.close()
-                    }
-
-                    Log.e("ok","文件写入完毕")
-                    runOnUiThread(){
-                        //                    tv_text.text =  tv_text.text.toString()+"\n 文件名称：${dest.name}"+"\n"+"filesize=${dest.length()}\nfilepath=${dest.absolutePath}"
-                    Toastinfo("${item.file_name} 下载完成")
-                    }
-
-                }
-
-            }).start()
+        if(TextUtils.isEmpty(item.fidhash)||item.fidhash==null){
+            Toastinfo("该文件hash为空")
+            return
         }
+            if(daemon!=null&& daemon!!.isAlive){
+                Thread(object:Runnable{
+                    override fun run() {
+                        var ipfs = IPFS( MultiAddress(CORE_CLIENT_ADDRESS))
+                        var filePointer = Multihash.fromBase58(item.fidhash)
+//                    var fileContents = ipfs.cat(filePointer)
+                        var fileInputStream = ipfs.catStream(filePointer)
+                        val root =  File(ROOT_DIR_PATH)
+                        if(!root.exists()){
+                            root.mkdirs()
+                        }
+//                    val dest  = File(ROOT_DIR_PATH+System.currentTimeMillis())
+                        val dest  = File(ROOT_DIR_PATH+item.file_name)
+                        val fileOutputStream = dest.outputStream()
+                        val buffer=ByteArray(1024*4)
+                        var sum:Long =0
+                        var len =0
+                        val off =0
+
+                        try {
+                            while (fileInputStream.read(buffer).apply { len =this }>0){
+                                fileOutputStream.write(buffer,off,len)
+                                sum+=len.toLong()
+                                val progression = (sum * 1.0f / item.size * 100 ).toInt()
+                                Log.e(TAG,"当前进度为${progression} ")
+
+                                runOnUiThread(){
+                                    Toastinfo("当前进度为${progression} ")
+                                }
+                            }
+//                        fileOutputStream.write(fileContents)
+                        }finally {
+                            fileOutputStream.close()
+                        }
+
+                        Log.e("ok","文件写入完毕")
+                        runOnUiThread(){
+                            //                    tv_text.text =  tv_text.text.toString()+"\n 文件名称：${dest.name}"+"\n"+"filesize=${dest.length()}\nfilepath=${dest.absolutePath}"
+                            Toastinfo("${item.file_name} 下载完成")
+                        }
+
+                    }
+
+                }).start()
+            }else{
+                Toastinfo("core服务未启动")
+            }
+
+
+
     }
 
     class MyBinder(var mDaemonService:DaemonService) : Binder() {

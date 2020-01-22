@@ -37,9 +37,12 @@ var IS_UNCOMMON_DIR= 0 // 普通文件夹
 //<editor-fold desc=" 网络请求link  ">
 val  ACCESS_PORT = 6016
 val  Get_Token_Port = 6019
+val LOCAL_HOST="http://10.0.130.172:"
+
 val BASE_HOST ="http://39.106.216.189:"
 
-val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
+//val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
+val  BASE_URL="${LOCAL_HOST+ACCESS_PORT}/api/cloud/v1/"
 
 val ENCODE="http://47.95.145.45:6020/api/v0/rs/encode"
 val DECODE="http://47.95.145.45:6020/api/v0/rs/decode"
@@ -63,10 +66,13 @@ val URL_ADD_MEMBER = "${BASE_URL}member" //添加成员
 val URL_LIST_MEMBER = "${BASE_URL}member_list/" //添加成员
 val URL_ADD_File = "${BASE_URL}file_add" //添加文件
 val URL_DELETE_FILE = "${BASE_URL}file" //删除文件
-val URL_LIST_FILES = "${BASE_URL}user_file/list/" //删除文件
+val URL_LIST_FILES = "${BASE_URL}user_file/list/" //文件列表
 
 val URL_LOGIN="http://39.106.216.189:${Get_Token_Port}/api/cloud/v1/login"
 val GET_REFRESH_ACCESS_TOKEN="${BASE_HOST+Get_Token_Port}refresh/"// :id id为refresh_token + user_id"
-
+val URL_FILE_SEARCH="${BASE_URL}file_search"
+val URL_FILE_RENAME="${BASE_URL}file_rename"
+val URL_FILE_MOV="${BASE_URL}file_mov"
+val URL_FILE_COPY="${BASE_URL}file_copy"
 //</editor-fold>
 

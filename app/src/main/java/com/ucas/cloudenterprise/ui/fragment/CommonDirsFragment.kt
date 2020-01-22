@@ -9,7 +9,7 @@ import com.ucas.cloudenterprise.base.BaseFragment
 @author simpler
 @create 2020年01月10日  14:31
  */
-class PersonalCenterFragment: BaseFragment() {
+class CommonDirsFragment: BaseFragment() {
 
 
     override fun initView() {
@@ -20,13 +20,13 @@ class PersonalCenterFragment: BaseFragment() {
 
     override fun GetRootViewID()= R.layout.personal_center_fragment
     companion object{
-         private var instance: PersonalCenterFragment? = null
+         private var instance: CommonDirsFragment? = null
 
-        fun getInstance( param1:Boolean,  param2:String?): PersonalCenterFragment {
+        fun getInstance( param1:Boolean,  param2:String?): CommonDirsFragment {
             if (instance == null) {
-                synchronized(PersonalCenterFragment::class.java) {
+                synchronized(CommonDirsFragment::class.java) {
                     if (instance == null) {
-                        instance = PersonalCenterFragment().apply {
+                        instance = CommonDirsFragment().apply {
                             this.arguments =Bundle().apply {
                                 putBoolean("param1",param1)
                                 putString("param2",param2)

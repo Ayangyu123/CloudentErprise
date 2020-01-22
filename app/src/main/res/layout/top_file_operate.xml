@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:layout_gravity="center"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:background="@color/app_color"
+    tools:showIn="@layout/my_files_fragment">
+
+    <ImageView
+        android:id="@+id/iv_create_dir"
+        style="@style/iv_myfiles_top"
+        android:src="@drawable/main_list_header_create_folder_normal" />
+
+    <ImageView
+        android:id="@+id/iv_show_up_file_type_dilaog"
+        android:src="@drawable/main_list_header_upload_normal"
+        style="@style/iv_myfiles_top" />
+
+    <ImageView
+        android:id="@+id/iv_sort"
+        style="@style/iv_myfiles_top"
+        android:src="@drawable/main_list_header_rank_normal" />
+
+    <ImageView
+        android:id="@+id/iv_search"
+        style="@style/iv_myfiles_top"
+        android:src="@drawable/main_list_header_search_normal" />
+
+</LinearLayout>
