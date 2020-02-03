@@ -1,7 +1,5 @@
 package com.ucas.cloudenterprise.app
 
-import android.app.DownloadManager
-import java.net.Socket
 
 /**
 @author simpler
@@ -23,9 +21,11 @@ val REQUEST_NO_TOKEN_CODE = 401 //没有携带Token
 val REQUEST_GET_TOKEN_FAIL_CODE = 5001 //获取Token失败
 val REQUEST_ACCESS_TOKEN_FAIL_CODE = 5002 //ACCESS_Token失效
 val REQUEST_REFRESH_TOKEN_FAIL_CODE = 5000 //刷新token失效
+val REQUEST_SUCCESS_CODE_NODATA = 4004 //请求成功没有数据
 //</editor-fold>
 //<editor-fold desc=" 网络请求参数  ">
-var IS_DIR = 0 //-1 文件 0  文件夹
+var IS_DIR = 1 // -1文件 1  文件夹 0 所有文件
+var ALL_FILE =  0//-1 文件 0  文件夹
 var IS_FILE = -1 //-1 文件 0  文件夹
 var IS_COMMON_DIR = -1// 共享文件夹
 var IS_UNCOMMON_DIR= 0 // 普通文件夹
@@ -42,7 +42,7 @@ val LOCAL_HOST="http://10.0.130.172:"
 val BASE_HOST ="http://39.106.216.189:"
 
 //val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
-val  BASE_URL="${LOCAL_HOST+ACCESS_PORT}/api/cloud/v1/"
+val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
 
 val ENCODE="http://47.95.145.45:6020/api/v0/rs/encode"
 val DECODE="http://47.95.145.45:6020/api/v0/rs/decode"

@@ -30,6 +30,7 @@ import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
+import com.ucas.cloudenterprise.ui.ChooseDestDirActivity
 import com.ucas.cloudenterprise.ui.FileInfoActivity
 import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.ui.SearchFileActivity
@@ -359,8 +360,11 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
 
                                 }
-                                "复制到"->{Toastinfo("复制到")}
-                                "移动到"->{Toastinfo("移动到")}
+                                "复制到"->{Toastinfo("复制到")
+                                    mContext?. startActivity<ChooseDestDirActivity>()}
+                                "移动到"->{Toastinfo("移动到")
+                                    mContext?. startActivity<ChooseDestDirActivity>()
+                                }
                                 "重命名"->{Toastinfo("重命名")
                                         ShowRenameDialog(item)
                                 }
@@ -444,7 +448,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     }
 
     private fun GetFileList() {
-        GetFilesListForNet(URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}",this,this)
+        GetFilesListForNet(URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}",this,this)
     }
 
 
@@ -475,7 +479,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     //<editor-fold desc=" 网络请求回调  ">
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
         when(request?.url){
-            URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}"->{
+            URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}"->{
                 Log.e(TAG,"request.method.name is ${request.method.name}")
                 when(request.method.name){
                     HttpMethod.GET.name->{

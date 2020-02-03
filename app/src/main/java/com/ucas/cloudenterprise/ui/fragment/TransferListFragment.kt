@@ -18,7 +18,7 @@ class TransferListFragment: BaseFragment() {
         iv_back.visibility = View.GONE
         tv_title.text = "传输列表"
         tv_download.setOnClickListener {
-            view_select_bar.animate().translationX(0f)
+            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
         }
         tv_upload.setOnClickListener {
             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)

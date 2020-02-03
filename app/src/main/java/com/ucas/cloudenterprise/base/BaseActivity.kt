@@ -111,16 +111,19 @@ import org.json.JSONObject
 
                       try {
                           json.getJSONObject("data").let {
-
                               onNetCallback?.OnNetPostSucces(mrequest,it.toString())
 
                           }
                       }catch (e:org.json.JSONException){
 //
-                                  json.getJSONArray("data").let {
-                                                                    onNetCallback?.OnNetPostSucces(mrequest,it.toString())}
+                          json.getJSONArray("data").let {
+                                  onNetCallback?.OnNetPostSucces(mrequest,it.toString())}
                               }
                           }
+                    REQUEST_SUCCESS_CODE_NODATA->{//请求成功没有数据
+
+                    }
+
                     REQUEST_NO_TOKEN_CODE ->//token为空
                     {
                         Toastinfo("Token  is null")

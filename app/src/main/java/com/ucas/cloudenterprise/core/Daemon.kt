@@ -119,7 +119,7 @@ class DaemonService : Service() {
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
             edit().putBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,false).commit()
         }
-        /*********core install   完成  写入flag 下次直接执行 star*******/
+        /*********core install   完成  写入flag 下次直接执行 start*******/
     }
 
     fun start() {
