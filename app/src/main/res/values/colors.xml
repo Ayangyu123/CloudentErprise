@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="app_color">#4F73DF</color>
+    <color name="root_linealayout_bg_color">#E8EBF2</color>
 </resources>

@@ -15,7 +15,7 @@
         android:layout_marginLeft="20dp"
         />
     <TextView
-    android:id="@+id/tv_title"
+    android:id="@+id/tv_file_name"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:text="你猜猜啊"
@@ -27,7 +27,7 @@
     android:layout_toRightOf="@id/iv_icon"
     />
     <TextView
-     android:id="@+id/tv_time"
+     android:id="@+id/tv_file_create_time"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginTop="2dp"
@@ -38,7 +38,7 @@
     android:layout_marginLeft="10dp"
         android:layout_marginBottom="20dp"
     android:layout_toRightOf="@id/iv_icon"
-        android:layout_below="@id/tv_title"
+        android:layout_below="@id/tv_file_name"
     />
 
     <ImageView
@@ -49,8 +49,18 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
+        android:visibility="gone"
         />
-
+    <CheckBox
+        android:id="@+id/checkbox_is_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_more_normal"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:visibility="gone"
+        />
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"

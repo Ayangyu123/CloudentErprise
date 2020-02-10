@@ -3,16 +3,26 @@ package com.ucas.cloudenterprise.ui.fragment
 import android.os.Bundle
 import android.view.View
 import com.ucas.cloudenterprise.R
-import com.ucas.cloudenterprise.base.BaseFragemnt
+import com.ucas.cloudenterprise.base.BaseFragment
+import kotlinx.android.synthetic.main.common_head.*
+import kotlinx.android.synthetic.main.transfer_list_fragment.*
 
 /**
 @author simpler
 @create 2020年01月10日  14:31
  */
-class TransferListFragment:BaseFragemnt() {
+class TransferListFragment: BaseFragment() {
 
 
     override fun initView() {
+        iv_back.visibility = View.GONE
+        tv_title.text = "传输列表"
+        tv_download.setOnClickListener {
+            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
+        }
+        tv_upload.setOnClickListener {
+            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
+        }
 
     }
 

@@ -3,10 +3,15 @@ package com.ucas.cloudenterprise.base
 
 
 import android.app.Dialog
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.Color
+import android.os.Binder
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +21,11 @@ import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
+import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.Resource
+import com.ucas.cloudenterprise.ui.LoginActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.startActivity
 import org.json.JSONObject
 
 /**
@@ -26,13 +34,42 @@ import org.json.JSONObject
  */
   abstract class BaseActivity  : AppCompatActivity(){
 
-
+    var  myBinder : Binder?=  null
      var onNetCallback: OnNetCallback?= null
      var mrequest: Request<String, out Request<Any, Request<*, *>>>?= null
      var mLastRequest: Request<String, out Request<Any, Request<*, *>>>?= null
 
      var dialog: Dialog?=null
     var NetTag: Any ? =null
+
+    var mBound =false
+    val con = object : ServiceConnection {
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            Log.e("BaseActivity","断开链接")
+            mBound =false
+
+        }
+
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            Log.e("BaseActivity","链接成功")
+            myBinder =p1 as DaemonService.MyBinder
+            mBound =true
+
+        }
+
+    }
+    override fun onResume() {
+        super.onResume()
+        bindService(Intent(this,DaemonService::class.java),con,BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(mBound){
+            unbindService(con)
+            mBound = false
+        }
+    }
    companion object val netcallback = object :StringCallback(){
        var  url:String=""
         override fun onFinish() {
@@ -63,36 +100,26 @@ import org.json.JSONObject
                     REQUEST_SUCCESS_CODE -> //请求成功
                     {
                         Log.e("BaseActivity","请求数据成功")
-                        if (json.isNull("data")){
-                            if(URL_DELETE_FILE.equals(url)){
-                                onNetCallback?.OnNetPostSucces(mrequest,"")
-                                return
-                            }
-                            Toastinfo("data is null")
-                            //TODO
-
-                            return
-                        }
-
-                      try {
-                          json.getJSONObject("data").let {
-
-                              onNetCallback?.OnNetPostSucces(mrequest,it.toString())
+                              onNetCallback?.OnNetPostSucces(mrequest,json.toString())
 
                           }
-                      }catch (e:org.json.JSONException){
-//
-                                  json.getJSONArray("data").let {
-                                                                    onNetCallback?.OnNetPostSucces(mrequest,it.toString())}
-                              }
-                          }
+                    REQUEST_SUCCESS_CODE_NODATA->{//请求成功没有数据
+                        onNetCallback?.OnNetPostSucces(mrequest,json.toString())
+                    }
+
                     REQUEST_NO_TOKEN_CODE ->//token为空
                     {
+
+
                         Toastinfo("Token  is null")
+                        startActivity<LoginActivity>()
+                        finish()
                     }
                     REQUEST_GET_TOKEN_FAIL_CODE ->//获取token失败
                                         {
                                             Toastinfo(" Get Token Fail")
+                                            startActivity<LoginActivity>()
+                                            finish()
                                         }
                     REQUEST_ACCESS_TOKEN_FAIL_CODE ->//access_token 失效
                     {
@@ -166,6 +193,26 @@ import org.json.JSONObject
     abstract  fun  GetContentViewId(): kotlin.Int
     abstract  fun  InitView()
     abstract  fun  InitData()
+
+    //<editor-fold desc=" 添加文件夹  ">
+    fun CreateNewDir(dirname: String, iscommon: Boolean,
+                     pid:String,
+                     tag: Any,
+                     onNetCallback:  BaseActivity.OnNetCallback) {
+        //TODO 请求创建新的文件夹
+        val params = HashMap<String,Any>()
+        params["file_name"] = dirname
+        params["is_dir"] = IS_DIR
+        params["user_id"] = USER_ID //TODO
+        params["fidhash"] = ""
+        params["state"] = if (iscommon) IS_COMMON_DIR else IS_UNCOMMON_DIR
+        params["pid"] = pid
+        params["size"] = 0
+
+        NetRequest(URL_ADD_File, NET_POST,params,tag,onNetCallback)
+
+    }
+    //</editor-fold>
 
 
     fun NetRequest(

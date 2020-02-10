@@ -10,6 +10,8 @@
 
     </style>
 
+<!--    <style name="progressBarStyleHorizontal"parent=""-->
+
     <style name="TV_ShowResult">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -102,6 +104,18 @@
         <item name="android:layout_marginHorizontal">10dp</item>
         <item name="android:drawableRight">@drawable/sort_is_selected</item>
 
+    </style>
+
+    <style name="personal_center_settings_textview">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:drawablePadding">15dp</item>
+        <item name="android:drawableRight">@drawable/personalcenter_guide_arrow</item>
     </style>
 
 

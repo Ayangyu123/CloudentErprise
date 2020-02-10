@@ -24,24 +24,29 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
         Toastinfo("登陆成功")
         //TODO 添加/更新Token
-        ACCESS_TOKEN =JSONObject(data).getString("access_token")
-        REFRESH_TOKEN =JSONObject(data).getString("refresh_token")
-        USER_ID =JSONObject(data).getString("user_id")
+        if(JSONObject(data).isNull("data")){
+            return
+        }
+            SaveToken(JSONObject(data).getJSONObject("data").toString())
+
+    }
+
+    private fun SaveToken(data: String) {
+        ACCESS_TOKEN = JSONObject(data).getString("access_token")
+        REFRESH_TOKEN = JSONObject(data).getString("refresh_token")
+        USER_ID = JSONObject(data).getString("user_id")
 
 
-        Log.e(TAG,"ACCESS_TOKEN=${ACCESS_TOKEN}")
-        Log.e(TAG,"refresh_token=${REFRESH_TOKEN}")
-        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).
-            edit().
-            putString("access_token",ACCESS_TOKEN).
-            putString("refresh_token",REFRESH_TOKEN).
-            commit()
+        Log.e(TAG, "ACCESS_TOKEN=${ACCESS_TOKEN}")
+        Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
+        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).edit()
+            .putString("access_token", ACCESS_TOKEN).putString("refresh_token", REFRESH_TOKEN)
+            .commit()
 
         AddToken(ACCESS_TOKEN)
-        Log.e(TAG,"token  is ${OkGo.getInstance().commonHeaders.get("Authorization")}")
-         startActivity<MainActivity>()
+        Log.e(TAG, "token  is ${OkGo.getInstance().commonHeaders.get("Authorization")}")
+        startActivity<MainActivity>()
         finish()
-
     }
 
     override fun InitView() {

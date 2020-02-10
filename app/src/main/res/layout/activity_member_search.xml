@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:background="@color/app_color"
+        android:padding="10dp"
+        android:gravity="bottom"
+        >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/title_back_icon_normal"
+            android:padding="5dp"
+            />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_linearlayout_serchfile"
+            android:layout_height="30dp">
+
+            <EditText
+                android:id="@+id/et_search_key_word"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:background="@null"
+                android:maxLines="1"
+                android:hint="请输入成员姓名或邮箱"
+                android:textColor="@android:color/black"
+                android:gravity="center_vertical"
+                android:layout_height="match_parent"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_search_cancel_normal"
+                android:layout_gravity="center_vertical|right"
+                />
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/tv_cancle_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/title_search_button_normal"
+            android:padding="5dp"
+            android:gravity="center"
+            />
+
+    </LinearLayout>
+
+    <include layout="@layout/swiperefreshlayout"/>
+</LinearLayout>

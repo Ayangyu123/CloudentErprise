@@ -16,12 +16,13 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
 import com.ucas.cloudenterprise.utils.FileCP
+import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.get
 import com.ucas.cloudenterprise.utils.store
 import io.ipfs.api.IPFS
 import io.ipfs.api.NamedStreamable
 
-abstract class BaseFragemnt : Fragment()  {
+abstract class BaseFragment : Fragment()  {
 
     var NetTag: Any ? =null
     var mContext:Context ? =null
@@ -76,16 +77,7 @@ abstract class BaseFragemnt : Fragment()  {
                       tag: Any,
                       onNetCallback:  BaseActivity.OnNetCallback) {
         //TODO 请求创建新的文件夹
-        val params = HashMap<String,Any>()
-        params["file_name"] = dirname
-        params["is_dir"] = IS_DIR
-        params["user_id"] = USER_ID //TODO
-        params["fidhash"] = ""
-        params["state"] = if (iscommon) IS_COMMON_DIR else IS_UNCOMMON_DIR
-        params["pid"] = pid
-        params["size"] = 0
-
-        NetRequest(URL_ADD_File, NET_POST,params,tag,onNetCallback)
+        (activity as BaseActivity).CreateNewDir(dirname,iscommon,pid,tag,onNetCallback)
 
     }
     //</editor-fold>
@@ -108,7 +100,7 @@ abstract class BaseFragemnt : Fragment()  {
                 val size: Int =
                     it.getInt(it.getColumnIndex(OpenableColumns.SIZE))
 
-                DaemonService.daemon?.let {
+                if(DaemonService.daemon !=null&& DaemonService.daemon!!.isAlive){
                     Thread(Runnable {
 
                         FileCP(
@@ -132,7 +124,7 @@ abstract class BaseFragemnt : Fragment()  {
                                 params["file_name"] = displayName+""
                                 params["is_dir"] = IS_FILE
                                 params["user_id"] = "${USER_ID}" //TODO
-                                params["fidhash"] = hash
+                                params["fidhash"] = "${hash}"
                                 params["pid"] = pid
                                 params["size"] = size
                                 NetRequest(URL_ADD_File, NET_POST,params,tag,onNetCallback)
@@ -143,6 +135,8 @@ abstract class BaseFragemnt : Fragment()  {
                             //                        tv_text.text =  tv_text.text.toString()+"\n"+"临时文件已删除"
                         }
                     }).start()
+                }else{
+                    Toastinfo("core服务未启动")
                 }
             }}
 

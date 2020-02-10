@@ -11,15 +11,14 @@ import android.view.View
 import android.widget.PopupWindow
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.adapter.FilesAdapter
 import com.ucas.cloudenterprise.base.BaseActivity
-import com.ucas.cloudenterprise.base.BaseFragemnt
 import com.ucas.cloudenterprise.model.File_Bean
-import kotlinx.android.synthetic.main.my_files_fragment.*
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,18 +28,25 @@ import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.app.*
+import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
-import com.ucas.cloudenterprise.ui.FileInfoActivity
-import com.ucas.cloudenterprise.ui.MainActivity
+import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.utils.*
+import kotlinx.android.synthetic.main.common_head.*
+import kotlinx.android.synthetic.main.common_head.tv_title
 import kotlinx.android.synthetic.main.dialog_create_new_dir.*
+import kotlinx.android.synthetic.main.dialog_create_new_dir.et_dir_name
+import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
+import kotlinx.android.synthetic.main.swiperefreshlayout.*
+import kotlinx.android.synthetic.main.top_file_operate.*
+import org.json.JSONObject
 
 
 /**
 @author simpler
 @create 2020年01月10日  14:31
  */
-class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
+class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     val TAG ="MyFilesFragment"
     var fileslist = ArrayList<File_Bean>()
     lateinit var adapter:FilesAdapter
@@ -48,8 +54,10 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
      var UpFileTypeDialog:Dialog ?=null
      var SortPOPwiond:PopupWindow ?=null
      var FileDeleteTipsDialog:Dialog ?=null
+     var ReanmeDialog:Dialog ?=null
     var BottomFilesOperateDialog:BottomSheetDialog ? =null
     var pid ="root"
+    var Is_Checked_Sum =0
 
 
 
@@ -65,13 +73,34 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
                 holder.apply {
                     holder as FilesAdapter.ViewHolder
                     holder.apply {
-                        tv_title.text = item.file_name
-                        tv_time.text = item.created_at
-                        val isfile = if(item.is_dir==-1)true  else false
+                        tv_file_name.text = item.file_name
+                        tv_file_create_time.text = item.created_at
 
-                        iv_right_icon.setOnClickListener{
-                           ShowBottomFilesOperateDialog(item,isfile)
+                        val isfile = if(item.is_dir==-1)true  else false
+                        if(item.is_show_checked_view){
+                            iv_right_icon.visibility =View.GONE
+                            checkbox_is_checked.visibility = View.VISIBLE
+                            checkbox_is_checked.isChecked =item.is_checked
+                            checkbox_is_checked.setOnCheckedChangeListener { button, ischecked ->
+                                if(ischecked){
+                                    Is_Checked_Sum = Is_Checked_Sum+1
+
+                                }else{
+                                    Is_Checked_Sum = Is_Checked_Sum-1
+
+                                }
+                                tv_title.text ="已选定${Is_Checked_Sum}个"
+                                item.is_checked = ischecked
+                            }
+
+                        }else{
+                            iv_right_icon.visibility =View.VISIBLE
+                            checkbox_is_checked.visibility = View.GONE
+                            iv_right_icon.setOnClickListener{
+                                ShowBottomFilesOperateDialog(item,isfile)
+                            }
                         }
+
 
 
 
@@ -110,29 +139,7 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
         //</editor-fold >
 
         iv_create_dir.setOnClickListener{
-            if(CreateNewDirDialog == null){
-
-                CreateNewDirDialog = GetCreateNewDirDialog(mContext!!,View.OnClickListener{
-                    CreateNewDirDialog!!.et_dir_name.text  = SetEt_Text("")
-                    CreateNewDirDialog!!.checkbox_is_common.isChecked = false
-                    CreateNewDirDialog?.dismiss()
-                }
-                   ,View.OnClickListener{
-                        if(CreateNewDirDialog!!.et_dir_name?.text==null||TextUtils.isEmpty(CreateNewDirDialog!!.et_dir_name?.text)){
-                            Toastinfo("文件名不能为空")
-                            return@OnClickListener
-                        }
-                        CreateNewDir( CreateNewDirDialog!!.et_dir_name?.text.toString(),
-                            CreateNewDirDialog!!.checkbox_is_common.isChecked,
-                            pid,
-                            this,
-                            this
-                        )
-                        CreateNewDirDialog?.dismiss()
-                    })
-            }
-
-            CreateNewDirDialog?.show()
+           ShowCreateNewDirDialog()
 
         }
 
@@ -212,16 +219,88 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
 
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
         swipeRefresh.setOnRefreshListener {
-            GetFilesListForNet(URL_LIST_FILES +"$USER_ID",this,this)
+            fileslist.clear()
+            GetFileList()
             swipeRefresh.isRefreshing = false
         }
+
+        tv_edit.setOnClickListener {
+            var text =(it as android.widget.TextView).text.toString()
+            when(text){
+                "编辑"->{
+                    //TODO ui
+                    it.text ="全选"
+                    iv_back.visibility =View.VISIBLE
+                    fileslist.forEach {
+                        it.is_show_checked_view =true
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+                "全选"->{
+                    it.text ="全不选"
+                    fileslist.forEach {
+                        it.is_checked =true
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+                "全不选"->{
+                    it.text ="全选"
+                    fileslist.forEach {
+                        it.is_checked =false
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
+        }
+        iv_back.setOnClickListener {
+            tv_title.text ="我的文件"
+            iv_back.visibility =View.INVISIBLE
+            fileslist.forEach {
+                it.is_show_checked_view =false
+                it.is_checked =false
+            }
+            adapter.notifyDataSetChanged()
+        }
+
+        iv_search.setOnClickListener {
+            startActivity(Intent(mContext,SearchFileActivity::class.java).putExtra("form","myfiles"))
+        }
+        tv_refresh.setOnClickListener {  GetFileList() }
     }
+
+    fun ShowCreateNewDirDialog() {
+        if(CreateNewDirDialog == null){
+
+            CreateNewDirDialog = GetCreateNewDirDialog(mContext!!,View.OnClickListener{
+                CreateNewDirDialog!!.et_dir_name.text  = SetEt_Text("")
+                CreateNewDirDialog!!.checkbox_is_common.isChecked = false
+                CreateNewDirDialog?.dismiss()
+            }
+                ,View.OnClickListener{
+                    if(CreateNewDirDialog!!.et_dir_name?.text==null||TextUtils.isEmpty(CreateNewDirDialog!!.et_dir_name?.text)){
+                        Toastinfo("文件名不能为空")
+                        return@OnClickListener
+                    }
+                    CreateNewDir( CreateNewDirDialog!!.et_dir_name?.text.toString(),
+                        CreateNewDirDialog!!.checkbox_is_common.isChecked,
+                        pid,
+                        this,
+                        this
+                    )
+                    CreateNewDirDialog?.dismiss()
+                })
+        }
+
+        CreateNewDirDialog?.show()
+    }
+
 
     private fun ShowBottomFilesOperateDialog(
         item: File_Bean,
         isfile: Boolean
     ) {
-        if(BottomFilesOperateDialog == null){
+
             BottomFilesOperateDialog = BottomSheetDialog(context!!)
             val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
             contentview.layoutManager = GridLayoutManager(context,4)
@@ -248,13 +327,24 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
                             when(tv.text.toString()){
                                 "设置共享"->{ Toastinfo("设置共享")
                                     //TODO 文件夹分享页面
+                                    mContext?.startActivity(Intent(context, SetCommonFileActivity::class.java).apply {
+                                        putExtra("file",item)
+                                    })
 
                                 }
                                 "链接分享"->{Toastinfo("链接分享")
                                     //TODO 跳转链接分享页面
-//                                        startActivity()
+                                    mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+                                        putExtra("file",item)
+                                    })
                                 }
-                                "下载"->{Toastinfo("下载")
+                                "下载"->{
+                                    Toastinfo("下载")
+                                    var  mainActivity=activity as MainActivity
+                                    if(!checkPermission(mainActivity)!!){
+                                        Toastinfo("没有sd卡写入权限")
+                                        return@setOnClickListener
+                                    }
                                     if(item.is_dir== IS_DIR){
                                         Toastinfo("暂不支持下载文件夹")
                                         return@setOnClickListener
@@ -263,14 +353,19 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
 //                        action ="downFiles"
 //                        putExtra("file",item)
 //                    })
-                                    val  mainActivity=activity as MainActivity
+
                                     mainActivity.myBinder as DaemonService.MyBinder
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
 
                                 }
-                                "复制到"->{Toastinfo("复制到")}
-                                "移动到"->{Toastinfo("移动到")}
-                                "重命名"->{Toastinfo("重命名")}
+                                "复制到"->{Toastinfo("复制到")
+                                    mContext?. startActivity<ChooseDestDirActivity>()}
+                                "移动到"->{Toastinfo("移动到")
+                                    mContext?. startActivity<ChooseDestDirActivity>()
+                                }
+                                "重命名"->{Toastinfo("重命名")
+                                        ShowRenameDialog(item)
+                                }
                                 "删除"->{
                                     Toastinfo("删除")
                                     ShowFileDeleteTipsDialog(item.file_id)
@@ -289,21 +384,57 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
 
             })
             BottomFilesOperateDialog?.setContentView(contentview)
-        }
+
 
 
 
         BottomFilesOperateDialog?.show()
     }
 
-    private fun ShowFileDeleteTipsDialog(file_id:String) {
-        if(FileDeleteTipsDialog ==null){
+    private fun ShowRenameDialog(item: File_Bean) {
+         ReanmeDialog =Dialog(mContext!!).apply {
+             var contentview =
+                 LayoutInflater.from(mContext).inflate(R.layout.dialog_file_rename,null)
+             contentview.apply {
+                 et_dir_name.text = SetEt_Text("${item.file_name}")
+                 et_dir_name.addTextChangedListener {
+                         if(et_dir_name.text.equals(item.file_name)){
+                             tv_commit.isEnabled = false
+                         }else{
+                             tv_commit.isEnabled = true
+                         }
+
+                 }
+                 tv_cancle.setOnClickListener{
+                     ReanmeDialog?.dismiss()
+                 }
+                 tv_commit.setOnClickListener {
+                     NetRequest("${URL_FILE_RENAME}", NET_POST,HashMap<String,Any>().apply {
+                         put("user_id","${USER_ID}")
+                         put("file_id","${item.file_id}")
+                         put("file_name","${et_dir_name.text}")
+
+                     },this,this@MyFilesFragment)
+                     ReanmeDialog?.dismiss()
+                 }
+
+             }
+             setContentView(contentview)
+             setCancelable(true)
+         }
+
+
+        ReanmeDialog?.show()
+    }
+
+    fun ShowFileDeleteTipsDialog(file_id:String) {
+
             FileDeleteTipsDialog = GetFileDeleteTipsDialog(mContext!!,View.OnClickListener {FileDeleteTipsDialog?.dismiss()  },View.OnClickListener{
                 DeleteFile(file_id,this,this@MyFilesFragment)
                 FileDeleteTipsDialog?.dismiss()
 
             })
-        }
+
         FileDeleteTipsDialog?.show()
     }
 
@@ -311,11 +442,11 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
     override fun initData() {
 
 
-        GetFileList(USER_ID)
+        GetFileList()
     }
 
-    private fun GetFileList(pid: String) {
-        GetFilesListForNet(URL_LIST_FILES +"$pid",this,this)
+    private fun GetFileList() {
+        GetFilesListForNet(URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}",this,this)
     }
 
 
@@ -345,17 +476,30 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
 
     //<editor-fold desc=" 网络请求回调  ">
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
+
+
         when(request?.url){
-            URL_LIST_FILES +"${USER_ID}"->{
+            URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}"->{
                 Log.e(TAG,"request.method.name is ${request.method.name}")
                 when(request.method.name){
                     HttpMethod.GET.name->{
                         //获取我的文件列表
+                        if(JSONObject(data).isNull("data")){
+                            ll_empty.visibility = View.VISIBLE
+                            swipeRefresh.visibility = View.INVISIBLE
+                            return
+
+                        }else{
+                            ll_empty.visibility = View.INVISIBLE
+                            swipeRefresh.visibility = View.VISIBLE
+                        }
+
+                        //获取我的文件列表
                         Toastinfo("获取文件列表成功")
                         fileslist.clear()
-                        fileslist.addAll(Gson().fromJson<List<File_Bean>>(data,object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
-                        Log.e(TAG,"filelist size is ${fileslist.size}")
+                        fileslist.addAll(Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
                         adapter?.notifyDataSetChanged()
+
                     }
 
                 }
@@ -367,12 +511,17 @@ class MyFilesFragment:BaseFragemnt(),BaseActivity.OnNetCallback {
                 Toastinfo("添加文件列表成功")
                 //刷新列表
                 //TODO USER_ID ->PID
-                GetFileList(USER_ID)
+                GetFileList()
             }
             URL_DELETE_FILE ->{
                 Toastinfo("删除文件成功")
                 //TODO USER_ID ->PID
-                GetFileList(USER_ID)
+                GetFileList()
+            }
+            URL_FILE_RENAME ->{
+                Toastinfo("文件重命名成功")
+                GetFileList()
+
             }
 
         }

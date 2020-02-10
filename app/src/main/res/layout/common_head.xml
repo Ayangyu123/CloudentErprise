@@ -35,8 +35,20 @@
         android:gravity="center"
         android:maxLines="1"
         android:text="编辑"
+
         android:textColor="#FFF"
         android:textSize="18dp" />
+    <ImageView
+        android:id="@+id/iv_title_search"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:scaleType="center"
+        android:visibility="gone"
+        android:src="@drawable/title_search_button_normal"
+        />
 
 
 </RelativeLayout>

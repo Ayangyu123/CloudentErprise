@@ -3,13 +3,13 @@ package com.ucas.cloudenterprise.ui.fragment
 import android.os.Bundle
 import android.view.View
 import com.ucas.cloudenterprise.R
-import com.ucas.cloudenterprise.base.BaseFragemnt
+import com.ucas.cloudenterprise.base.BaseFragment
 
 /**
 @author simpler
 @create 2020年01月10日  14:31
  */
-class PersonalCenterFragment:BaseFragemnt() {
+class PersonalCenterFragment: BaseFragment() {
 
 
     override fun initView() {

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/root_linealayout_bg_color"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/common_head"/>
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/app_color"
+        android:layout_marginTop="20dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="土星企业云盘"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:layout_marginTop="40dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前版本"
+                android:gravity="center_vertical"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:layout_height="wrap_content"
+                android:text="V 2.2.1"/>
+        </LinearLayout>
+        <include layout="@layout/common_line"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设备码"
+                android:gravity="center_vertical"
+                />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:layout_height="wrap_content"
+                android:text="245t68734658927349587"/>
+        </LinearLayout>
+        <include layout="@layout/common_line"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="服务协议"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical|right"
+                android:layout_height="wrap_content"
+               android:src="@drawable/personalcenter_guide_arrow"/>
+        </LinearLayout>
+        <include layout="@layout/common_line"/>
+
+    </LinearLayout>
+
+</LinearLayout>

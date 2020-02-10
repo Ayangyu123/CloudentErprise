@@ -56,8 +56,12 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
             when(request?.url){
                 URL_REGISTER_COMPANY ->{
-                    Toastinfo("注册成功")
-                    var company = Gson().fromJson(data,Company::class.java)
+                    if (JSONObject(data).isNull("data")){
+                        Toastinfo("注册失败")
+                        return
+                    }
+                        Toastinfo("注册成功")
+                    var company = Gson().fromJson(JSONObject(data).getJSONObject("data").toString(),Company::class.java)
                     Log.e(TAG,company.toString())
                     COMP_ID = company.comp_id
                     COMP = company

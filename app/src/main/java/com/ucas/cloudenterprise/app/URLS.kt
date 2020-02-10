@@ -1,7 +1,5 @@
 package com.ucas.cloudenterprise.app
 
-import android.app.DownloadManager
-import java.net.Socket
 
 /**
 @author simpler
@@ -23,10 +21,14 @@ val REQUEST_NO_TOKEN_CODE = 401 //没有携带Token
 val REQUEST_GET_TOKEN_FAIL_CODE = 5001 //获取Token失败
 val REQUEST_ACCESS_TOKEN_FAIL_CODE = 5002 //ACCESS_Token失效
 val REQUEST_REFRESH_TOKEN_FAIL_CODE = 5000 //刷新token失效
+val REQUEST_SUCCESS_CODE_NODATA = 4004 //请求成功没有数据
 //</editor-fold>
 //<editor-fold desc=" 网络请求参数  ">
-var IS_DIR = 0 //-1 文件 0  文件夹
-var IS_FILE = -1 //-1 文件 0  文件夹
+//   文件类型
+var IS_DIR = 1 // -1文件 1  文件夹 0 所有文件
+var ALL_FILE =  0// 0  所有文件
+var IS_FILE = -1 //-1 文件
+//文件状态 是否是共享
 var IS_COMMON_DIR = -1// 共享文件夹
 var IS_UNCOMMON_DIR= 0 // 普通文件夹
 //</editor-fold>
@@ -37,8 +39,11 @@ var IS_UNCOMMON_DIR= 0 // 普通文件夹
 //<editor-fold desc=" 网络请求link  ">
 val  ACCESS_PORT = 6016
 val  Get_Token_Port = 6019
+val LOCAL_HOST="http://10.0.130.172:"
+
 val BASE_HOST ="http://39.106.216.189:"
 
+//val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
 val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
 
 val ENCODE="http://47.95.145.45:6020/api/v0/rs/encode"
@@ -63,10 +68,13 @@ val URL_ADD_MEMBER = "${BASE_URL}member" //添加成员
 val URL_LIST_MEMBER = "${BASE_URL}member_list/" //添加成员
 val URL_ADD_File = "${BASE_URL}file_add" //添加文件
 val URL_DELETE_FILE = "${BASE_URL}file" //删除文件
-val URL_LIST_FILES = "${BASE_URL}user_file/list/" //删除文件
+val URL_LIST_FILES = "${BASE_URL}user_file/list/" //文件列表
 
 val URL_LOGIN="http://39.106.216.189:${Get_Token_Port}/api/cloud/v1/login"
 val GET_REFRESH_ACCESS_TOKEN="${BASE_HOST+Get_Token_Port}refresh/"// :id id为refresh_token + user_id"
-
+val URL_FILE_SEARCH="${BASE_URL}file_search"
+val URL_FILE_RENAME="${BASE_URL}file_rename"
+val URL_FILE_MOV="${BASE_URL}file_mov"
+val URL_FILE_COPY="${BASE_URL}file_copy"
 //</editor-fold>
 

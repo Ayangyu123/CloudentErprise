@@ -39,6 +39,7 @@
         <!--  第一个启动的   activity （页面）   -->
 
         <activity android:name=".ui.LoginActivity">
+<!--        <activity android:name=".ui.ChooseDestDirActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,8 +56,29 @@
         <activity android:name=".ui.WelcomeActivity"/>
         <!-- 注册   页面-->
           <activity android:name=".ui.RegisterActivity"/>
-
+        <!-- 文件详情        -->
         <activity android:name=".ui.FileInfoActivity"/>
+        <!-- 文件搜索        -->
+        <activity android:name=".ui.SearchFileActivity" />
+        <!-- 选择目标文件夹        -->
+        <activity android:name=".ui.ChooseDestDirActivity"/>
+        <!-- 设置共享文件        -->
+        <activity android:name=".ui.SetCommonFileActivity"/>
+        <!-- 权限说明        -->
+        <activity android:name=".ui.PermissionToIllustrateActivity"/>
+        <!-- 链接分享      -->
+        <activity android:name=".ui.LinkSharedActivity"/>
+        <!-- 选择成员        -->
+        <activity android:name=".ui.SelectMembersActivity"/>
+        <!-- 成员搜索        -->
+        <activity android:name=".ui.member.MemberSearchActivity"/>
+        <!-- 邀请成员        -->
+        <activity android:name=".ui.member.MemberInviteActivity"/>
+        <!-- 修改邀请成员链接        -->
+        <activity android:name=".ui.member.EditMemberInviteLinkActivity"/>
+        <!-- 关于        -->
+        <activity android:name=".ui.AboutActivity"/>
+
 
 
 

@@ -1,13 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.fragment.PersonalCenterFragment"
+    android:orientation="vertical"
+    android:background="#E8EBF2"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/tv_text"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
+        android:background="@color/app_color"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:textSize="25dp"
+            android:text="樊志攀"
+            android:layout_margin="20dp"
+            android:textColor="@android:color/white"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="国科环宇"
+            android:layout_margin="20dp"
+            android:textColor="@android:color/white"
+            android:layout_gravity="bottom|right"
+            />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="容量：11.59GB/.20.00GB"
+            android:textSize="16dp"
+            />
+<!--       style="@style/progressBarStyleHorizontal"  -->
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="10dp"
+            android:max="2000"
+            android:progress="1159"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:progressDrawable="@drawable/bg_personalcenterfragment_progressbar"
+            />
+
+    </LinearLayout>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:text="成员管理"
+            android:drawableLeft="@drawable/member_admin_icon"
+            style="@style/personal_center_settings_textview" />
+    <include layout="@layout/common_line"/>
+    <TextView
+        android:text="消息通知"
+        android:drawableLeft="@drawable/message_notification_setting_icon"
+        style="@style/personal_center_settings_textview" />
+    <include layout="@layout/common_line"/>
+    <TextView
+        android:text="设置"
+        android:drawableLeft="@drawable/settings_setting_icon"
+        style="@style/personal_center_settings_textview" />
+    <include layout="@layout/common_line"/>
+    <TextView
+        android:text="用户反馈"
+        android:drawableLeft="@drawable/member_admin_icon"
+        style="@style/personal_center_settings_textview" />
+    <include layout="@layout/common_line"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@android:color/white"
+        >
+        <TextView
+            tools:text="V 2.2.1 "
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:drawablePadding="15dp"
+            android:textColor="@android:color/black"
+            android:gravity="center_vertical|right"
+            />
+
+        <TextView
+            android:text="检查新版本"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:drawablePadding="15dp"
+            android:textColor="@android:color/black"
+            android:gravity="center_vertical"
+            android:drawableLeft="@drawable/check_new_version_setting_icon"
+             />
+
+    </FrameLayout>
+
+    <include layout="@layout/common_line"/>
+    <TextView
+        android:text="关于"
+        android:drawableLeft="@drawable/about_us_setting_icon"
+        style="@style/personal_center_settings_textview" />
+    <include layout="@layout/common_line"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
-        android:textSize="40dp"
-        android:text="PersonalCenter"
-        />
+        android:textSize="20dp"
+        android:background="@android:color/white"
+        android:text="退出登录"
+         />
+
+
 </LinearLayout>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.member.MembersManageActivity"
+    android:background="@color/root_linealayout_bg_color"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/common_head"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="邀请成员"
+            android:textSize="16dp"
+            android:padding="10dp"
+            android:gravity="center_vertical"
+            android:drawablePadding="10dp"
+            android:drawableLeft="@drawable/invite_member_icon"
+            android:drawableRight="@drawable/personalcenter_guide_arrow"
+            />
+        <include layout="@layout/common_line"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="审核成员"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:drawableLeft="@drawable/invite_list_icon"
+            android:drawableRight="@drawable/personalcenter_guide_arrow"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="企业成员"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/white"/>
+    <include  layout="@layout/common_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@android:color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="管理员"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="管理员"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/personalcenter_guide_arrow"
+            />
+    </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_members_manage"
+            />
+</LinearLayout>

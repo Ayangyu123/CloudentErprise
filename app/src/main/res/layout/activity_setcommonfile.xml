@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.SetCommonFileActivity"
+    android:background="@color/root_linealayout_bg_color"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/common_head"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            >
+        <TextView
+            android:id="@+id/tv_able_look_count"
+            android:text="可查看成员  （共1人）"
+            android:gravity="center_vertical"
+            android:textSize="16dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:background="@color/app_color"
+                android:textColor="@android:color/white"
+                android:text="添加"
+                />
+    </LinearLayout>
+        <include layout="@layout/common_line"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            >
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="智能软件实验室"
+                    android:textColor="@color/app_color"
+                    />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/personalcenter_guide_arrow"
+                />
+
+    </LinearLayout>
+
+</LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:text="添加可编辑成员"
+        android:gravity="center_vertical"
+        android:padding="20dp"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/permission_edit_icon"
+        android:drawableRight="@drawable/personalcenter_guide_arrow"
+        />
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@android:color/white"
+    android:text="添加可上传成员"
+    android:layout_marginTop="10dp"
+    android:gravity="center_vertical"
+    android:padding="20dp"
+    android:drawablePadding="10dp"
+    android:drawableLeft="@drawable/permission_upload_icon"
+    android:drawableRight="@drawable/personalcenter_guide_arrow"
+    />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@android:color/white"
+        android:text="添加可查看 成员"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:padding="20dp"
+        android:drawablePadding="10dp"
+        android:drawableLeft="@drawable/permission_view_icon"
+        android:drawableRight="@drawable/personalcenter_guide_arrow"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:text="取消共享"
+    android:gravity="center"
+    android:textColor="@android:color/holo_red_light"
+    android:background="@android:color/white"
+    />
+</LinearLayout>
