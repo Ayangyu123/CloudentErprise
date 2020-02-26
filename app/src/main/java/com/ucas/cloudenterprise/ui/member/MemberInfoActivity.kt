@@ -7,10 +7,9 @@ class MemberInfoActivity : BaseActivity() {
     override fun GetContentViewId()= R.layout.activity_member_info
 
     override fun InitView() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun InitData() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

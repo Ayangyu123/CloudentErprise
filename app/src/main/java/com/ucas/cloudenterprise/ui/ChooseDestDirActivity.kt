@@ -1,6 +1,9 @@
 package com.ucas.cloudenterprise.ui
 
+import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
+import android.graphics.Color
 import android.text.TextUtils
 import android.view.View
 import android.widget.TextView
@@ -13,13 +16,13 @@ import com.ucas.cloudenterprise.app.IS_COMMON_DIR
 import com.ucas.cloudenterprise.app.IS_UNCOMMON_DIR
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
+import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.ui.fragment.MyDirsFragment
+import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
 import com.ucas.cloudenterprise.utils.GetCreateNewDirDialog
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
 import kotlinx.android.synthetic.main.activity_choose_dest_dir.*
-import kotlinx.android.synthetic.main.activity_choose_dest_dir.tv_download
-import kotlinx.android.synthetic.main.activity_choose_dest_dir.tv_upload
 import kotlinx.android.synthetic.main.activity_choose_dest_dir.view_select_bar
 import kotlinx.android.synthetic.main.activity_choose_dest_dir.viewpager_content
 import kotlinx.android.synthetic.main.common_head.*
@@ -31,14 +34,32 @@ import java.util.concurrent.TimeoutException
 @create 2020年01月22日  15:18
  */
 class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
+    companion object{
+          val  MOVE= 1
+           val COPY =2
+        val SHOW_MYFILES =1
+        val SHOW_OTHERSHARED =2
+    }
+
      var CreateNewDirDialog: Dialog? =null
     var pid ="root"
+    var file_item: File_Bean ? = null
+    var   operatortype :Int = 0
     lateinit var  tv_dest_dir_commit:TextView
+    lateinit var  mMyFilesDirFragment:MyDirsFragment
+    lateinit var  mOthersShareDirFragment:MyDirsFragment
     var  fragmentlist =ArrayList<BaseFragment>()
 
     override fun GetContentViewId() = R.layout.activity_choose_dest_dir
 
     override fun InitView() {
+         intent.apply {
+             file_item = getSerializableExtra("file") as File_Bean
+             operatortype = getIntExtra("type",0)
+             pid =file_item!!.pid
+         }
+
+
         tv_title.text ="选择目标文件夹"
         tv_edit.visibility =View.GONE
         iv_back.setOnClickListener { finish() }
@@ -48,12 +69,15 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         tv_dest_dir_commit =findViewById<TextView>(R.id.tv_dest_dir_commit)
         tv_dest_dir_commit.setOnClickListener {
 
+            setResult(Activity.RESULT_OK, intent.apply {  putExtra("pid","${pid}")})
             finish()
         }
         tv_dest_dir_commit.isEnabled =false
         fragmentlist.clear()
-        fragmentlist.add(MyDirsFragment(IS_UNCOMMON_DIR))
-        fragmentlist.add(MyDirsFragment(IS_COMMON_DIR))
+        mMyFilesDirFragment =MyDirsFragment(IS_UNCOMMON_DIR,pid)
+        mOthersShareDirFragment = MyDirsFragment(IS_COMMON_DIR,pid)
+        fragmentlist.add(mMyFilesDirFragment)
+        fragmentlist.add(mOthersShareDirFragment)
         viewpager_content.apply {
             adapter = object :FragmentPagerAdapter(supportFragmentManager){
                 override fun getItem(position: Int): Fragment {
@@ -78,11 +102,17 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                    when(position){
                        0->{ //我的文件
                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
+                           tv_myfiles.setTextColor( Color.parseColor("#4F73DF"))
+                           tv_othercommom.setTextColor( Color.parseColor("#AAAFC0"))
                            iv_create_dir.isEnabled =true
+                          tv_dest_dir_commit.isEnabled = mMyFilesDirFragment.fileslist.isEmpty()
                        }
                        1->{ //共享文件
                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
                            iv_create_dir.isEnabled =false
+                           tv_othercommom.setTextColor( Color.parseColor("#4F73DF"))
+                           tv_myfiles.setTextColor( Color.parseColor("#AAAFC0"))
+                           tv_dest_dir_commit.isEnabled = mOthersShareDirFragment.fileslist.isEmpty()
                        }
 
                    }
@@ -91,14 +121,15 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
             })
         }
 
-        tv_download.setOnClickListener {
+        tv_myfiles.setOnClickListener {
             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
-            viewpager_content.currentItem =0
+            viewpager_content.currentItem =SHOW_MYFILES
         }
-        tv_upload.setOnClickListener {
+        tv_othercommom.setOnClickListener {
             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
-            viewpager_content.currentItem =1
+            viewpager_content.currentItem = SHOW_OTHERSHARED
         }
+
 
     }
 
@@ -128,6 +159,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         CreateNewDirDialog?.show()
     }
     override fun InitData(){
+
     }
 
     override fun OnNetPostSucces(

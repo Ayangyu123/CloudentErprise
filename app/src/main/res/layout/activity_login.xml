@@ -3,21 +3,31 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="20dp"
+        android:gravity="center"
+       android:layout_marginTop="?attr/actionBarSize"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         >
         <TextView
             android:layout_width="100dp"
-            android:text="用户名称"
+            android:text="账号"
+            android:gravity="center"
             android:layout_height="match_parent"/>
         <EditText
             android:id="@+id/et_user_name"
-            android:text="@string/test"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:hint="请输入邮箱"
+            android:background="@null"
+            style="@style/register_edittext_style"/>
 
     </LinearLayout>
     <LinearLayout
@@ -28,28 +38,80 @@
         >
         <TextView
             android:layout_width="100dp"
-            android:text="用户密码"
+            android:text="密码"
+            android:gravity="center"
             android:layout_height="match_parent"/>
         <EditText
             android:id="@+id/et_user_password"
-            android:text="@string/test"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:hint="请输入登录密码"
+            android:background="@null"
+            style="@style/register_edittext_style"/>
 
     </LinearLayout>
 
     <TextView
         android:onClick="Login"
-        android:text="Login"
-        style="@style/TV_Action"
+        android:text="登录"
+        android:textColor="@android:color/white"
+       android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/app_color"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_marginTop="80dp"
         />
 
+
     <TextView
-        android:onClick="ToRegisterActivity"
-        android:text="Register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="以下情况请联系企业管理员:\n        1.没有登录账号密码\n        2.忘记密码"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <TextView
+            android:onClick="ToRegisterActivity"
+            android:text="忘记密码"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft= "20dp"
+            />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1px"
+            android:layout_weight="1"/>
+        <TextView
+            android:onClick="ToRegisterActivity"
+            android:text="没有账号，立即注册"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+
+            />
+    </LinearLayout>
+
+
+    <TextView
+        android:onClick="Share"
+        android:text="Share"
+        android:visibility="gone"
         style="@style/TV_Action"
         />
-    
     
 
 </LinearLayout>

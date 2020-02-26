@@ -7,12 +7,12 @@ import android.app.NotificationManager.IMPORTANCE_MIN
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.res.AssetManager
 import android.graphics.Color.parseColor
 import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
 import android.os.IBinder
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.core.app.NotificationCompat
@@ -50,20 +50,33 @@ class DaemonService : Service() {
 
         if(IS_NOT_INSTALLED){
             install()
+
         }
 
-        start()
-        startForeground(CORE_SERVICE_ID, notification.build())
+        if(!IS_NOT_INSTALLED){
+            start()
+            startForeground(CORE_SERVICE_ID, notification.build())
+        }
+
     }
 
     fun install() {
 
         val type = CPU_ABI.let {
+            Log.e("Daemo","cpu is ${it}")
             when {
                 it.startsWith("arm") -> "arm"
-                it.startsWith("x86") -> "386"
-                else -> throw Exception("Unsupported ABI")
+                it.startsWith("x86") -> "386"  //移除386支持
+                else ->throw Exception("Unsupported ABI")
+
             }
+        }
+        Log.e("Daemo","type is ${type}")
+
+        if(!assets.list("")!!.contains(type)){
+            Toastinfo("不支持该cpu类型")
+            stopSelf()
+            return
         }
 
 
@@ -219,13 +232,6 @@ class DaemonService : Service() {
     }
 
     fun GetFile(item:File_Bean) {
-        if (item.fidhash==null||TextUtils.isEmpty(item.fidhash)){
-            Toastinfo("该文件信息不规范")
-            //TODO filehash 为空
-            return
-        }
-
-
         daemon?.let {
             Thread(object:Runnable{
                 override fun run() {

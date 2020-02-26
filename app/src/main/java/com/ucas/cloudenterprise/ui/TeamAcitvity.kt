@@ -11,9 +11,12 @@ import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.COMP_ID
+import com.ucas.cloudenterprise.app.MD5encode
 import com.ucas.cloudenterprise.app.URL_TEAM
+import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.Resource
 import com.ucas.cloudenterprise.model.Team
+import com.ucas.cloudenterprise.utils.AppUtils
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_team.*
@@ -140,4 +143,37 @@ class TeamAcitvity : AppCompatActivity() {
 
     }
 
+    fun testimp(view: View) {
+
+
+        var nonce = "${AppUtils.getRandomString(32)}"
+        var s="file_id=borsd7ir3udq387hksvg&nonce=${nonce}&user_id=225212075364847616"
+
+        val SecretKey="nD8ZMAqRGsXyUTYmGq2ZRw00LGMWsMof"
+        var stringSignTemp ="${s}&key=${SecretKey}"
+        Log.e("ok","${stringSignTemp}")
+
+        var sign = MD5encode(stringSignTemp,false).toUpperCase()
+
+        var jsonsrc ="{\n" +
+                " \"user_id\":\"225212075364847616\",\n" +
+                " \"file_id\":\"borsd7ir3udq387hksvg\",\n" +
+                " \"nonce\":\"${nonce}\"\n" +
+                "}"
+            OkGo.post<String>(" http://39.106.216.189:6016/api/cloud/v1/enterprise/share/create").
+                headers("app_id","250528").
+                headers("logid","MTU4MjAxNjAyODE2NDAuODkyMjA2MDk1MDk2OTc3OQ").
+                headers("clienttype","1").
+                headers("nonce","${nonce}").
+                headers("sign","${sign}").
+                upJson(JSONObject(jsonsrc)).
+                execute(object : StringCallback(){
+                    override fun onSuccess(response: Response<String>?) {
+                        Log.e("okgo","${response?.body().toString()}")
+                    }
+                })
+
+
+    }
+        
 }

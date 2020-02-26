@@ -17,6 +17,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.HttpHeaders
 import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
@@ -24,9 +25,12 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.Resource
 import com.ucas.cloudenterprise.ui.LoginActivity
+import com.ucas.cloudenterprise.utils.AppUtils
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
 import org.json.JSONObject
+import java.util.*
+import kotlin.collections.HashMap
 
 /**
 @author simpler
@@ -118,6 +122,7 @@ import org.json.JSONObject
                     REQUEST_GET_TOKEN_FAIL_CODE ->//获取token失败
                                         {
                                             Toastinfo(" Get Token Fail")
+                                            OkGo.getInstance().commonHeaders.clear()
                                             startActivity<LoginActivity>()
                                             finish()
                                         }
@@ -150,10 +155,6 @@ import org.json.JSONObject
                     REQUEST_NOT_FOUND_CODE ->{
                         Toastinfo("服务端找不到相应数据")
                     }
-
-//
-
-
 
 
                     else ->{
@@ -215,6 +216,7 @@ import org.json.JSONObject
     //</editor-fold>
 
 
+
     fun NetRequest(
         url: String,
         RequestMethod:Int,
@@ -222,18 +224,49 @@ import org.json.JSONObject
         tag: Any,
         onNetCallback: OnNetCallback
     ) {
+
         this.onNetCallback  = onNetCallback
         this.NetTag =tag
+
+
+        val SecretKey="nD8ZMAqRGsXyUTYmGq2ZRw00LGMWsMof"
+        var json  =JSONObject()
+
+//        var stringA  = StringBuffer()
+        if(RequestMethod!= NET_GET){
+            json  =JSONObject(paramsjson as Map<String, Any>)
+//            if(!url.equals(URL_LOGIN)&&!url.equals(URL_REGISTER_COMPANY)){
+//                paramsjson.put("app_id",APP_ID)
+//                paramsjson.put("logid",LOGID)
+//                paramsjson.put("clienttype",CLIENTTYPE)
+            }
+//        paramsjson?.toSortedMap()?.forEach { K,V  ->
+//            stringA.append("${K}=${V}&")
+//
+//        }
+//        }
+//        var s=stringA.deleteCharAt(stringA.length-1)
+//
+//        var stringSignTemp ="${s}&key=${SecretKey}"
+//
+//        var sign = MD5encode(stringSignTemp,false).toUpperCase()
+//        OkGo.getInstance().apply {
+//            addCommonHeaders(HttpHeaders("sign","${sign}"))
+//            addCommonHeaders(HttpHeaders("nonce","${AppUtils.getRandomString(16)}"))
+//        }
         when(RequestMethod){
+
             NET_GET->{
+                var stringA  = StringBuffer()
                     OkGo.
                     get<String>(url).
                     tag(tag).
                     execute(netcallback)
             }
             NET_POST->{
+
                 OkGo.post<String>(url).
-                    upJson(JSONObject(paramsjson as Map<String, Any>)).
+                    upJson(json).
                     tag(tag).
                     execute(netcallback)
             }
@@ -249,7 +282,6 @@ import org.json.JSONObject
 
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         NetTag?.let { OkGo.getInstance().cancelTag(NetTag) }
@@ -257,7 +289,8 @@ import org.json.JSONObject
 
     }
 
-    private fun StatusBarsettings() {
+    private fun
+            StatusBarsettings() {
         if (Build.VERSION.SDK_INT >= 21) {
             val decorView = window.decorView
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE

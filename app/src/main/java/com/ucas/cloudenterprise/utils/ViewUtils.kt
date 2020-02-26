@@ -136,7 +136,6 @@ fun GetRenameDialog(
 }
 
     fun RightDrawable(RadioButton: TextView, ResourcesID:Int) {
-
         //加下划线
         val nav_up = MyApplication.context.resources.getDrawable(ResourcesID)
         nav_up.setBounds(0, 0, nav_up.minimumWidth, nav_up.minimumHeight)

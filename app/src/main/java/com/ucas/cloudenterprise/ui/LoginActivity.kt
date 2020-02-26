@@ -1,9 +1,11 @@
 package com.ucas.cloudenterprise.ui
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.View
 import com.lzy.okgo.OkGo
+import com.lzy.okgo.model.HttpHeaders
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
@@ -12,6 +14,7 @@ import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 
 /**
@@ -44,6 +47,12 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
             .commit()
 
         AddToken(ACCESS_TOKEN)
+//       APP_ID = JSONObject(data).getString("app_id")
+//       LOGID = JSONObject(data).getString("logid")
+//        CLIENTTYPE = JSONObject(data).getInt("clienttype").toString()
+//        OkGo.getInstance().addCommonHeaders(HttpHeaders("app_id",APP_ID))
+//        OkGo.getInstance().addCommonHeaders(HttpHeaders("logid",LOGID))
+//        OkGo.getInstance().addCommonHeaders(HttpHeaders("clienttype",CLIENTTYPE))
         Log.e(TAG, "token  is ${OkGo.getInstance().commonHeaders.get("Authorization")}")
         startActivity<MainActivity>()
         finish()
@@ -60,14 +69,26 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     override fun GetContentViewId(): Int = R.layout.activity_login
     fun Login(view: View) {
+
+
         val params = HashMap<String,Any>()
         params["mobile"] = "${et_user_name.text.toString()}"
-        params["password"] = MD5encode("${et_user_password.text.toString()}")
+        params["password"] = MD5encode("${et_user_password.text.toString()}",true)
         NetRequest(URL_LOGIN, NET_POST,params,this,this)
     }
 
     fun ToRegisterActivity(view: View) {
         startActivity<RegisterActivity>()
 
+    }
+
+    fun Share(view: View) {
+
+        startActivity(
+            Intent.createChooser(Intent().apply {
+                action =Intent.ACTION_SEND
+                type ="text/plain"
+                putExtra(Intent.EXTRA_TEXT, "Here is the email content")
+            },"Here is the title of Select box"))
     }
 }

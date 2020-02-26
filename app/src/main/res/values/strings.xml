@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">CloudentErprise</string>
+    <string name="app_name">土星云网盘</string>
+    <string name="app_icon_name">土星云\n企业网盘</string>
+    <string name="app_full_name">土星云企业网盘</string>
     <!-- register Activity    -->
     <string name="公司名称">comp_name</string>
     <string name="公司联系邮箱">comp_con_email</string>
@@ -17,4 +19,8 @@
 
     <string name="team_test">team_test</string>
     <string name="member_test">member_test</string>
+    <string name="iv_back_des">back_icon</string>
+    <string name="myfile">我的文件</string>
+    <string name="edit">编辑</string>
+    <string name="iv_search__des">search_icon</string>
 </resources>

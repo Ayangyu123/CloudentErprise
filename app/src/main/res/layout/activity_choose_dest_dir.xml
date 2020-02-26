@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.ChooseDestDirActivity"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include
@@ -13,24 +15,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
+            android:background="#EBEEFD"
             >
             <TextView
-                android:id="@+id/tv_download"
-                android:text="下载列表"
+                android:id="@+id/tv_myfiles"
+                android:text="我的文件"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="@android:color/white"
+                android:textColor="#4F73DF"
+
                 />
             <TextView
-                android:id="@+id/tv_upload"
-                android:text="上传列表"
+                android:id="@+id/tv_othercommom"
+                android:text="他人共享"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="@android:color/white"
+                android:textColor="#AAAFC0"
                 />
 
         </LinearLayout>
@@ -40,7 +44,7 @@
             android:layout_height="5dp"
             android:layout_gravity="bottom"
             android:layout_marginLeft="50dp"
-            android:background="@drawable/bg_transferlist_fragment_select_bar"
+            android:background="@drawable/bg_choose_dest_dir_select_bar"
             />
     </FrameLayout>
     <androidx.viewpager.widget.ViewPager

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="40dp"
     android:layout_gravity="center"
-    android:gravity="center_horizontal"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
     android:background="@color/app_color"
     tools:showIn="@layout/my_files_fragment">

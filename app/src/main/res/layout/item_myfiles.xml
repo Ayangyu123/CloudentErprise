@@ -1,72 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".adapter.FilesAdapter"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/rl_file_item_root"
+    tools:context=".adapter.FilesAdapter">
 
     <ImageView
         android:id="@+id/iv_icon"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:src="@drawable/icon_list_folder"
+        android:layout_width="36dp"
+        android:layout_height="33dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        />
+        android:layout_marginLeft="14dp"
+        android:src="@drawable/icon_list_folder" />
+
     <TextView
-    android:id="@+id/tv_file_name"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    tools:text="你猜猜啊"
-    android:textColor="#000"
-    android:maxLines="1"
-    android:textSize="16dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginLeft="10dp"
-    android:layout_toRightOf="@id/iv_icon"
-    />
+        android:id="@+id/tv_file_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginRight="33dp"
+        android:layout_toRightOf="@id/iv_icon"
+        android:maxLines="1"
+        android:textColor="#000"
+        android:textSize="14sp"
+        tools:text="你猜猜啊" />
+
     <TextView
-     android:id="@+id/tv_file_create_time"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="2dp"
-     tools:text="2019-12-24"
-    android:textColor="#000"
-    android:maxLines="1"
-    android:textSize="12dp"
-    android:layout_marginLeft="10dp"
-        android:layout_marginBottom="20dp"
-    android:layout_toRightOf="@id/iv_icon"
+        android:id="@+id/tv_file_create_time"
+        android:layout_width="wrap_content"
+        android:layout_height="10dp"
         android:layout_below="@id/tv_file_name"
-    />
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="13dp"
+        android:layout_toRightOf="@id/iv_icon"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="#999999"
+        android:textSize="8sp"
+        tools:text="2019-12-24" />
 
     <ImageView
         android:id="@+id/iv_right_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/icon_more_normal"
-        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:visibility="gone"
-        />
+        android:layout_centerVertical="true"
+        android:layout_marginRight="18dp"
+        android:src="@drawable/icon_more_normal"
+        android:visibility="gone" />
+
     <CheckBox
         android:id="@+id/checkbox_is_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/icon_more_normal"
-        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:visibility="gone"
-        />
+        android:layout_centerVertical="true"
+        android:layout_marginRight="14dp"
+        android:button="@drawable/checkbox"
+        android:visibility="gone" />
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_alignParentBottom="true"
         android:background="#000"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 
 </RelativeLayout>

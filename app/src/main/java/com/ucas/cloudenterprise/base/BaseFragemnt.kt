@@ -22,17 +22,17 @@ import com.ucas.cloudenterprise.utils.store
 import io.ipfs.api.IPFS
 import io.ipfs.api.NamedStreamable
 
-abstract class BaseFragment : Fragment()  {
+abstract class BaseFragment : Fragment() {
 
-    var NetTag: Any ? =null
-    var mContext:Context ? =null
+    var NetTag: Any? = null
+    var mContext: Context? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mContext =  inflater.context
+        mContext = inflater.context
         return inflater.inflate(GetRootViewID(), container, false)
     }
 
@@ -41,9 +41,16 @@ abstract class BaseFragment : Fragment()  {
         initView()
         initData()
     }
-    fun NetRequest(url:String,RequestMethod:Int,paramsjson:HashMap<String,Any>?,tag:Any,onNetCallback: BaseActivity.OnNetCallback){
-        this.NetTag =tag
-        (activity as BaseActivity).NetRequest(url,RequestMethod,paramsjson,tag,onNetCallback)
+
+    fun NetRequest(
+        url: String,
+        RequestMethod: Int,
+        paramsjson: HashMap<String, Any>?,
+        tag: Any,
+        onNetCallback: BaseActivity.OnNetCallback
+    ) {
+        this.NetTag = tag
+        (activity as BaseActivity).NetRequest(url, RequestMethod, paramsjson, tag, onNetCallback)
 
     }
 
@@ -62,45 +69,49 @@ abstract class BaseFragment : Fragment()  {
     abstract fun GetRootViewID(): Int
 
     //<editor-fold desc="获取文件列表">
-     fun GetFilesListForNet(
-         url: String,
-         tag: Any,
-         onNetCallback:  BaseActivity.OnNetCallback
-     ) {
-        NetRequest(url, NET_GET,null,tag,onNetCallback )
+    fun GetFilesListForNet(
+        url: String,
+        tag: Any,
+        onNetCallback: BaseActivity.OnNetCallback
+    ) {
+        NetRequest(url, NET_GET, null, tag, onNetCallback)
     }
     //</editor-fold>
 
     //<editor-fold desc=" 添加文件夹  ">
-     fun CreateNewDir(dirname: String, iscommon: Boolean,
-                      pid:String,
-                      tag: Any,
-                      onNetCallback:  BaseActivity.OnNetCallback) {
+    fun CreateNewDir(
+        dirname: String, iscommon: Boolean,
+        pid: String,
+        tag: Any,
+        onNetCallback: BaseActivity.OnNetCallback
+    ) {
         //TODO 请求创建新的文件夹
-        (activity as BaseActivity).CreateNewDir(dirname,iscommon,pid,tag,onNetCallback)
+        (activity as BaseActivity).CreateNewDir(dirname, iscommon, pid, tag, onNetCallback)
 
     }
     //</editor-fold>
 
     //<editor-fold desc=" 添加文件  ">
-    fun AddFile(uri:String,
-                pid:String,
-                tag: Any,
-                onNetCallback:  BaseActivity.OnNetCallback) {
+    fun AddFile(
+        uri: String,
+        pid: String,
+        tag: Any,
+        onNetCallback: BaseActivity.OnNetCallback
+    ) {
         val uri = Uri.parse(uri) // 获取用户选择文件的URI
-        Log.e("uri)","data.getData()="+uri)
-        Log.e("uri)","uri.getScheme()="+uri.getScheme())
-        Log.e("uri)","uri.authority="+uri.authority)
-        val cursor= activity!!.contentResolver.query(uri, null, null, null, null, null)
-        var displayName: String? =null
+        Log.e("uri)", "data.getData()=" + uri)
+        Log.e("uri)", "uri.getScheme()=" + uri.getScheme())
+        Log.e("uri)", "uri.authority=" + uri.authority)
+        val cursor = activity!!.contentResolver.query(uri, null, null, null, null, null)
+        var displayName: String? = null
         cursor?.use {
-            if(it.moveToFirst()) {
+            if (it.moveToFirst()) {
                 displayName =
                     it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                 val size: Int =
                     it.getInt(it.getColumnIndex(OpenableColumns.SIZE))
 
-                if(DaemonService.daemon !=null&& DaemonService.daemon!!.isAlive){
+                if (DaemonService.daemon != null && DaemonService.daemon!!.isAlive) {
                     Thread(Runnable {
 
                         FileCP(
@@ -109,62 +120,48 @@ abstract class BaseFragment : Fragment()  {
                         )
 
                         val ipfs = IPFS(CORE_CLIENT_ADDRESS)
-                        val src =activity!!.store[displayName!!]
-                        val srcsize =src.length()
+                        val src = activity!!.store[displayName!!]
+                        val srcsize = src.length()
                         val file = NamedStreamable.FileWrapper(src)
                         val addResult = ipfs.add(file)[0]
 
                         Log.e("ifileContents", "addResult=" + addResult)
-
-
                         activity!!.store[displayName!!].delete()
-                       runOnUiThread() {
+                        runOnUiThread() {
                             addResult.apply {
-                                val params = HashMap<String,Any>()
-                                params["file_name"] = displayName+""
+                                val params = HashMap<String, Any>()
+                                params["file_name"] = displayName + ""
                                 params["is_dir"] = IS_FILE
                                 params["user_id"] = "${USER_ID}" //TODO
                                 params["fidhash"] = "${hash}"
                                 params["pid"] = pid
                                 params["size"] = size
-                                NetRequest(URL_ADD_File, NET_POST,params,tag,onNetCallback)
+                                NetRequest(URL_ADD_File, NET_POST, params, tag, onNetCallback)
 
                             }
-
-
-                            //                        tv_text.text =  tv_text.text.toString()+"\n"+"临时文件已删除"
                         }
                     }).start()
-                }else{
+                } else {
                     Toastinfo("core服务未启动")
                 }
-            }}
-
-
-
-
-
-
-
-
-
+            }
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="删除文件">
     fun DeleteFile(
-        fileid:String,
+        fileid: String,
         tag: Any,
-        onNetCallback:  BaseActivity.OnNetCallback
-    ){
-        val params = HashMap<String,Any>()
+        onNetCallback: BaseActivity.OnNetCallback
+    ) {
+        val params = HashMap<String, Any>()
         params["file_id"] = "${fileid}"
         params["user_id"] = USER_ID
-        NetRequest(URL_DELETE_FILE, NET_PUT,params,tag,onNetCallback)
+        NetRequest(URL_DELETE_FILE, NET_PUT, params, tag, onNetCallback)
 
     }
     //</editor-fold>
-
 
 
 }

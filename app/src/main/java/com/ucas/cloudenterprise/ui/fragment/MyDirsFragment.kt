@@ -12,14 +12,13 @@ import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.FilesAdapter
-import com.ucas.cloudenterprise.app.IS_DIR
-import com.ucas.cloudenterprise.app.IS_UNCOMMON_DIR
-import com.ucas.cloudenterprise.app.URL_LIST_FILES
-import com.ucas.cloudenterprise.app.USER_ID
+import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.model.File_Bean
+import com.ucas.cloudenterprise.ui.ChooseDestDirActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
+import kotlinx.android.synthetic.main.activity_choose_dest_dir.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import org.json.JSONObject
 
@@ -27,7 +26,7 @@ import org.json.JSONObject
 @author simpler
 @create 2020年01月10日  14:31
  */
-class MyDirsFragment(val isUncommonDir: Int) : BaseFragment(),BaseActivity.OnNetCallback {
+class MyDirsFragment(val isUncommonDir: Int,val pid:String) : BaseFragment(),BaseActivity.OnNetCallback {
     override fun OnNetPostSucces(
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
@@ -50,6 +49,13 @@ class MyDirsFragment(val isUncommonDir: Int) : BaseFragment(),BaseActivity.OnNet
              fileslist.clear()
              fileslist.addAll(Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
              adapter?.notifyDataSetChanged()
+             var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
+             if(showtype==ChooseDestDirActivity.SHOW_MYFILES&&isUncommonDir==IS_UNCOMMON_DIR){
+                 (activity as ChooseDestDirActivity).tv_dest_dir_commit.isEnabled = fileslist.isEmpty()
+
+             }else if(showtype==ChooseDestDirActivity.SHOW_OTHERSHARED&&isUncommonDir== IS_COMMON_DIR){
+                 (activity as ChooseDestDirActivity).tv_dest_dir_commit.isEnabled = fileslist.isEmpty()
+             }
 
          }
 
@@ -58,7 +64,7 @@ class MyDirsFragment(val isUncommonDir: Int) : BaseFragment(),BaseActivity.OnNet
 
     lateinit var adapter:FilesAdapter
        lateinit var fileslist:ArrayList<File_Bean>
-    var  pid ="root"
+
 
     override fun initView() {
         //<editor-fold desc=" 设置files RecyclerView  ">
@@ -132,24 +138,6 @@ class MyDirsFragment(val isUncommonDir: Int) : BaseFragment(),BaseActivity.OnNet
     }
 
     override fun GetRootViewID()= R.layout.mydirs_fragment
-    companion object{
-         private var instance: MyDirsFragment? = null
 
-        fun getInstance( param1:Boolean,  param2:String?): MyDirsFragment {
-            if (instance == null) {
-                synchronized(MyDirsFragment::class.java) {
-                    if (instance == null) {
-                        instance = MyDirsFragment(IS_UNCOMMON_DIR).apply {
-                            this.arguments =Bundle().apply {
-                                putBoolean("param1",param1)
-                                putString("param2",param2)
-                            }
-                        }
-                    }
-                }
-            }
-            return instance!!
-        }
-    }
 
 }

@@ -112,5 +112,9 @@
         android:text="AddMemberActivity"
         android:onClick="To_AddMemberActiviy"
         style="@style/TV_To_Activity"/>
+    <TextView
+        android:text="加密测试"
+        android:onClick="testimp"
+        style="@style/TV_To_Activity"/>
 
 </LinearLayout>

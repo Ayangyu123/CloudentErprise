@@ -17,13 +17,13 @@
         android:layout_height="1px"
         android:background="#000"
         />
+
     <RadioGroup
         android:id="@+id/rg_main_bottom"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-
-        android:orientation="horizontal"
-        >
+        android:layout_height="82dp"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/rb_my_files"
@@ -33,24 +33,22 @@
 
         <RadioButton
             android:id="@+id/rb_others_share"
-            android:text="他人共享"
-            android:drawableTop="@drawable/tab_sharefile"
             style="@style/main_riado_button"
-            />
+            android:drawableTop="@drawable/tab_sharefile"
+            android:text="他人共享" />
+
         <RadioButton
             android:id="@+id/rb_transfer_list"
-            android:text="传输列表"
-            android:drawableTop="@drawable/tab_transferlist"
             style="@style/main_riado_button"
-            />
+            android:drawableTop="@drawable/tab_transferlist"
+            android:text="传输列表" />
 
         <RadioButton
             android:id="@+id/rb_personal_center"
-            android:text="个人中心"
-            android:drawableTop="@drawable/tab_personalcenter"
             style="@style/main_riado_button"
-            />
-        
+            android:drawableTop="@drawable/tab_personalcenter"
+            android:text="个人中心" />
+
     </RadioGroup>
 
   

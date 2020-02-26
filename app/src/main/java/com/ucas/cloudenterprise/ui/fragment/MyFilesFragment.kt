@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.PopupWindow
@@ -57,6 +58,10 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
      var ReanmeDialog:Dialog ?=null
     var BottomFilesOperateDialog:BottomSheetDialog ? =null
     var pid ="root"
+    var copy_pid ="root"
+    var move_pid ="root"
+    lateinit var pid_stack : ArrayList<String>
+    lateinit var pid_name_maps : HashMap<String,String>
     var Is_Checked_Sum =0
 
 
@@ -77,10 +82,17 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         tv_file_create_time.text = item.created_at
 
                         val isfile = if(item.is_dir==-1)true  else false
-                        if(item.is_show_checked_view){
+
+
+                        if(item.is_show_checked_view) {
                             iv_right_icon.visibility =View.GONE
                             checkbox_is_checked.visibility = View.VISIBLE
                             checkbox_is_checked.isChecked =item.is_checked
+                            rl_file_item_root.setOnClickListener {
+                                item.is_checked =  !item.is_checked
+                                checkbox_is_checked.isChecked= item.is_checked
+
+                            }
                             checkbox_is_checked.setOnCheckedChangeListener { button, ischecked ->
                                 if(ischecked){
                                     Is_Checked_Sum = Is_Checked_Sum+1
@@ -96,6 +108,17 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         }else{
                             iv_right_icon.visibility =View.VISIBLE
                             checkbox_is_checked.visibility = View.GONE
+                            rl_file_item_root.setOnClickListener {
+                                //如果不是文件，是文件夹 点击获取改文件夹下的内容 pid = 该文件id
+                                if(!isfile){
+                                    iv_back.visibility = View.VISIBLE
+                                    tv_title.text = item.file_name
+                                    pid_stack.add(0,item.file_id)
+                                    pid_name_maps.put( item.file_id, item.file_name)
+                                    pid = item.file_id
+                                    GetFileList()
+                                }
+                            }
                             iv_right_icon.setOnClickListener{
                                 ShowBottomFilesOperateDialog(item,isfile)
                             }
@@ -107,26 +130,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         if(!isfile){
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
                         }else{
-                            var filetype = item.file_name.substringAfterLast(".")
-                            Log.e(TAG,"filetype is ${filetype}")
-                            if(filetype.equals("text")||filetype.equals("txt")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_txtfile)
-                            }
-                            if(filetype.equals("doc")||filetype.equals("docx")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_doc)
-                            }
-                            if(filetype.equals("pdf")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_pdf)
-                            }
-                            if(filetype.equals("exe")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_exe)
-                            }
-                            if(filetype.equals("apk")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_apk)
-                            }
-                            if(filetype in arrayOf("jpg","png","jpge","psd","svg")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_image)
-                            }
+                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
                         }
                     }
 
@@ -137,13 +141,12 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             }
         })
         //</editor-fold >
-
+        //<editor-fold  desc ="显示新建文件夹Dialog">
         iv_create_dir.setOnClickListener{
            ShowCreateNewDirDialog()
-
         }
-
-
+        //</editor-fold >
+        //<editor-fold  desc ="显示上传文件Dialog">
         iv_show_up_file_type_dilaog.setOnClickListener{
             if(UpFileTypeDialog == null){
 
@@ -187,8 +190,8 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             UpFileTypeDialog?.show()
 
         }
-
-
+        //</editor-fold >
+        //<editor-fold desc ="显示排序popwinod">
         iv_sort.setOnClickListener{
             if(SortPOPwiond == null){
                 SortPOPwiond = GetSortPOPwiond(mContext!!,RadioGroup.OnCheckedChangeListener { radioGroup, i ->
@@ -215,21 +218,23 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             }
 
         }
-
-
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
+        //</editor-fold >
+        //<editor-fold desc ="swipeRefresh settings">
+        swipeRefresh.setColorSchemeResources(R.color.app_color)
         swipeRefresh.setOnRefreshListener {
             fileslist.clear()
             GetFileList()
             swipeRefresh.isRefreshing = false
         }
-
+        //</editor-fold >
+        //<editor-fold desc ="编辑按钮 设置">
         tv_edit.setOnClickListener {
             var text =(it as android.widget.TextView).text.toString()
             when(text){
                 "编辑"->{
                     //TODO ui
                     it.text ="全选"
+                    tv_title.text="已选定${Is_Checked_Sum}个"
                     iv_back.visibility =View.VISIBLE
                     fileslist.forEach {
                         it.is_show_checked_view =true
@@ -253,22 +258,47 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             }
 
         }
-        iv_back.setOnClickListener {
-            tv_title.text ="我的文件"
-            iv_back.visibility =View.INVISIBLE
-            fileslist.forEach {
-                it.is_show_checked_view =false
-                it.is_checked =false
-            }
-            adapter.notifyDataSetChanged()
-        }
+        //</editor-fold >
 
+
+        //<editor-fold  desc ="返回按钮 设置" >
+        iv_back.setOnClickListener {
+
+            if( tv_edit.text.equals("编辑")&&  pid_name_maps.containsValue(tv_title.text)){ //选择文件夹显示返回
+
+                pid_name_maps.remove(pid_stack[0])
+                pid_stack.remove(pid_stack[0])
+                pid = pid_stack[0]
+                tv_title.text =pid_name_maps[pid_stack[0]]
+                if(pid.equals("root")){
+                    iv_back.visibility =View.INVISIBLE
+                }
+                GetFileList()
+
+            }else{ //多选操作显示
+                tv_title.text =  pid_name_maps[pid_stack[0]]//"我的文件"
+                tv_edit.text ="编辑"
+                iv_back.visibility =View.INVISIBLE
+                fileslist.forEach {
+                    it.is_show_checked_view =false
+                    it.is_checked =false
+                }
+                Is_Checked_Sum =0
+                adapter.notifyDataSetChanged()
+            }
+
+        }
+        //</editor-fold >
+        //<editor-fold  desc ="搜索按钮 设置" >
         iv_search.setOnClickListener {
             startActivity(Intent(mContext,SearchFileActivity::class.java).putExtra("form","myfiles"))
-        }
+        }  //</editor-fold >
+        //<editor-fold  desc ="刷新 设置" >
         tv_refresh.setOnClickListener {  GetFileList() }
+        //</editor-fold >
     }
 
+    //<editor-fold  desc ="新建文件夹 Dialog" >
     fun ShowCreateNewDirDialog() {
         if(CreateNewDirDialog == null){
 
@@ -294,8 +324,8 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
         CreateNewDirDialog?.show()
     }
-
-
+    //</editor-fold >
+//<editor-fold  desc ="底部操作 Dialog" >
     private fun ShowBottomFilesOperateDialog(
         item: File_Bean,
         isfile: Boolean
@@ -334,7 +364,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                                 }
                                 "链接分享"->{Toastinfo("链接分享")
                                     //TODO 跳转链接分享页面
-                                    mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+                                    mContext?.startActivity(Intent(context, LinkSharedActivity::class.java).apply {
                                         putExtra("file",item)
                                     })
                                 }
@@ -353,15 +383,29 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 //                        action ="downFiles"
 //                        putExtra("file",item)
 //                    })
+                                                    Log.e("ok","DaemonService.daemon=${DaemonService.daemon}")
+                                                    Log.e("ok","DaemonService.daemon!!.isAlive=${DaemonService.daemon!!.isAlive}")
+                                                    Log.e("ok","DaemonService.daemon!!.isAlive=${DaemonService.daemon!!.isAlive}")
 
-                                    mainActivity.myBinder as DaemonService.MyBinder
-                                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
+                                    if(DaemonService.daemon!=null && DaemonService.daemon!!.isAlive){
+                                        mainActivity.myBinder as DaemonService.MyBinder
+                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
+                                    }else{
+                                        Toastinfo("未启动服务")
+                                    }
+
 
                                 }
                                 "复制到"->{Toastinfo("复制到")
-                                    mContext?. startActivity<ChooseDestDirActivity>()}
+                                   startActivityForResult(Intent(context, ChooseDestDirActivity::class.java).apply {
+                                        putExtra("file",item)
+                                        putExtra("type",ChooseDestDirActivity.COPY)
+                                    },ChooseDestDirActivity.COPY)}
                                 "移动到"->{Toastinfo("移动到")
-                                    mContext?. startActivity<ChooseDestDirActivity>()
+                                    startActivityForResult(Intent(context, ChooseDestDirActivity::class.java).apply {
+                                        putExtra("file",item)
+                                        putExtra("type",ChooseDestDirActivity.MOVE)
+                                    },ChooseDestDirActivity.MOVE)
                                 }
                                 "重命名"->{Toastinfo("重命名")
                                         ShowRenameDialog(item)
@@ -390,7 +434,8 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
         BottomFilesOperateDialog?.show()
     }
-
+    //</editor-fold >
+    //<editor-fold  desc ="重命名 Dialog" >
     private fun ShowRenameDialog(item: File_Bean) {
          ReanmeDialog =Dialog(mContext!!).apply {
              var contentview =
@@ -426,7 +471,8 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
         ReanmeDialog?.show()
     }
-
+    //</editor-fold >
+    //<editor-fold  desc ="删除提示 Dialog" >
     fun ShowFileDeleteTipsDialog(file_id:String) {
 
             FileDeleteTipsDialog = GetFileDeleteTipsDialog(mContext!!,View.OnClickListener {FileDeleteTipsDialog?.dismiss()  },View.OnClickListener{
@@ -437,17 +483,24 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
         FileDeleteTipsDialog?.show()
     }
-
+    //</editor-fold >
 
     override fun initData() {
 
+        pid_stack = ArrayList<String>().apply {
+            add(0,"root")
+        }
+        pid_name_maps = HashMap()
+        pid_name_maps.put("root","我的文件")
+        pid = pid_stack[0]
 
         GetFileList()
     }
-
+    //<editor-fold  desc =" 获取文件列表" >
     private fun GetFileList() {
         GetFilesListForNet(URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}",this,this)
     }
+    //</editor-fold >
 
 
     override fun GetRootViewID()= com.ucas.cloudenterprise.R.layout.my_files_fragment
@@ -487,11 +540,13 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         if(JSONObject(data).isNull("data")){
                             ll_empty.visibility = View.VISIBLE
                             swipeRefresh.visibility = View.INVISIBLE
+                            tv_edit.visibility = View.INVISIBLE
                             return
 
                         }else{
                             ll_empty.visibility = View.INVISIBLE
                             swipeRefresh.visibility = View.VISIBLE
+
                         }
 
                         //获取我的文件列表
@@ -499,6 +554,8 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         fileslist.clear()
                         fileslist.addAll(Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
                         adapter?.notifyDataSetChanged()
+                        tv_edit.visibility =  if (!fileslist.isEmpty()) View.VISIBLE  else View.INVISIBLE
+
 
                     }
 
@@ -531,8 +588,28 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == FILE_CHOOSER_RESULT_CODE && data !=null) {
-            AddFile(data.dataString!!,pid,this,this)
+        if ( data !=null) {
+
+            when(requestCode){
+                FILE_CHOOSER_RESULT_CODE ->{ //选择文件上传文件
+                    if(DaemonService.daemon!=null && DaemonService.daemon!!.isAlive){
+                        AddFile(data.dataString!!,pid,this,this)
+                    }else{
+                        Toastinfo("未启动服务")
+                    }
+                }
+                ChooseDestDirActivity.COPY ->{ //文件复制
+                    copy_pid= data.getStringExtra("pid")
+
+                }
+                ChooseDestDirActivity.MOVE ->{ //文件移动
+                   move_pid=data.getStringExtra("pid")
+                }
+
+            }
+
+
+
 
         }
 
@@ -540,4 +617,18 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     }
 
 
+}
+
+fun main() {
+    var testArrayList = ArrayList<String >()
+    testArrayList.add("root")
+    testArrayList.add(0,"test")
+    testArrayList.forEach {
+        println(it)
+    }
+    testArrayList.remove(testArrayList[0])
+    print("romove 0")
+    testArrayList.forEach {
+        println(it)
+    }
 }

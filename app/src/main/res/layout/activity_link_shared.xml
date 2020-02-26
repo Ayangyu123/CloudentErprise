@@ -9,10 +9,10 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="40dp"
         android:gravity="center"
         android:text="该分享链接仅供查看、下载"
-        android:textSize="18dp"
+        android:textSize="12dp"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,8 +36,11 @@
                 android:textColor="@android:color/black"
                 />
             <CheckBox
+                android:id="@+id/checkbox_setting_password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:checked="true"
                 android:button="@drawable/checkbox_left_to_right"
                 />
@@ -45,25 +48,33 @@
         </LinearLayout>
         <include layout="@layout/common_line"/>
         <LinearLayout
+            android:id="@+id/ll_random"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
+            android:visibility="visible"
             >
             <EditText
+                android:id="@+id/edittext_password"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:maxLines="1"
+                android:maxLength="6"
                 android:hint="请输入4到6位的字母、数字"
                 android:background="@null"
                 />
             <TextView
+                android:id="@+id/textview_ipassword_generator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:text="生成随机密码"
                 android:padding="10dp"
                 android:layout_marginLeft="10dp"
-                android:background="@color/app_color"
+                android:background="@drawable/bg_tv_linkshare_ipassword_generator"
                 android:textColor="@android:color/white"/>
 
         </LinearLayout>
@@ -94,19 +105,24 @@
                 android:textColor="@android:color/black"
                 />
             <CheckBox
+                android:id="@+id/checkbox_setting_indate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:checked="false"
                 android:button="@drawable/checkbox_left_to_right"
                 />
 
         </LinearLayout>
         <include layout="@layout/common_line"/>
         <TextView
+            android:id="@+id/textview_setting_indate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="设置链接有效期"
             android:padding="10dp"
+            android:visibility="gone"
             android:drawableRight="@drawable/pick_date_normal"
             android:textColor="@android:color/black"
             />
@@ -122,6 +138,8 @@
         android:background="@android:color/white"
         >
         <TextView
+            android:id="@+id/tv_link_share"
+            android:singleLine="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="分享链接及密码"

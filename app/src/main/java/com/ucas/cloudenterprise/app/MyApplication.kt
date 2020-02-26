@@ -30,7 +30,7 @@ class MyApplication:Application() {
     }
     override fun onCreate() {
         super.onCreate()
-        startService<DaemonService>()
+//        startService<DaemonService>()
         context = this
 
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {

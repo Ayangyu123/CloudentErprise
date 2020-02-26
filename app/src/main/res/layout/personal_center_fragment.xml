@@ -57,27 +57,32 @@
 
     </LinearLayout>
         <TextView
+            android:id="@+id/tv_member_manager"
             android:layout_marginTop="10dp"
             android:text="成员管理"
             android:drawableLeft="@drawable/member_admin_icon"
             style="@style/personal_center_settings_textview" />
     <include layout="@layout/common_line"/>
     <TextView
+        android:id="@+id/tv_message_notification"
         android:text="消息通知"
         android:drawableLeft="@drawable/message_notification_setting_icon"
         style="@style/personal_center_settings_textview" />
     <include layout="@layout/common_line"/>
     <TextView
+        android:id="@+id/tv_setting"
         android:text="设置"
         android:drawableLeft="@drawable/settings_setting_icon"
         style="@style/personal_center_settings_textview" />
     <include layout="@layout/common_line"/>
     <TextView
+        android:id="@+id/tv_user_feedback"
         android:text="用户反馈"
         android:drawableLeft="@drawable/member_admin_icon"
         style="@style/personal_center_settings_textview" />
     <include layout="@layout/common_line"/>
     <FrameLayout
+        android:id="@+id/fl_check_new_version"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@android:color/white"
@@ -107,11 +112,13 @@
 
     <include layout="@layout/common_line"/>
     <TextView
+        android:id="@+id/tv_about"
         android:text="关于"
         android:drawableLeft="@drawable/about_us_setting_icon"
         style="@style/personal_center_settings_textview" />
     <include layout="@layout/common_line"/>
     <TextView
+        android:id="@+id/tv_to_logout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginTop="16dp"

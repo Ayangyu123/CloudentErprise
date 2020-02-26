@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,7 +48,7 @@ class FilesAdapter(var context: Context?, var list:ArrayList<File_Bean>) :Recycl
         }
 
     class ViewHolder(itemView :View) :RecyclerView.ViewHolder(itemView){
-
+          var rl_file_item_root = itemView.findViewById<RelativeLayout>(com.ucas.cloudenterprise.R.id.rl_file_item_root)
           var iv_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_icon)
           var iv_right_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_right_icon)
           var checkbox_is_checked =itemView.findViewById<CheckBox>(com.ucas.cloudenterprise.R.id.checkbox_is_checked)

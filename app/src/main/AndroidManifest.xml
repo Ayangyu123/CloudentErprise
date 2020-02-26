@@ -11,15 +11,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
 
-    <!--  MyApplication   usesCleartextTraffic 允许http请求    requestLegacyExternalStorage外部设备 -->
+    <!--  MyApplication   usesCleartextTraffic 允许http请求   android:requestLegacyExternalStorage="true"   requestLegacyExternalStorage外部设备 -->
     <application
         android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/app_icon_name"
         android:usesCleartextTraffic="true"
+        android:sharedUserId="android.uid.system"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -39,7 +39,9 @@
         <!--  第一个启动的   activity （页面）   -->
 
         <activity android:name=".ui.LoginActivity">
+<!--        <activity android:name=".ui.TeamAcitvity">-->
 <!--        <activity android:name=".ui.ChooseDestDirActivity">-->
+<!--        <activity android:name=".ui.message.MessageNotificationActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,6 +70,9 @@
         <activity android:name=".ui.PermissionToIllustrateActivity"/>
         <!-- 链接分享      -->
         <activity android:name=".ui.LinkSharedActivity"/>
+        <!-- 成员管理      -->
+        <activity android:name=".ui.member.MembersManageActivity"/>
+
         <!-- 选择成员        -->
         <activity android:name=".ui.SelectMembersActivity"/>
         <!-- 成员搜索        -->
@@ -78,10 +83,19 @@
         <activity android:name=".ui.member.EditMemberInviteLinkActivity"/>
         <!-- 关于        -->
         <activity android:name=".ui.AboutActivity"/>
+        <!-- 设置        -->
+        <activity android:name=".ui.SettingsActivity"/>
+        <!-- 消息通知        -->
+        <activity android:name=".ui.message.MessageNotificationActivity"/>
 
-
-
-
+        <!-- 帮助和反馈        -->
+        <activity android:name=".ui.helpandfeedback.HelpAndFeedbackActivity"/>
+        <!-- 热门问题        -->
+        <activity android:name=".ui.helpandfeedback.HotIssueActivity"/>
+        <!-- 我的反馈       -->
+        <activity android:name=".ui.helpandfeedback.MyFeedbackActivity"/>
+            <!--       意见、 反馈详情    -->
+        <activity android:name=".ui.helpandfeedback.FeedbackInfoActivity"/>
 
 
 

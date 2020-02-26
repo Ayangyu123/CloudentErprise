@@ -7,7 +7,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowNoTitle">true</item>
-
     </style>
 
 <!--    <style name="progressBarStyleHorizontal"parent=""-->
@@ -31,7 +30,9 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">80dp</item>
         <item name="android:layout_marginTop">20dp</item>
-        <item name="android:background">@color/colorAccent</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:background">@color/app_color</item>
         <item name="android:gravity">center</item>
 
     </style>
@@ -39,7 +40,7 @@
     <style name="main_riado_button">
         <item name="android:layout_width">0dp</item>
         <item name="android:textColor">@color/main_bottom_text_selector</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:button">@null</item>
         <item name="android:paddingTop">20dp</item>
 
@@ -116,6 +117,12 @@
         <item name="android:textColor">@android:color/black</item>
         <item name="android:drawablePadding">15dp</item>
         <item name="android:drawableRight">@drawable/personalcenter_guide_arrow</item>
+    </style>
+
+    <style name="register_edittext_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@null</item>
     </style>
 
 

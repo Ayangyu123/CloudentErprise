@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="75dp"
     android:background="@color/app_color"
-    android:gravity="center_vertical"
     android:padding="10dp">
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:scaleType="center"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/title_back_icon_normal"
-        />
+        android:contentDescription="@string/iv_back_des"
+        android:scaleType="center"
+        android:src="@drawable/title_back_icon_normal" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
         android:gravity="center"
         android:maxLines="1"
-        android:text="我的文件"
+        android:text="@string/myfile"
         android:textColor="#FFF"
-        android:textSize="26dp" />
+        android:textSize="@dimen/tv_titile" />
 
     <TextView
         android:id="@+id/tv_edit"
-        android:layout_width="60dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="16dp"
+        android:paddingBottom="18dp"
         android:gravity="center"
         android:maxLines="1"
-        android:text="编辑"
+        android:text="@string/edit"
 
         android:textColor="#FFF"
-        android:textSize="18dp" />
+        android:textSize="@dimen/tv_edit" />
+
     <ImageView
         android:id="@+id/iv_title_search"
         android:layout_width="60dp"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+        android:contentDescription="@string/iv_search__des"
         android:gravity="center"
         android:scaleType="center"
-        android:visibility="gone"
         android:src="@drawable/title_search_button_normal"
-        />
+        android:visibility="gone" />
 
 
 </RelativeLayout>

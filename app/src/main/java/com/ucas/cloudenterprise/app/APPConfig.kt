@@ -100,6 +100,12 @@ val APP_COLOR ="#4F73DF"
  var ACCESS_TOKEN ="token"
  var REFRESH_TOKEN ="token"
 //</editor-fold>
+//<editor-fold desc=" common head name   ">
+ var APP_ID ="app_id"
+ var LOGID ="app_id"
+ var CLIENTTYPE ="app_id"
+
+//</editor-fold>
 //<editor-fold desc=" 添加 TOKEN    ">
 fun AddToken( token:String){
     OkGo.getInstance().addCommonHeaders(HttpHeaders("Authorization","${token}"))
@@ -113,15 +119,16 @@ fun AddToken( token:String){
 val user_name_param="test"
 //val password_param= "rdXRcM"
 val password_param= "test"
-
+//</editor-fold>
 val Salt="#$^^xsAd.."
-fun MD5encode(text: String): String {
+fun MD5encode(text: String,AddSaltAble:Boolean): String {
 
     try {
         //获取md5加密对象
         val instance: MessageDigest = MessageDigest.getInstance("MD5")
         //对字符串加密，返回字节数组
-        val digest:ByteArray = instance.digest(("${text}${Salt}").toByteArray())
+        var str  = if(AddSaltAble)  "${text}${Salt}" else "${text}"
+        val digest:ByteArray = instance.digest(str.toByteArray())
         var sb : StringBuffer = StringBuffer()
         for (b in digest) {
             //获取低八位有效值
