@@ -47,6 +47,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
             .commit()
 
         AddToken(ACCESS_TOKEN)
+        //TODO 加密
 //       APP_ID = JSONObject(data).getString("app_id")
 //       LOGID = JSONObject(data).getString("logid")
 //        CLIENTTYPE = JSONObject(data).getInt("clienttype").toString()
@@ -69,8 +70,6 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     override fun GetContentViewId(): Int = R.layout.activity_login
     fun Login(view: View) {
-
-
         val params = HashMap<String,Any>()
         params["mobile"] = "${et_user_name.text.toString()}"
         params["password"] = MD5encode("${et_user_password.text.toString()}",true)
@@ -82,13 +81,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     }
 
-    fun Share(view: View) {
+    fun ToForgetPassword(view: View) {
+        startActivity<ForgetPasswordActivity>()
 
-        startActivity(
-            Intent.createChooser(Intent().apply {
-                action =Intent.ACTION_SEND
-                type ="text/plain"
-                putExtra(Intent.EXTRA_TEXT, "Here is the email content")
-            },"Here is the title of Select box"))
     }
 }

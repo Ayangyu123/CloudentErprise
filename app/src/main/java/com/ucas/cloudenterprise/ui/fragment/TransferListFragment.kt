@@ -1,26 +1,79 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.base.BaseFragment
+import kotlinx.android.synthetic.main.activity_choose_dest_dir.*
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.transfer_list_fragment.*
+import kotlinx.android.synthetic.main.transfer_list_fragment.view_select_bar
+import kotlinx.android.synthetic.main.transfer_list_fragment.viewpager_content
 
 /**
 @author simpler
 @create 2020年01月10日  14:31
  */
 class TransferListFragment: BaseFragment() {
-
+        var  fragmentlist =ArrayList<BaseFragment>()
 
     override fun initView() {
         iv_back.visibility = View.GONE
         tv_title.text = "传输列表"
+
+        viewpager_content.apply {
+            adapter = object : FragmentPagerAdapter(activity!!.supportFragmentManager){
+            override fun getItem(position: Int): Fragment {
+                 return  fragmentlist[position]
+            }
+
+            override fun getCount(): Int {
+                return  fragmentlist.size
+            }
+
+           }
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+                override fun onPageScrollStateChanged(state: Int) { }
+
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) { }
+
+                override fun onPageSelected(position: Int) {
+                    when(position){
+                        0->{ //下载
+
+                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
+                            tv_myfiles.setTextColor( Color.parseColor("#4F73DF"))
+                            tv_othercommom.setTextColor( Color.parseColor("#AAAFC0"))
+
+                        }
+                        1->{ //上传
+                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
+                            iv_create_dir.isEnabled =false
+                            tv_othercommom.setTextColor( Color.parseColor("#4F73DF"))
+                            tv_myfiles.setTextColor( Color.parseColor("#AAAFC0"))
+                            }
+
+                    }
+                }
+
+            })
+
+        }
+
         tv_download.setOnClickListener {
+            viewpager_content.currentItem=0
             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
         }
         tv_upload.setOnClickListener {
+            viewpager_content.currentItem=1
             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
         }
 

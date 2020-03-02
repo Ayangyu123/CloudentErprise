@@ -19,6 +19,7 @@ import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.ui.ChooseDestDirActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
 import kotlinx.android.synthetic.main.activity_choose_dest_dir.*
+import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import org.json.JSONObject
 
@@ -26,7 +27,12 @@ import org.json.JSONObject
 @author simpler
 @create 2020年01月10日  14:31
  */
-class MyDirsFragment(val isUncommonDir: Int,val pid:String) : BaseFragment(),BaseActivity.OnNetCallback {
+class MyDirsFragment(val isUncommonDir: Int,var pid:String) : BaseFragment(),BaseActivity.OnNetCallback {
+    lateinit var adapter:FilesAdapter
+    lateinit var fileslist:ArrayList<File_Bean>
+    var pid_src ="root"
+    lateinit var pid_stack : ArrayList<String>
+
     override fun OnNetPostSucces(
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
@@ -42,12 +48,13 @@ class MyDirsFragment(val isUncommonDir: Int,val pid:String) : BaseFragment(),Bas
              }else{
                  ll_empty.visibility = View.INVISIBLE
                  swipeRefresh.visibility = View.VISIBLE
+
              }
 
              //获取我的文件列表
              Toastinfo("获取文件列表成功")
              fileslist.clear()
-             fileslist.addAll(Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
+             fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
              adapter?.notifyDataSetChanged()
              var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
              if(showtype==ChooseDestDirActivity.SHOW_MYFILES&&isUncommonDir==IS_UNCOMMON_DIR){
@@ -62,8 +69,10 @@ class MyDirsFragment(val isUncommonDir: Int,val pid:String) : BaseFragment(),Bas
         }
     }
 
-    lateinit var adapter:FilesAdapter
-       lateinit var fileslist:ArrayList<File_Bean>
+
+
+
+
 
 
     override fun initView() {
@@ -82,31 +91,11 @@ class MyDirsFragment(val isUncommonDir: Int,val pid:String) : BaseFragment(),Bas
                     holder.apply {
                         tv_file_name.text = item.file_name
                         tv_file_create_time.text = item.created_at
-
-//                        val isfile = if(item.is_dir==-1)true  else false
-//                        if(item.is_show_checked_view){
-//                            iv_right_icon.visibility =View.GONE
-//                            checkbox_is_checked.visibility = View.VISIBLE
-//                            checkbox_is_checked.isChecked =item.is_checked
-//                            checkbox_is_checked.setOnCheckedChangeListener { button, ischecked ->
-//
-//                            }
-//
-//                        }else{
-//                            iv_right_icon.visibility =View.VISIBLE
-//                            checkbox_is_checked.visibility = View.GONE
-//                            iv_right_icon.setOnClickListener{
-////                                ShowBottomFilesOperateDialog(item,isfile)
-//                            }
-//                        }
-//
-//
-//
-//
-//                        if(!isfile){
-//                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
-//                        }
-
+                        rl_file_item_root.setOnClickListener {
+                            pid_stack.add(0,item.file_id)
+                            pid = item.file_id
+                            GetFileList()
+                        }
                     }
 
 
@@ -119,20 +108,28 @@ class MyDirsFragment(val isUncommonDir: Int,val pid:String) : BaseFragment(),Bas
 
 
 
+
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
         swipeRefresh.setOnRefreshListener {
-            fileslist.clear()
+//            fileslist.clear()
             GetFileList()
             swipeRefresh.isRefreshing = false
         }
 
     }
 
-    private fun GetFileList() {
+    public fun GetFileList() {
         GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/${isUncommonDir}/p/${pid}/dir/$IS_DIR",this,this)
     }
 
     override fun initData() {
+        pid_src = pid
+        pid_stack = ArrayList<String>().apply {
+            add(0,pid)
+        }
+
+        pid = pid_stack[0]
+        Log.e("ok","pid is  ${pid}")
         GetFileList()
 
     }

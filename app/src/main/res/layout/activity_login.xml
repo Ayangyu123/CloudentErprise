@@ -64,26 +64,17 @@
         />
 
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:padding="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:text="以下情况请联系企业管理员:\n        1.没有登录账号密码\n        2.忘记密码"
-        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="horizontal">
 
         <TextView
-            android:onClick="ToRegisterActivity"
+            android:onClick="ToForgetPassword"
             android:text="忘记密码"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -104,6 +95,16 @@
 
             />
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:padding="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="以下情况请联系企业管理员:\n        1.没有登录账号密码\n        2.忘记密码"
+        />
 
 
     <TextView

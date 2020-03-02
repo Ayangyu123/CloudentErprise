@@ -16,30 +16,42 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.core.app.NotificationCompat
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.Response
 import com.lzy.okgo.utils.HttpUtils.runOnUiThread
 import  com.ucas.cloudenterprise.utils.*
 import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
+import com.ucas.cloudenterprise.model.DownLoadIngFile
+import com.ucas.cloudenterprise.model.DownLoadIngFileState
 import com.ucas.cloudenterprise.model.File_Bean
 import io.ipfs.api.IPFS
 import io.ipfs.multiaddr.MultiAddress
 import io.ipfs.multihash.Multihash
 import java.io.File
+import java.nio.charset.StandardCharsets
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import kotlin.concurrent.timer
 
 class DaemonService : Service() {
         val TAG="DaemonService"
     var mMyBinder :  MyBinder ? =null
+    val  diskIO = Executors.newSingleThreadExecutor()
     override fun onBind(intent: Intent): IBinder? = mMyBinder
     companion object {
         var daemon: Process? = null
+        var plugindaemon: Process? = null
         var logs: MutableList<String> = mutableListOf()
     }
 
     override fun onCreate() {
         super.onCreate()
         mMyBinder = MyBinder(this)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             NotificationChannel("sweetipfs", "Sweet IPFS", IMPORTANCE_MIN).apply {
                 description = "Sweet IPFS"
@@ -81,7 +93,9 @@ class DaemonService : Service() {
 
 
         AssetFileCP(this,type,bin)
+        AssetFileCP(this,"arm-plugin",pluginbin)
         bin.setExecutable(true)
+        pluginbin.setExecutable(true)
             /*********core bin  复制 完成*******/
         logs.clear()
         exec("init").apply {
@@ -91,6 +105,9 @@ class DaemonService : Service() {
                 logs.add(it) }
             waitFor()
         }
+
+
+
         /*********core init   完成*******/
 
 
@@ -140,14 +157,33 @@ class DaemonService : Service() {
         exec("daemon").apply {
             daemon = this
             read {
-                Log.e("it","it="+it)
+//                Log.e("it","it="+it)
                 logs.add(it) }
         }
+        Runtime.getRuntime().exec(
+            "${pluginbin.absolutePath}"
+//            ,
+//            arrayOf(String(Base64.getDecoder().decode(CORE_PATH), StandardCharsets.UTF_8 )+"=${store.absolutePath}")//此处字符串为环境变量
+
+        ).apply {
+            plugindaemon = this
+            read {
+                //                Log.e("it","it="+it)
+                logs.add(it) }
+        }
+            OkGo.get<String>("http://127.0.0.1:9984/api/v0/version").execute(object :StringCallback(){
+                override fun onSuccess(response: Response<String>?) {
+                    Log.e("it","${response?.body().toString()}")
+                }
+            })
+
 
     }
 
     fun stop() {
+        plugindaemon?.destroy()
         daemon?.destroy()
+        plugindaemon = null
         daemon = null
     }
 
@@ -232,9 +268,12 @@ class DaemonService : Service() {
     }
 
     fun GetFile(item:File_Bean) {
+//        diskIO.execute {  }
+
         daemon?.let {
             Thread(object:Runnable{
                 override fun run() {
+
                     var ipfs = IPFS( MultiAddress(CORE_CLIENT_ADDRESS))
                     var filePointer = Multihash.fromBase58(item.fidhash)
 //                    var fileContents = ipfs.cat(filePointer)
@@ -244,6 +283,15 @@ class DaemonService : Service() {
                         root.mkdirs()
                     }
 //                    val dest  = File(ROOT_DIR_PATH+System.currentTimeMillis())
+                    var item_downing =DownLoadIngFile(
+                        file_id = System.currentTimeMillis().toString(),
+                        isDir = IS_FILE,
+                        file_name = item.file_name,
+                        file_size =  item.size.toString(),
+                        down_size = "0",
+                        state = DownLoadIngFileState.DOWNLOADING
+                    )
+                    MyApplication.downLoad_Ing.add(item_downing)
                     val dest  = File(ROOT_DIR_PATH+item.file_name)
                     val fileOutputStream = dest.outputStream()
                     val buffer=ByteArray(1024*4)
@@ -253,9 +301,10 @@ class DaemonService : Service() {
 
                     try {
                         while (fileInputStream.read(buffer).apply { len =this }>0){
-                            fileOutputStream.write(buffer,off,len)
+//                            fileOutputStream.write(buffer,off,len)
                             sum+=len.toLong()
                             val progression = (sum * 1.0f / item.size * 100 ).toInt()
+
                             Log.e(TAG,"当前进度为${progression} ")
 
                             runOnUiThread(){
@@ -286,6 +335,97 @@ class DaemonService : Service() {
         }
 
     }
+}
+
+fun main() {
+
+    Thread{
+        run {
+            val srcfile=File("/Users/simple/Desktop/IPFS-Desktop-0.10.2-mac.zip")
+            var destfile = File("/Users/simple/Desktop/testzip")
+            var  total:Long=srcfile.length()
+            println("srcfile size =${total}")
+
+            var counttimer:Timer ?= null
+            if(destfile.exists()){
+                destfile.delete()
+            }
+            destfile.createNewFile()
+            var fileOutputStream = destfile.outputStream()
+            var fileInputStream = srcfile.inputStream()
+            var buffer=ByteArray(1024*4)
+            var last_size:Long =0
+            var sum:Long =0
+            var len =0
+            val off =0
+            var last_progression =0
+            var progression =0
+
+            try {
+                while(fileInputStream.read(buffer).apply { len =this }>0){
+//                        Thread.sleep(10)
+                    fileOutputStream.write(buffer,off,len)
+                    sum+=len.toLong()
+                     progression = (sum * 1.0 / total * 100 ).toInt()
+                    if(counttimer==null){
+                        counttimer= Timer()
+
+                        counttimer.scheduleAtFixedRate(object :TimerTask(){
+                            override fun run() {
+
+                                println("当前时间${SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Date())}")
+                                println("当前size${sum}")
+                                println("last_size 前一秒size ${last_size}")
+                                println("当前速度 ${sum-last_size}")
+                                last_size =sum
+                                if(progression!=last_progression){
+                                println("当前进度为${progression}")
+                                last_progression =progression
+                                }
+                                if(sum==total){
+                                    print("下载完成")
+                                    this.cancel()
+                                    counttimer =null
+
+                                }
+                            }
+                        },0,1000)
+                    }
+//                    println("当前进度为${progression} ")
+
+                }
+//
+            }finally {
+                counttimer=null
+                fileOutputStream.close()
+            }
+
+//            while(curr!=total){
+//                if(counttimer==null){
+//                    counttimer= Timer()
+//
+//                    counttimer.scheduleAtFixedRate(object :TimerTask(){
+//                        override fun run() {
+//                            if(curr!=total){
+//
+//                                println("${curr}")
+//                            }else{
+//                                print("")
+//                                this.cancel()
+//                            }
+//                        }
+//                    },0,10)
+//                }
+//                curr += 1
+//                if(curr==total){
+//                println(curr)
+//                counttimer=null
+//                }
+//
+//            }
+        }
+    }.start()
+
 }
 
 

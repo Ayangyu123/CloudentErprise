@@ -58,8 +58,6 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
      var ReanmeDialog:Dialog ?=null
     var BottomFilesOperateDialog:BottomSheetDialog ? =null
     var pid ="root"
-    var copy_pid ="root"
-    var move_pid ="root"
     lateinit var pid_stack : ArrayList<String>
     lateinit var pid_name_maps : HashMap<String,String>
     var Is_Checked_Sum =0
@@ -148,46 +146,46 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         //</editor-fold >
         //<editor-fold  desc ="显示上传文件Dialog">
         iv_show_up_file_type_dilaog.setOnClickListener{
-            if(UpFileTypeDialog == null){
-
-                UpFileTypeDialog = GetUploadFileTypeDialog(mContext!!,View.OnClickListener{
-
-                    UpFileTypeDialog?.dismiss()
-                }
-                    ,View.OnClickListener{
+//            if(UpFileTypeDialog == null){
+//
+//                UpFileTypeDialog = GetUploadFileTypeDialog(mContext!!,View.OnClickListener{
+//
+//                    UpFileTypeDialog?.dismiss()
+//                }
+//                    ,View.OnClickListener{
                         if(checkPermission(activity!!)!! == false){
                             Toastinfo("没有sd卡读取权限")
-                            return@OnClickListener
+                            return@setOnClickListener
                         }
                         var mintent =  Intent(Intent.ACTION_GET_CONTENT)
                         mintent.addCategory(Intent.CATEGORY_OPENABLE)
 
-                       when(it.id){
-                           R.id.tv_image->{
-                               //TODO
-                               Toastinfo("图片")
-                               mintent.setType("image/*")
-                           }
-                           R.id.tv_doc->{
-                               //TODO
-                               Toastinfo("文档")
+//                       when(it.id){
+//                           R.id.tv_image->{
+//                               //TODO
+//                               Toastinfo("图片")
+//                               mintent.setType("image/*")
+//                           }
+//                           R.id.tv_doc->{
+//                               //TODO
+//                               Toastinfo("文档")
+//                               mintent.setType("*/*")
+//
+//                           }
+//                           R.id.tv_video->{
+//                               Toastinfo("视频")
+//                               mintent.setType("video/*")
+//                           }
+//                           R.id.tv_all->{
+//                               Toastinfo("全部")
                                mintent.setType("*/*")
-
-                           }
-                           R.id.tv_video->{
-                               Toastinfo("视频")
-                               mintent.setType("video/*")
-                           }
-                           R.id.tv_all->{
-                               Toastinfo("全部")
-                               mintent.setType("*/*")
-                           }
-                       }
+//                           }
+//                       }
                         startActivityForResult(Intent.createChooser(mintent,"文件选择"),FILE_CHOOSER_RESULT_CODE)
-                        UpFileTypeDialog?.dismiss()
-                    })
-            }
-            UpFileTypeDialog?.show()
+//                        UpFileTypeDialog?.dismiss()
+//                    })
+//            }
+//            UpFileTypeDialog?.show()
 
         }
         //</editor-fold >
@@ -258,6 +256,8 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             }
 
         }
+        //TODO 多选不显示
+        tv_edit.visibility =View.INVISIBLE
         //</editor-fold >
 
 
@@ -296,6 +296,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         //<editor-fold  desc ="刷新 设置" >
         tv_refresh.setOnClickListener {  GetFileList() }
         //</editor-fold >
+        tv_edit.visibility = View.INVISIBLE
     }
 
     //<editor-fold  desc ="新建文件夹 Dialog" >
@@ -497,7 +498,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         GetFileList()
     }
     //<editor-fold  desc =" 获取文件列表" >
-    private fun GetFileList() {
+    public fun GetFileList() {
         GetFilesListForNet(URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}",this,this)
     }
     //</editor-fold >
@@ -554,7 +555,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         fileslist.clear()
                         fileslist.addAll(Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
                         adapter?.notifyDataSetChanged()
-                        tv_edit.visibility =  if (!fileslist.isEmpty()) View.VISIBLE  else View.INVISIBLE
+//              TODO  编辑按钮显示         tv_edit.visibility =  if (!fileslist.isEmpty()) View.VISIBLE  else View.INVISIBLE
 
 
                     }
@@ -580,6 +581,16 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                 GetFileList()
 
             }
+            URL_FILE_COPY ->{
+                Toastinfo("文件复制成功")
+                GetFileList()
+
+            }
+            URL_FILE_MOV ->{
+                Toastinfo("文件移动成功")
+                GetFileList()
+
+            }
 
         }
 
@@ -599,11 +610,25 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                     }
                 }
                 ChooseDestDirActivity.COPY ->{ //文件复制
-                    copy_pid= data.getStringExtra("pid")
+                  var   file_id= data.getStringExtra("file_id")
+                   var  pid= data.getStringExtra("pid")
+                    var params =HashMap<String,Any>().apply {
+                        put("user_id","${ USER_ID}")
+                        put("file_id",file_id)
+                        put("pid",pid)
+                    }
+                    NetRequest(URL_FILE_COPY, NET_POST,params,this,this)
 
                 }
                 ChooseDestDirActivity.MOVE ->{ //文件移动
-                   move_pid=data.getStringExtra("pid")
+                    var   file_id= data.getStringExtra("file_id")
+                    var  pid= data.getStringExtra("pid")
+                    var params =HashMap<String,Any>().apply {
+                        put("user_id","${ USER_ID}")
+                        put("file_id",file_id)
+                        put("pid",pid)
+                    }
+                    NetRequest(URL_FILE_MOV, NET_POST,params,this,this)
                 }
 
             }

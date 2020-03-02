@@ -12,18 +12,21 @@
         android:background="@color/app_color"
         >
         <TextView
+            android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:textSize="25dp"
-            android:text="樊志攀"
+            tools:text="樊志攀"
             android:layout_margin="20dp"
             android:textColor="@android:color/white"
             />
         <TextView
+            android:id="@+id/tv_company_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="20dp"
-            android:text="国科环宇"
+            tools:text="国科环宇"
+            android:visibility="gone"
             android:layout_margin="20dp"
             android:textColor="@android:color/white"
             android:layout_gravity="bottom|right"
@@ -39,13 +42,15 @@
         android:layout_marginTop="10dp"
         >
         <TextView
+            android:id="@+id/tv_cap_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="容量：11.59GB/.20.00GB"
+            tools:text="容量：11.59GB/.20.00GB"
             android:textSize="16dp"
             />
 <!--       style="@style/progressBarStyleHorizontal"  -->
         <ProgressBar
+            android:id="@+id/progressbar_cap"
             android:layout_width="match_parent"
             android:layout_height="5dp"
             android:layout_marginTop="10dp"
@@ -88,6 +93,7 @@
         android:background="@android:color/white"
         >
         <TextView
+            android:id="@+id/tv_version"
             tools:text="V 2.2.1 "
             android:layout_width="match_parent"
             android:layout_height="match_parent"

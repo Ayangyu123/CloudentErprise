@@ -5,9 +5,14 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.preference.PreferenceManager
+import android.text.style.UpdateAppearance
 import android.util.Log
 import com.lzy.okgo.OkGo
 import com.ucas.cloudenterprise.core.DaemonService
+import com.ucas.cloudenterprise.model.DownLoadCompletedFile
+import com.ucas.cloudenterprise.model.DownLoadIngFile
+import com.ucas.cloudenterprise.model.UpLoadCompletedFile
+import com.ucas.cloudenterprise.model.UpLoadIngFile
 import com.ucas.cloudenterprise.utils.startService
 import me.jessyan.autosize.AutoSize
 import me.jessyan.autosize.AutoSizeConfig
@@ -24,19 +29,28 @@ class MyApplication:Application() {
 
 
 
+
     companion object {
 //        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
+        lateinit var downLoad_Ing:ArrayList<DownLoadIngFile>
+        lateinit var downLoad_completed:ArrayList<DownLoadCompletedFile>
+        lateinit var upLoad_Ing:ArrayList<UpLoadIngFile>
+        lateinit var upLoad_completed:ArrayList<UpLoadCompletedFile>
     }
     override fun onCreate() {
         super.onCreate()
 //        startService<DaemonService>()
         context = this
-
+        downLoad_Ing =ArrayList()
+        upLoad_Ing =ArrayList()
+        downLoad_completed =ArrayList()
+        upLoad_completed =ArrayList()
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
             IS_FIRSTRUN = getBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,true)
             Log.e(TAG,"IS_FIRSTRUN=${IS_FIRSTRUN}")
             IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
+
         }
         AutoSizeConfig()
         initOKGO()
@@ -60,7 +74,7 @@ class MyApplication:Application() {
         //设置为 true 则使用设备的实际屏幕高度, 不会减去状态栏以及导航栏高度
         //                .setUseDeviceSize(true)
         //是否全局按照宽度进行等比例适配, 默认为 true, 如果设置为 false, AutoSize 会全局按照高度进行适配
-        //                .setBaseOnWidth(false)
+        //                .setBaseOnWidth(false)a
         //设置屏幕适配逻辑策略类, 一般不用设置, 使用框架默认的就好
         //                .setAutoAdaptStrategy(new AutoAdaptStrategy())
         //当 App 中出现多进程, 并且您需要适配所有的进程, 就需要在 App 初始化时调用 initCompatMultiProcess()

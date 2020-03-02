@@ -3,17 +3,24 @@ package com.ucas.cloudenterprise.ui
 import android.content.Intent
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_setcommonfile.*
 import kotlinx.android.synthetic.main.common_head.*
 
 class SetCommonFileActivity:BaseActivity() {
+    lateinit var  fileitem:File_Bean//文件
+
+
+
     override fun GetContentViewId()= R.layout.activity_setcommonfile
 
 
 
     override fun InitView() {
         tv_title.text = "设置共享"
+        fileitem = intent.getSerializableExtra("file") as File_Bean
+
         iv_back.setOnClickListener {
             finish()
         }

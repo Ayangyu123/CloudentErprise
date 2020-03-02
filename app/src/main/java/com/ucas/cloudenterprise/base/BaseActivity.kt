@@ -17,20 +17,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
-import com.lzy.okgo.model.HttpHeaders
 import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.core.DaemonService
-import com.ucas.cloudenterprise.model.Resource
 import com.ucas.cloudenterprise.ui.LoginActivity
-import com.ucas.cloudenterprise.utils.AppUtils
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
 import org.json.JSONObject
-import java.util.*
-import kotlin.collections.HashMap
+import java.io.File
 
 /**
 @author simpler
@@ -156,7 +152,9 @@ import kotlin.collections.HashMap
                         Toastinfo("服务端找不到相应数据")
                     }
 
-
+                    REQUEST_REFRESH_TOKEN_FAIL_CODE->{
+                        Toastinfo("服务端找不到相应数据")
+                    }
                     else ->{
                         Log.e("BaseActivity","请求数据异常")
                     }
@@ -304,3 +302,4 @@ import kotlin.collections.HashMap
          fun OnNetPostSucces(request:Request<String, out Request<Any, Request<*, *>>>?, data: String)
     }
 }
+

@@ -135,6 +135,21 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        when(mLastFgIndex){
+           0->{//我的文件
+               if(!mMyFilesFragment.pid.equals("root")){
+                   mMyFilesFragment.pid=mMyFilesFragment.pid_stack[0]
+                   mMyFilesFragment.GetFileList()
+                   return  false
+               }
+           }
+            1->{// 共享文件
+
+            }
+
+        }
+
+
         if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - lastBackPressedAt > 2000) {
                 Toastinfo("再按一次退出程序")

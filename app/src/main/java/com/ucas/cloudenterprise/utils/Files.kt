@@ -14,6 +14,7 @@ operator fun File.get(path: String) = File(this, path)
 val Context.store get() = getExternalFilesDir(null)!![CORE_WORK_DIR]
 //val Context.cache get() = externalCacheDir(null)!![""]
 val Context.bin get() = filesDir[CORE_COMMAND_BIN]
+val Context.pluginbin get() = filesDir["Plugin"]
 val Context.config get() = JsonParser().parse(FileReader(store[CORE_WORK_CONFIG])).asJsonObject
 
 fun Context.config(consumer: JsonObject.() -> Unit) {
@@ -39,7 +40,9 @@ fun Process.read(consumer: (String) -> Unit) {
     }
 }
 fun AssetFileCP(context:Context,filename:String)= AssetFileCP(context,filename,context.store[filename])
+
 fun AssetFileCP(context:Context,src:String,dest:File)= FileCP(context.assets.open(src),dest.outputStream())
+
 fun FileCP(inputStream: InputStream,outputStream: OutputStream){
     try {
         inputStream.copyTo(outputStream)

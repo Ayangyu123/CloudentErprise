@@ -1,0 +1,114 @@
+package com.ucas.cloudenterprise.ui
+
+import android.content.Intent
+import android.os.CountDownTimer
+import android.text.TextUtils
+import android.view.View
+import com.lzy.okgo.request.base.Request
+import com.ucas.cloudenterprise.R
+import com.ucas.cloudenterprise.app.*
+import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.startActivity
+import kotlinx.android.synthetic.main.activity_forget_password.*
+import kotlinx.android.synthetic.main.common_head.*
+import org.json.JSONObject
+import java.util.regex.Pattern
+
+class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
+    var VerifcationCode="" //验证码
+    var phone =""
+
+    override fun GetContentViewId()= R.layout.activity_forget_password
+
+
+    override fun InitView(){
+        tv_title.text ="忘记密码"
+        iv_back.setOnClickListener { finish() }
+        tv_edit.visibility =View.GONE
+     }
+
+    override fun InitData() {
+    }
+
+    fun getVerifcationCode(view: View) {
+        if(TextUtils.isEmpty(editTextPhone.text)){
+            Toastinfo("请输入手机号")
+            return
+        }
+
+        if(!Pattern.compile("^1[3-9][0-9]{9}$").matcher(editTextPhone.text).matches()){
+
+            Toastinfo("请输入正确的手机号")
+            return
+        }
+        phone =editTextPhone.text.toString()
+        NetRequest(URL_RESERT_PASS_MESSAGE, NET_PUT,HashMap<String,Any>().apply {
+            put("telephone","${phone}")
+        },this,this)
+
+
+    }
+    fun verifyMessageCode(view: View) {
+        if(TextUtils.isEmpty(editTextPhone.text)){
+            Toastinfo("请输入手机号")
+            return
+        }
+
+        if(!Pattern.compile("^1[3-9][0-9]{9}$").matcher(editTextPhone.text).matches()){
+
+            Toastinfo("请输入正确的手机号")
+            return
+        }
+        if(TextUtils.isEmpty(editText_verification_code.text)){
+            Toastinfo("请输入验证码")
+            return
+        }
+        NetRequest(URL_RESERT_PASS_VERIFY, NET_POST,HashMap<String,Any>().apply {
+          put("message_code","${editText_verification_code.text}")
+          put("telephone","${editTextPhone.text}")
+        },this,this)
+
+    }
+    override fun OnNetPostSucces(
+        request: Request<String, out Request<Any, Request<*, *>>>?,
+        data: String
+    ) {
+        JSONObject(data).apply {
+            if(!isNull("data")&&getInt("code")== REQUEST_SUCCESS_CODE){
+                when(request?.url){
+                    "${URL_RESERT_PASS_MESSAGE}"->{ //验证码
+                            Toastinfo(getJSONObject("data").getString("send_status"))
+                        tv_send_reset_password_message.apply {
+                            text ="已发送"
+                            isEnabled =false
+                            object :CountDownTimer(60 * 1000, 1000){
+                                override fun onFinish() {
+                                    isEnabled =true
+                                }
+
+                                override fun onTick(millisUntilFinished: Long) {
+                                    text = "已发送(" + millisUntilFinished / 1000 + ")"
+                                }
+
+                            }.start()
+                        }
+
+                    }
+                    "${URL_RESERT_PASS_VERIFY}"->{ //验证短信
+                        Toastinfo(getString("verifyStatus"))
+                        startActivity(Intent(this@ForgetPasswordActivity,ResetPassWordActivity::class.java).apply {
+                            put("phone","${phone}")
+                        })
+                        finish()
+                    }
+                }
+
+            }
+
+        }
+    }
+
+
+
+}

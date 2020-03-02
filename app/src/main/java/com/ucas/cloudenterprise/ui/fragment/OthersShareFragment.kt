@@ -166,6 +166,8 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
             }
         })
         //</editor-fold >
+        //TODO 多选不显示
+        tv_edit.visibility =View.INVISIBLE
 
     }
 

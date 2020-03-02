@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_choose_dest_dir.view_select_bar
 import kotlinx.android.synthetic.main.activity_choose_dest_dir.viewpager_content
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.dialog_create_new_dir.*
+import org.json.JSONObject
 import java.util.concurrent.TimeoutException
 
 /**
@@ -37,8 +38,8 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
     companion object{
           val  MOVE= 1
            val COPY =2
-        val SHOW_MYFILES =1
-        val SHOW_OTHERSHARED =2
+        val SHOW_MYFILES =0
+        val SHOW_OTHERSHARED =1
     }
 
      var CreateNewDirDialog: Dialog? =null
@@ -69,7 +70,10 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         tv_dest_dir_commit =findViewById<TextView>(R.id.tv_dest_dir_commit)
         tv_dest_dir_commit.setOnClickListener {
 
-            setResult(Activity.RESULT_OK, intent.apply {  putExtra("pid","${pid}")})
+            setResult(Activity.RESULT_OK, intent.apply {
+                putExtra("pid","${pid}")
+                putExtra("file_id","${file_item?.file_id}")
+            })
             finish()
         }
         tv_dest_dir_commit.isEnabled =false
@@ -101,6 +105,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                 override fun onPageSelected(position: Int) {
                    when(position){
                        0->{ //我的文件
+                           tv_path.text = "已选 ：我的文件"
                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
                            tv_myfiles.setTextColor( Color.parseColor("#4F73DF"))
                            tv_othercommom.setTextColor( Color.parseColor("#AAAFC0"))
@@ -108,6 +113,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                           tv_dest_dir_commit.isEnabled = mMyFilesDirFragment.fileslist.isEmpty()
                        }
                        1->{ //共享文件
+                           tv_path.text = "已选 ：共享文件"
                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
                            iv_create_dir.isEnabled =false
                            tv_othercommom.setTextColor( Color.parseColor("#4F73DF"))
@@ -131,6 +137,25 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         }
 
 
+        //<editor-fold  desc ="返回按钮 设置" >
+        iv_back.setOnClickListener {
+            var destfargment:MyDirsFragment =  fragmentlist[viewpager_content.currentItem] as MyDirsFragment
+            destfargment.apply {
+                if( !this.pid.equals(this.pid_src)){ //选择文件夹显示返回
+                    this. pid_stack.remove(this.pid_stack[0])
+                    this.pid = this.pid_stack[0]
+                     this.GetFileList()
+
+                }else{ //相等 返回
+                    finish()
+              }
+
+
+            }
+
+        }
+        //</editor-fold >
+
     }
 
     fun ShowCreateNewDirDialog() {
@@ -139,6 +164,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
             CreateNewDirDialog = GetCreateNewDirDialog(this,View.OnClickListener{
                 CreateNewDirDialog!!.et_dir_name.text  = SetEt_Text("")
                 CreateNewDirDialog!!.checkbox_is_common.isChecked = false
+                CreateNewDirDialog!!.checkbox_is_common.visibility = View.GONE
                 CreateNewDirDialog?.dismiss()
             }
                 ,View.OnClickListener{
@@ -166,5 +192,10 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
     ) {
+           if(!JSONObject(data).isNull("data")){
+               Toastinfo("新建文件夹成功")
+               mMyFilesDirFragment.GetFileList()
+           }
+
      }
 }

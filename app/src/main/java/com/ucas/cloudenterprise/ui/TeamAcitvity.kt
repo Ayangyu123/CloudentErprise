@@ -22,6 +22,9 @@ import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_team.*
 import kotlinx.android.synthetic.main.activity_team.tv_result
 import org.json.JSONObject
+import java.io.File
+import java.lang.Exception
+import java.security.MessageDigest
 
 /**
 @author simpler
@@ -175,5 +178,30 @@ class TeamAcitvity : AppCompatActivity() {
 
 
     }
-        
+
+
+}
+
+fun main(args: Array<String>) = try {
+
+
+var file = File("/Users/simple/Desktop/test.txt")
+//获取md5加密对象
+val instance: MessageDigest = MessageDigest.getInstance("MD5")
+val digest:ByteArray = instance.digest(file.readBytes())
+var sb : StringBuffer = StringBuffer()
+for (b in digest) {
+    //获取低八位有效值
+    var i :Int = b.toInt() and 0xff
+    //将整数转化为16进制
+    var hexString = Integer.toHexString(i)
+    if (hexString.length < 2) {
+        //如果是一位的话，补0
+        hexString = "0" + hexString
+    }
+    sb.append(hexString)
+}
+    print(sb.toString())
+}catch (e:Exception){
+    print(e.message)
 }

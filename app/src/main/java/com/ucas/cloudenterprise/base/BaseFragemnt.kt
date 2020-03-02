@@ -121,6 +121,7 @@ abstract class BaseFragment : Fragment() {
 
                         val ipfs = IPFS(CORE_CLIENT_ADDRESS)
                         val src = activity!!.store[displayName!!]
+                        val srcmd5= MD5encode(src.readBytes())
                         val srcsize = src.length()
                         val file = NamedStreamable.FileWrapper(src)
                         val addResult = ipfs.add(file)[0]

@@ -3,18 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.RegisterActivity"
     android:orientation="vertical"
-    android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/common_head"/>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
+
         >
         <TextView
             android:text="公司名称"
@@ -115,4 +121,5 @@
         android:text="AddTeamActivity" />
 
 
+</LinearLayout>
 </LinearLayout>

@@ -55,8 +55,9 @@ class BottomFilesOperateAdapter(
         if(isfile){
             InfoList.removeAt(0)
             DrawableList.removeAt(0)
-//            Log.e(TAG,"isfile is ${isfile}")
-//            Log.e(TAG,"InfoList${InfoList.size}")
+        }else{
+            InfoList.removeAt(1)
+            DrawableList.removeAt(1)
         }
     }
 

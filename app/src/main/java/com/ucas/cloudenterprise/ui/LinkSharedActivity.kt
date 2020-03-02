@@ -1,25 +1,25 @@
 package com.ucas.cloudenterprise.ui
 
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.widget.DatePicker
 import com.lzy.okgo.model.HttpMethod
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
-import com.ucas.cloudenterprise.app.NET_POST
-import com.ucas.cloudenterprise.app.REQUEST_SUCCESS_CODE
-import com.ucas.cloudenterprise.app.URL_LINK_SHARE
-import com.ucas.cloudenterprise.app.USER_ID
+import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.utils.AppUtils
+import com.ucas.cloudenterprise.utils.AppUtils.Stringtotimestamp
+import com.ucas.cloudenterprise.utils.AppUtils.timestamptoString
 import com.ucas.cloudenterprise.utils.SetEt_Text
+import com.ucas.cloudenterprise.utils.ShareUtils
 import com.ucas.cloudenterprise.utils.Toastinfo
 import kotlinx.android.synthetic.main.activity_link_shared.*
 import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -27,6 +27,8 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
 
        var  shared_url:String ="" //文件分享链接
+       var  shared_sid:String ="" //文件分享链接
+    var expire_time  =0L
        var  shared_password:String ="" //文件分享链接密码
     var  shareable =false
     var mDatePickerDialog:DatePickerDialog ?=null
@@ -39,8 +41,8 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
         //<editor-fold desc="生成分享链接">
         var params = HashMap<String,Any>()
         params["user_id"] = "${USER_ID}"
-        params["file_name"] = "${item.file_name}"
-//        NetRequest(URL_LINK_SHARE, NET_POST,params,this,this)
+        params["file_id"] = "${item.file_id}"
+        NetRequest(URL_LINK_SHARE_CREATE, NET_POST,params,this,this)
         //</editor-fold>
 
         tv_title.text="链接分享"
@@ -76,8 +78,7 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
                         mYear = year;
                         mMonth = month;
                         mDay = dayOfMonth;
-                        var  date = "${mYear}/${month+1}/${dayOfMonth } "
-                        textview_setting_indate.text =date
+                        textview_setting_indate.text =SimpleDateFormat("yyyy/MM/dd").format(Date(year-1900,month+1,dayOfMonth))
                     }
                 },mYear,mMonth,mDay)
             }
@@ -94,44 +95,32 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
                 Toastinfo("尚未生成分享链接，请稍后尝试")
                 return@setOnClickListener
             }
+            Log.e("ok","shared_password.equals( edittext_password.text ) = ${shared_password.equals( edittext_password.text.toString() )}")
+            Log.e("ok","textview_setting_indate.text.equals(DatetoString(expire_time)) = ${textview_setting_indate.text.equals(timestamptoString(expire_time))}")
 
-            if(!shared_password.equals( edittext_password.text )){// 用户修改密码，与原始密码不一致。执行修改链接接口
-                //<editor-fold desc="生成分享链接">
-                //TODO
+            //<editor-fold desc="修改分享链接">
+            if(!shared_password.equals( edittext_password.text.toString() )||!textview_setting_indate.text.toString().equals(
+                    timestamptoString(expire_time))){// 用户修改密码，与原始密码不一致。执行修改链接接口
+
                 var params = HashMap<String,Any>()
-                params["user_id"] = "${USER_ID}"
-                params["file_name"] = "${item.file_name}"
-                NetRequest(URL_LINK_SHARE, NET_POST,params,this,this)
-                //</editor-fold>
+                params["sid"] = "${shared_sid}"
+                params["password"] = "${edittext_password.text}"
+                params["expire_time"] = Stringtotimestamp(textview_setting_indate.text.toString())
+                NetRequest(URL_LINK_SHARE_UPDATE, NET_POST,params,this,this)
+
                 return@setOnClickListener
             }
-
-            sharebyandroidSheet("${shared_url}${shared_password}")
+            //</editor-fold>
+            Log.e("ok","执行分享" )
+            ShareUtils.sharebyandroidSheet("来自土星云的分享 文件地址：${shared_url} 密码：${shared_password}",this )
         }
     }
 
     override fun InitData() {
-        checkbox_setting_password.isChecked =true
-        edittext_password.text = SetEt_Text(AppUtils.getRandomString(4))
-    }
-    fun sharebyandroidintent(message:String){
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "This is my text to send.${message}")
-            type = "text/plain"
-        }
-        startActivity(sendIntent)
+//        checkbox_setting_password.isChecked =true
+//        edittext_password.text = SetEt_Text(AppUtils.getRandomString(4))
     }
 
-    fun sharebyandroidSheet(message:String){
-        val sendIntent: Intent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "This is my text to send.${message}")
-            type = "text/plain"
-        }
-
-        startActivity(Intent.createChooser(sendIntent,null))
-    }
 
 
     override fun OnNetPostSucces(
@@ -140,7 +129,7 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
     ) {
         when(request?.url){
 
-            URL_LINK_SHARE ->{
+            URL_LINK_SHARE_CREATE ->{
                 when(request?.method.name){
                     HttpMethod.POST.name ->{
 
@@ -148,9 +137,11 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
                             Toastinfo("创建分享链接成功")
                             shareable = true
                             shared_password = JSONObject(data).getJSONObject("data").getString("password")
+                            expire_time = JSONObject(data).getJSONObject("data").getLong("expire_time")
                             shared_url = JSONObject(data).getJSONObject("data").getString("short_url")
+                            shared_sid = JSONObject(data).getJSONObject("data").getString("sid")
                             edittext_password.setText(SetEt_Text(shared_password))
-
+                            textview_setting_indate.text = timestamptoString(expire_time)
                         }else{
                             Toastinfo("创建分享链接失败")
                             return
@@ -158,6 +149,9 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
                     }
 
                 }
+
+            }
+            URL_LINK_SHARE_UPDATE->{
 
             }
 

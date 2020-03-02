@@ -62,10 +62,13 @@ val URL_REGISTER_COMPANY = "${BASE_URL}register_company" //企业注册
 //{"code":200,"message":"Sucess","data":{"comp_id":"220546049285033984","comp_name":"test","comp_con_email":"916094751@qq.com","comp_con_tel":"test","vip_type":0,"vip_exp":0,"total_cap":0,"used_cap":0,"limit_user":0,"discounts":0,"create_time":"2020-01-06","update_time":"2020-01-06","status":0}}
 
 val URL_TEAM = "${BASE_URL}team" //团队
+val URL_TEAM_INVITE = "${BASE_URL}team_invite" //团队
 
 val URL_ADD_MEMBER = "${BASE_URL}member" //添加成员
 //http://10.0.130.172:20000/api/cloud/v1/member_list/company/220874840104505344/mem/1578371132474935000-7696043959137995161
 val URL_LIST_MEMBER = "${BASE_URL}member_list/" //添加成员
+val URL_SEARCH_MEMBER = "${BASE_URL}member_search/" //添加成员
+
 val URL_ADD_File = "${BASE_URL}file_add" //添加文件
 val URL_DELETE_FILE = "${BASE_URL}file" //删除文件
 val URL_LIST_FILES = "${BASE_URL}user_file/list/" //文件列表
@@ -76,6 +79,16 @@ val URL_FILE_SEARCH="${BASE_URL}file_search"
 val URL_FILE_RENAME="${BASE_URL}file_rename"
 val URL_FILE_MOV="${BASE_URL}file_mov"
 val URL_FILE_COPY="${BASE_URL}file_copy"
-val URL_LINK_SHARE="${BASE_URL}enterprise/share/create"
+val URL_LINK_SHARE_CREATE="${BASE_URL}enterprise/share/created"
+val URL_LINK_SHARE_UPDATE="${BASE_URL}enterprise/share/update"
+val URL_GET_COMPANY_INFO="${BASE_URL}company/"
+val URL_POST_FILE_JURIS="${BASE_URL}file_juris" //文件收藏 共享接口
+
+
+
+val URL_RESERT_PASS_MESSAGE="${BASE_URL}reset_pass/message"//发送重置密码短信
+val URL_RESERT_PASS_VERIFY="${BASE_URL}reset_pass/verify"//验证重置密码短信
+val URL_RESERT_PASSWORD="${BASE_URL}reset_pass"//重置密码
+
 //</editor-fold>
 

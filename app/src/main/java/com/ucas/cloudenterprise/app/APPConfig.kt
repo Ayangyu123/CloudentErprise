@@ -17,6 +17,11 @@ import java.security.NoSuchAlgorithmException
 @author simpler
 @create 2019年12月27日  14:51
  */
+
+var COMP_ID ="220874840104505344" //企业ID
+val  team_id = "1578371132474935000-7696043959137995161"
+var  USER_ID = ""
+var COMP: Company?=null  //企业ID
   //<editor-fold desc="core文件目录">
   val CORE_COMMAND_BIN = "core_bin" //core命令目录名称
 
@@ -26,7 +31,7 @@ import java.security.NoSuchAlgorithmException
 
   val CORE_CLIENT_ADDRESS ="/ip4/127.0.0.1/tcp/5001" //client 地址
   val TEST_DOWN_FiLE_HASH ="QmU6yMLXAku4komAi1bGyh3UwLdDcrY1NQ12QijnKAiNQ8" //client 地址
-  val ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/" //client 地址
+  var ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}/" //client 地址
 
   //</editor-fold>
 
@@ -78,10 +83,7 @@ import java.security.NoSuchAlgorithmException
    //</editor-fold>
 
 
-        var COMP_ID ="220874840104505344" //企业ID
-val  team_id = "1578371132474935000-7696043959137995161"
-var  USER_ID = "220953996322410496"
-        var COMP: Company?=null  //企业ID
+
      //<editor-fold desc=" Register_Activity   ">
     var vip_type = 0 //是否是VIP 0默认不是 1 是
    //</editor-fold>
@@ -123,12 +125,16 @@ val password_param= "test"
 val Salt="#$^^xsAd.."
 fun MD5encode(text: String,AddSaltAble:Boolean): String {
 
+        //对字符串加密，返回字节数组
+        var str  = if(AddSaltAble)  "${text}${Salt}" else "${text}"
+        return MD5encode(str.toByteArray())
+
+}
+fun MD5encode(bytearray:ByteArray):String{
     try {
         //获取md5加密对象
         val instance: MessageDigest = MessageDigest.getInstance("MD5")
-        //对字符串加密，返回字节数组
-        var str  = if(AddSaltAble)  "${text}${Salt}" else "${text}"
-        val digest:ByteArray = instance.digest(str.toByteArray())
+        val digest:ByteArray = instance.digest(bytearray)
         var sb : StringBuffer = StringBuffer()
         for (b in digest) {
             //获取低八位有效值
