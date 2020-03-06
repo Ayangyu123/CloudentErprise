@@ -17,6 +17,7 @@ import android.os.IBinder
 import android.provider.OpenableColumns
 import android.util.Log
 import android.view.View
+import android.widget.ThemedSpinnerAdapter
 import androidx.core.app.NotificationCompat
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.FileCallback
@@ -382,7 +383,8 @@ class DaemonService : Service() {
 
 
                                             var AesKey =  "${response?.body()}"
-                                            File(displayName).apply {
+
+                                             File(displayName).apply {
                                                 writeBytes(inputsteam.readBytes()
                                                 )}
 
