@@ -12,10 +12,7 @@ import com.ucas.cloudenterprise.app.NET_POST
 import com.ucas.cloudenterprise.app.REQUEST_SUCCESS_CODE
 import com.ucas.cloudenterprise.app.URL_TEAM_INVITE
 import com.ucas.cloudenterprise.base.BaseActivity
-import com.ucas.cloudenterprise.utils.AppUtils
-import com.ucas.cloudenterprise.utils.ShareUtils
-import com.ucas.cloudenterprise.utils.Toastinfo
-import com.ucas.cloudenterprise.utils.startActivity
+import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.activity_member_invite.*
 import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
@@ -60,11 +57,13 @@ class MemberInviteActivity: BaseActivity(), BaseActivity.OnNetCallback {
         JSONObject(data).apply {
             if(!isNull("data")&&getInt("code")== REQUEST_SUCCESS_CODE){
                 getJSONObject("data")?.apply {
-                    Glide.with(context).load(getString("qrcode_url")).into(iv_qr_code)
+//                    Glide.with(context).load(getString("qrcode_url")).into(iv_qr_code)
                     //TODO 分享链接字段
-//                    shared_url =""
-//                    tv_cap.text = "${getInt("capacity")}G"
-//                    tv_indate.text = AppUtils.timestamptoString(getLong("expire"))
+                    shared_url ="${getString("invite_url")}"
+                    iv_qr_code.setImageBitmap(QRCodeUtils.CreateQRCode(shared_url,this@MemberInviteActivity,R.drawable.ic_launcher,(iv_qr_code.width/2)))
+                    tv_cap.text = "${getInt("capacity")}G"
+                    tv_link_share.isEnabled = true
+//                    tv_indate.text = AppUtils.timestamptoString(getLong("timestamp"))
                 }
 
             }

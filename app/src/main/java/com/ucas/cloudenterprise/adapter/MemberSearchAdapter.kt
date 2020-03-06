@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
@@ -13,9 +14,9 @@ class MemberSearchAdapter(var context: Context?, var list:ArrayList<MemberInfo>)
 
     val TAG ="FilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberSearchAdapter.ViewHolder {
-        var view = LayoutInflater.from(context).inflate(com.ucas.cloudenterprise.R.layout.item_search_member, null)
-        return MemberSearchAdapter.ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        var view = LayoutInflater.from(parent.context).inflate(com.ucas.cloudenterprise.R.layout.item_search_member, parent,false)
+        return ViewHolder(view)
     }
     fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){
         this.mOnRecyclerItemClickListener =OnRecyclerItemClickListener
@@ -24,7 +25,7 @@ class MemberSearchAdapter(var context: Context?, var list:ArrayList<MemberInfo>)
         return  list?.size
     }
 
-    override fun onBindViewHolder(holder: MemberSearchAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         if(mOnRecyclerItemClickListener!=null){
             mOnRecyclerItemClickListener!!.onItemClick(holder,position)
@@ -37,9 +38,9 @@ class MemberSearchAdapter(var context: Context?, var list:ArrayList<MemberInfo>)
     }
 
     class ViewHolder(itemView : View) :RecyclerView.ViewHolder(itemView){
-        var ll_root=itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.ll_root)
-        var tv_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_name)
-        var tv_state =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_state)
+        var ll_root=itemView.findViewById<LinearLayout>(com.ucas.cloudenterprise.R.id.ll_root)
+        var tv_acc_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_acc_name)
+        var tv_email =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_email)
 
 
     }

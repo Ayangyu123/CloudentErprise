@@ -12,6 +12,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -94,7 +95,12 @@ import java.io.File
         override fun onSuccess(response: Response<String>?) {
 //            Log.e("BaseActivity",response?.body().toString())
             response?.let {
+                if(TextUtils.isEmpty(it.body())){
+                    Toastinfo(" 返回 body 为空")
+                    return@let
+                }
                 val json = JSONObject(it.body().toString())
+
                 val code = json.getInt("code")
                 when(code){
                     REQUEST_SUCCESS_CODE -> //请求成功
@@ -149,11 +155,11 @@ import java.io.File
                     }
 
                     REQUEST_NOT_FOUND_CODE ->{
-                        Toastinfo("服务端找不到相应数据")
+                        Toastinfo("${REQUEST_NOT_FOUND_CODE}服务端找不到相应数据")
                     }
 
                     REQUEST_REFRESH_TOKEN_FAIL_CODE->{
-                        Toastinfo("服务端找不到相应数据")
+                        Toastinfo("${REQUEST_REFRESH_TOKEN_FAIL_CODE}${json.getString("message")}  服务端找不到相应数据")
                     }
                     else ->{
                         Log.e("BaseActivity","请求数据异常")
@@ -215,7 +221,7 @@ import java.io.File
 
 
 
-    fun NetRequest(
+    public fun NetRequest(
         url: String,
         RequestMethod:Int,
         paramsjson: HashMap<String, Any>?,
@@ -233,6 +239,8 @@ import java.io.File
 //        var stringA  = StringBuffer()
         if(RequestMethod!= NET_GET){
             json  =JSONObject(paramsjson as Map<String, Any>)
+            Log.e("ok",json.toString())
+            Log.e("ok replace",json.toString().replace("\\",""))
 //            if(!url.equals(URL_LOGIN)&&!url.equals(URL_REGISTER_COMPANY)){
 //                paramsjson.put("app_id",APP_ID)
 //                paramsjson.put("logid",LOGID)
@@ -264,7 +272,9 @@ import java.io.File
             NET_POST->{
 
                 OkGo.post<String>(url).
-                    upJson(json).
+                    upJson(json
+//                        .toString().replace("\\","")
+                    ).
                     tag(tag).
                     execute(netcallback)
             }

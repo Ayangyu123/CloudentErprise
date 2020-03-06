@@ -65,11 +65,11 @@ class PermissionToIllustrateActivity : BaseActivity() {
             viewpager_content.currentItem = 0
 
         }
-        tv_editable.setOnClickListener {
+        tv_uploadable.setOnClickListener {
             viewpager_content.currentItem = 1
 
         }
-        tv_editable.setOnClickListener {
+        tv_selectable.setOnClickListener {
             viewpager_content.currentItem = 2
 
         }

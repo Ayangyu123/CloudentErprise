@@ -264,7 +264,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         //<editor-fold  desc ="返回按钮 设置" >
         iv_back.setOnClickListener {
 
-            if( tv_edit.text.equals("编辑")&&  pid_name_maps.containsValue(tv_title.text)){ //选择文件夹显示返回
+            if( tv_edit.text.equals("编辑")&&  pid_name_maps.containsValue(tv_title.text)&&pid_stack.size>1){ //选择文件夹显示返回
 
                 pid_name_maps.remove(pid_stack[0])
                 pid_stack.remove(pid_stack[0])
@@ -603,11 +603,12 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
             when(requestCode){
                 FILE_CHOOSER_RESULT_CODE ->{ //选择文件上传文件
-                    if(DaemonService.daemon!=null && DaemonService.daemon!!.isAlive){
-                        AddFile(data.dataString!!,pid,this,this)
-                    }else{
-                        Toastinfo("未启动服务")
-                    }
+
+                        var  mainActivity=activity as MainActivity
+                        mainActivity.myBinder as DaemonService.MyBinder
+                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(data.dataString,pid,this,this)
+
+
                 }
                 ChooseDestDirActivity.COPY ->{ //文件复制
                   var   file_id= data.getStringExtra("file_id")

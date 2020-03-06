@@ -1,6 +1,8 @@
 package com.ucas.cloudenterprise.ui.member
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.text.TextUtils
 import android.view.KeyEvent
 import android.view.View
@@ -24,6 +26,7 @@ import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.model.MemberInfo
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.intent
 import kotlinx.android.synthetic.main.activity_member_invite.*
 import kotlinx.android.synthetic.main.activity_member_search.*
 import kotlinx.android.synthetic.main.activity_member_search.et_search_key_word
@@ -31,10 +34,14 @@ import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import org.json.JSONObject
 
 class MemberSearchActivity : BaseActivity(), BaseActivity.OnNetCallback {
-    override fun GetContentViewId() = R.layout.activity_member_search
-        var  mMemberlist= ArrayList<MemberInfo>()
+
+
+
+    var  mMemberlist= ArrayList<MemberInfo>()
     lateinit var mContext :Context
     lateinit var adapter :MemberSearchAdapter
+    override fun GetContentViewId() = R.layout.activity_member_search
+
     override fun InitView() {
         mContext  = this@MemberSearchActivity
         iv_back.setOnClickListener { finish() }
@@ -44,10 +51,21 @@ class MemberSearchActivity : BaseActivity(), BaseActivity.OnNetCallback {
             addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
         }
         adapter = MemberSearchAdapter(mContext,mMemberlist)
+        rc_myfiles.adapter =adapter
         adapter.SetOnRecyclerItemClickListener(object: OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                 var item = mMemberlist[position]
                 (holder as MemberSearchAdapter.ViewHolder).apply {
+                    item.apply {
+                        tv_acc_name.text = acc_name
+                        tv_email.text = email
+                        ll_root.setOnClickListener {
+                            startActivityForResult(intent<MemberInfoActivity>().apply {
+                                putExtra("item",item)
+                            },1)
+                        }
+                    }
+
 
 
                 }
@@ -92,6 +110,13 @@ class MemberSearchActivity : BaseActivity(), BaseActivity.OnNetCallback {
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode== Activity.RESULT_OK){
+            membersearch()
+        }
+    }
+
     private fun membersearch() {
         if(TextUtils.isEmpty(et_search_key_word.text)){
             Toastinfo("搜索内容不能为空")
@@ -118,7 +143,7 @@ class MemberSearchActivity : BaseActivity(), BaseActivity.OnNetCallback {
     ) {
         JSONObject(data).apply {
             if(!isNull("data")&&getInt("code")== REQUEST_SUCCESS_CODE){
-                mMemberlist.addAll(Gson().fromJson<List<File_Bean>>(getJSONArray("data").toString(),object : TypeToken<List<MemberInfo>>(){}.type) as ArrayList<MemberInfo>)
+                mMemberlist.addAll(Gson().fromJson<List<MemberInfo>>(getJSONArray("data").toString(),object : TypeToken<List<MemberInfo>>(){}.type) as ArrayList<MemberInfo>)
                 adapter?.notifyDataSetChanged()
 
             }

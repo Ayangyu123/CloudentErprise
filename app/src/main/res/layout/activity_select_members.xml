@@ -1,56 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.SelectMembersActivity"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#E8EBF2"
-    android:layout_height="match_parent">
-    <include layout="@layout/common_head"/>
+    android:orientation="vertical"
+    tools:context=".ui.SelectMembersActivity">
+
+    <include layout="@layout/common_head" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:background="@android:color/white"
-        android:padding="10dp"
-        >
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
         <CheckBox
+            android:id="@+id/check_box_select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@drawable/checkbox"
-            />
+            android:button="@drawable/checkbox" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/group_icon"
             android:layout_marginLeft="10dp"
-            />
+            android:src="@drawable/group_icon"
+            android:visibility="visible" />
+
         <TextView
+            android:id="@+id/tv_team_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="国科环宇"
             android:layout_marginLeft="10dp"
-            />
+            android:text="国科环宇" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
+
         <TextView
+            android:id="@+id/members_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3人"
             android:layout_marginRight="10dp"
-            />
+            android:text="3人" />
 
     </LinearLayout>
-    <include layout="@layout/common_line"/>
+
+    <include layout="@layout/common_line" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rc_teams"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
-        tools:listitem="@layout/item_members"
-        />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_members" />
 
 
 </LinearLayout>

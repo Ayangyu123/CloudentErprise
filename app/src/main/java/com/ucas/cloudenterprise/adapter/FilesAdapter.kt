@@ -25,7 +25,7 @@ class FilesAdapter(var context: Context?, var list:ArrayList<File_Bean>) :Recycl
     val TAG ="FilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener ? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(context).inflate(com.ucas.cloudenterprise.R.layout.item_myfiles, null)
+        var view = LayoutInflater.from(context).inflate(R.layout.item_myfiles, null)
         return ViewHolder(view)
     }
     fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){

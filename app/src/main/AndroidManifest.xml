@@ -70,6 +70,9 @@
         <activity android:name=".ui.PermissionToIllustrateActivity"/>
         <!-- 链接分享      -->
         <activity android:name=".ui.LinkSharedActivity"/>
+
+
+
         <!-- 成员管理      -->
         <activity android:name=".ui.member.MembersManageActivity"/>
 
@@ -81,10 +84,20 @@
         <activity android:name=".ui.member.MemberInviteActivity"/>
         <!-- 修改邀请成员链接        -->
         <activity android:name=".ui.member.EditMemberInviteLinkActivity"/>
+
+
         <!-- 成员审核        -->
         <activity android:name=".ui.member.MemberAuditActivity"/>
         <!-- 成员审核 详情       -->
         <activity android:name=".ui.member.MemberAuditInfoActivity"/>
+        <!-- 成员 详情 修改      -->
+        <activity android:name=".ui.member.MemberInfoActivity"/>
+        <activity android:name=".ui.member.MemberInfoEditActivity"/>
+
+        <!-- 成员管理      -->
+        <activity android:name=".ui.member.MemberAddActivity"/>
+
+
         <!-- 关于        -->
         <activity android:name=".ui.AboutActivity"/>
         <!-- 设置        -->
@@ -100,6 +113,9 @@
         <activity android:name=".ui.helpandfeedback.MyFeedbackActivity"/>
             <!--       意见、 反馈详情    -->
         <activity android:name=".ui.helpandfeedback.FeedbackInfoActivity"/>
+
+
+
     <!--       忘记密码 验证手机号    -->
         <activity android:name=".ui.ForgetPasswordActivity"/>
         <!--      重置密码   -->

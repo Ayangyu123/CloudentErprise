@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.member.MembersManageActivity"
     android:background="@color/root_linealayout_bg_color"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <include layout="@layout/common_head"/>
     <LinearLayout
@@ -38,6 +39,21 @@
             android:drawableLeft="@drawable/invite_list_icon"
             android:drawableRight="@drawable/personalcenter_guide_arrow"
             />
+
+        <include layout="@layout/common_line"/>
+        <TextView
+            android:id="@+id/tv_member_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="添加成员"
+            android:textSize="16dp"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:drawablePadding="10dp"
+            android:drawableLeft="@drawable/invite_list_icon"
+            android:drawableRight="@drawable/personalcenter_guide_arrow"
+            />
+
     </LinearLayout>
 
     <TextView

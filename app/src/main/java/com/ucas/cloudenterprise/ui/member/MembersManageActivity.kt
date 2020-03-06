@@ -1,8 +1,10 @@
 package com.ucas.cloudenterprise.ui.member
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -50,17 +52,18 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
 
         adapter=MemberInfoAdapter(this,mMemberlist)
         rc_members.adapter =adapter
+        rc_members.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                    var holder_item = holder as MemberInfoAdapter.ViewHolder
                 holder_item.apply {
                     //TODO
                     tv_name.text = mMemberlist[position].acc_name
-                    tv_state.text =mMemberlist[position].acc_name
+//                    tv_state.text =mMemberlist[position].acc_name
                     ll_root.setOnClickListener {
-                        startActivity(intent<MemberInfoActivity>().apply {
+                        startActivityForResult(intent<MemberInfoActivity>().apply {
                             putExtra("item", mMemberlist[position])
-                        })
+                        },1)
                     }
 
 
@@ -68,11 +71,25 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
             }
         })
 
+
+        tv_member_add.setOnClickListener {
+            startActivityForResult(intent<MemberAddActivity>(),1)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode== Activity.RESULT_OK){
+            getMemberlist()
+
+        }
+    }
+    fun getMemberlist(){
+        NetRequest(URL_LIST_MEMBER +"company/$COMP_ID", NET_GET,null,this,this)
     }
 
     override fun InitData() {
-       //TODO 获取成员list /api/cloud/v1/member_list/company/:pid/mem/:mid
-         NetRequest(URL_LIST_MEMBER +"company/$COMP_ID", NET_GET,null,this,this)
+        getMemberlist()
 
     }
 
@@ -80,10 +97,11 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
     ) {
-        Log.e("ok",data)
         JSONObject(data).apply {
             if(!isNull("data")&&getInt("code")==200){
+                mMemberlist.clear()
                 mMemberlist.addAll(Gson().fromJson<List<MemberInfo>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<MemberInfo>>(){}.type) as ArrayList<MemberInfo>)
+                adapter.notifyDataSetChanged()
             }
         }
     }

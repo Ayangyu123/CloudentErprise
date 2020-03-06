@@ -32,6 +32,12 @@ var IS_FILE = -1 //-1 文件
 var IS_COMMON_DIR = -1// 共享文件夹
 var IS_UNCOMMON_DIR= 0 // 普通文件夹
 //</editor-fold>
+//<editor-fol desc="成员审核状态"> -1:未审核 1:拒绝 0:已通过 2所有
+val All_STATE = 2
+val UNAUDIT_STATE = -1
+val NOT_PASS_STATE = 1
+val PASS_STATE = 0
+//</editor-fold>
 
 
 
@@ -64,12 +70,17 @@ val URL_REGISTER_COMPANY = "${BASE_URL}register_company" //企业注册
 val URL_TEAM = "${BASE_URL}team" //团队
 val URL_TEAM_INVITE = "${BASE_URL}team_invite" //团队
 
-val URL_ADD_MEMBER = "${BASE_URL}member" //添加成员
+val URL_ADD_MEMBER = "${BASE_URL}member" //post 添加成员 put 删除
+val URL_MEMBER_INFO_UPDATE = "${BASE_URL}member_info/update" //成员信息修改
 //http://10.0.130.172:20000/api/cloud/v1/member_list/company/220874840104505344/mem/1578371132474935000-7696043959137995161
 val URL_LIST_MEMBER = "${BASE_URL}member_list/" //添加成员
-val URL_SEARCH_MEMBER = "${BASE_URL}member_search/" //添加成员
+val URL_SEARCH_MEMBER = "${BASE_URL}member_search/" //成员搜索
+
+val URL_MEMBER_AUDIT_LIST = "${BASE_URL}member_audit/company/"// :pid/status/:sts/" //get 成员审核列表  put 修改邀请信息
+val URL_MEMBER_AUDIT_UPDATE_INFO = "${BASE_URL}member_audit/company/"// :pid/status/:sts/" //成员审核列表
 
 val URL_ADD_File = "${BASE_URL}file_add" //添加文件
+val URL_ADD_File_CHECK = "${BASE_URL}file_check_hash/" //添加文件 检查
 val URL_DELETE_FILE = "${BASE_URL}file" //删除文件
 val URL_LIST_FILES = "${BASE_URL}user_file/list/" //文件列表
 

@@ -6,13 +6,23 @@
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/iv_back"
+    android:id="@+id/iv_back"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_centerVertical="true"
+    android:contentDescription="@string/iv_back_des"
+
+    android:scaleType="center"
+    android:src="@drawable/title_back_icon_normal" />
+    <ImageView
+        android:id="@+id/iv_choose"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_centerVertical="true"
-        android:contentDescription="@string/iv_back_des"
+        android:layout_toRightOf="@id/iv_back"
+        android:visibility="gone"
         android:scaleType="center"
-        android:src="@drawable/title_back_icon_normal" />
+        android:src="@drawable/title_close_icon_normal" />
 
     <TextView
         android:id="@+id/tv_title"

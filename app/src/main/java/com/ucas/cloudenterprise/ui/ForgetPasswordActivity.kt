@@ -9,6 +9,7 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.VerifyUtils
 import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_forget_password.*
 import kotlinx.android.synthetic.main.common_head.*
@@ -38,7 +39,6 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
         }
 
         if(!Pattern.compile("^1[3-9][0-9]{9}$").matcher(editTextPhone.text).matches()){
-
             Toastinfo("请输入正确的手机号")
             return
         }
@@ -55,8 +55,7 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
             return
         }
 
-        if(!Pattern.compile("^1[3-9][0-9]{9}$").matcher(editTextPhone.text).matches()){
-
+        if(!VerifyUtils.VerifyPhone(editTextPhone.text.toString())){
             Toastinfo("请输入正确的手机号")
             return
         }
@@ -85,6 +84,7 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
                             object :CountDownTimer(60 * 1000, 1000){
                                 override fun onFinish() {
                                     isEnabled =true
+                                    text ="重新获取验证码"
                                 }
 
                                 override fun onTick(millisUntilFinished: Long) {
@@ -96,10 +96,8 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
                     }
                     "${URL_RESERT_PASS_VERIFY}"->{ //验证短信
-                        Toastinfo(getString("verifyStatus"))
-                        startActivity(Intent(this@ForgetPasswordActivity,ResetPassWordActivity::class.java).apply {
-                            put("phone","${phone}")
-                        })
+                        //TODO 短信验证通过
+                        Toastinfo(getJSONObject("data").getString("verify_status"))
                         finish()
                     }
                 }

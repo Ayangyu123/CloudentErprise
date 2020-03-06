@@ -118,7 +118,7 @@ fun AddToken( token:String){
 //<editor-fold desc=" 网络请求参数  ">
 //val user_name_param="221669671319900160"
 //val user_name_param="18152173267"
-val user_name_param="test"
+val user_name_param="13716496502"
 //val password_param= "rdXRcM"
 val password_param= "test"
 //</editor-fold>

@@ -66,7 +66,11 @@ class MyApplication:Application() {
          * 以下是 AndroidAutoSize 可以自定义的参数, [AutoSizeConfig] 的每个方法的注释都写的很详细
          * 使用前请一定记得跳进源码，查看方法的注释, 下面的注释只是简单描述!!!
          */
-        AutoSizeConfig.getInstance().isCustomFragment =true
+        AutoSizeConfig.getInstance().apply {
+            isCustomFragment =true
+            setLog(false)
+            setUseDeviceSize(true)
+        }
         //是否打印 AutoSize 的内部日志, 默认为 true, 如果您不想 AutoSize 打印日志, 则请设置为 false
         //                .setLog(false)
         //是否使用设备的实际尺寸做适配, 默认为 false, 如果设置为 false, 在以屏幕高度为基准进行适配时

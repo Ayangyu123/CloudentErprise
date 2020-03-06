@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.lzy.okgo.OkGo
+import com.lzy.okgo.request.base.Request
 import com.lzy.okgo.utils.HttpUtils
 import com.lzy.okgo.utils.HttpUtils.runOnUiThread
 import com.ucas.cloudenterprise.app.*
@@ -91,64 +92,7 @@ abstract class BaseFragment : Fragment() {
     }
     //</editor-fold>
 
-    //<editor-fold desc=" 添加文件  ">
-    fun AddFile(
-        uri: String,
-        pid: String,
-        tag: Any,
-        onNetCallback: BaseActivity.OnNetCallback
-    ) {
-        val uri = Uri.parse(uri) // 获取用户选择文件的URI
-        Log.e("uri)", "data.getData()=" + uri)
-        Log.e("uri)", "uri.getScheme()=" + uri.getScheme())
-        Log.e("uri)", "uri.authority=" + uri.authority)
-        val cursor = activity!!.contentResolver.query(uri, null, null, null, null, null)
-        var displayName: String? = null
-        cursor?.use {
-            if (it.moveToFirst()) {
-                displayName =
-                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                val size: Int =
-                    it.getInt(it.getColumnIndex(OpenableColumns.SIZE))
 
-                if (DaemonService.daemon != null && DaemonService.daemon!!.isAlive) {
-                    Thread(Runnable {
-
-                        FileCP(
-                            activity!!.contentResolver.openInputStream(uri)!!,
-                            activity!!.store[displayName!!].outputStream()
-                        )
-
-                        val ipfs = IPFS(CORE_CLIENT_ADDRESS)
-                        val src = activity!!.store[displayName!!]
-                        val srcmd5= MD5encode(src.readBytes())
-                        val srcsize = src.length()
-                        val file = NamedStreamable.FileWrapper(src)
-                        val addResult = ipfs.add(file)[0]
-
-                        Log.e("ifileContents", "addResult=" + addResult)
-                        activity!!.store[displayName!!].delete()
-                        runOnUiThread() {
-                            addResult.apply {
-                                val params = HashMap<String, Any>()
-                                params["file_name"] = displayName + ""
-                                params["is_dir"] = IS_FILE
-                                params["user_id"] = "${USER_ID}" //TODO
-                                params["fidhash"] = "${hash}"
-                                params["pid"] = pid
-                                params["size"] = size
-                                NetRequest(URL_ADD_File, NET_POST, params, tag, onNetCallback)
-
-                            }
-                        }
-                    }).start()
-                } else {
-                    Toastinfo("core服务未启动")
-                }
-            }
-        }
-    }
-    //</editor-fold>
 
     //<editor-fold desc="删除文件">
     fun DeleteFile(
