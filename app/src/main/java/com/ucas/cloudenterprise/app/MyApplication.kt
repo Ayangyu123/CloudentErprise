@@ -51,6 +51,8 @@ class MyApplication:Application() {
             Log.e(TAG,"IS_FIRSTRUN=${IS_FIRSTRUN}")
             IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
 
+
+
         }
         AutoSizeConfig()
         initOKGO()

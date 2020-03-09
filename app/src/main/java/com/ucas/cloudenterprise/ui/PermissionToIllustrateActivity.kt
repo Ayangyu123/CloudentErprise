@@ -6,6 +6,7 @@ import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.ucas.cloudenterprise.R
+import com.ucas.cloudenterprise.app.PERMISSIONTOILLUSTRATE_GUIDES
 import com.ucas.cloudenterprise.app.WELCOME_GUIDES
 import com.ucas.cloudenterprise.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_permission_to_illustrate.*
@@ -25,7 +26,7 @@ class PermissionToIllustrateActivity : BaseActivity() {
                        layoutParams = ViewGroup.LayoutParams(
                            ViewGroup.LayoutParams.MATCH_PARENT,
                            ViewGroup.LayoutParams.MATCH_PARENT)
-                       setBackgroundResource(WELCOME_GUIDES[position])
+                       setBackgroundResource(PERMISSIONTOILLUSTRATE_GUIDES[position])
                        scaleType = ImageView.ScaleType.CENTER
                        container.addView(this)
 

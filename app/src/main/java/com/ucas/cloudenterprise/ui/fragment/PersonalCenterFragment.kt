@@ -11,6 +11,7 @@ import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.ui.AboutActivity
 import com.ucas.cloudenterprise.ui.LoginActivity
+import com.ucas.cloudenterprise.ui.ResetPassWordActivity
 import com.ucas.cloudenterprise.ui.SettingsActivity
 import com.ucas.cloudenterprise.ui.helpandfeedback.FeedbackInfoActivity
 import com.ucas.cloudenterprise.ui.helpandfeedback.HelpAndFeedbackActivity
@@ -31,6 +32,11 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
 
         tv_member_manager.setOnClickListener {
             mContext?.startActivity<MembersManageActivity>() }
+
+        tv_reset_password.setOnClickListener {
+            mContext?.startActivity<ResetPassWordActivity>()
+        }
+
         tv_message_notification.setOnClickListener {
             mContext?.startActivity<MessageNotificationActivity>() }
         tv_setting.setOnClickListener {
@@ -39,6 +45,8 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
             mContext?.startActivity<HelpAndFeedbackActivity>() }
         tv_about.setOnClickListener {
             mContext?.startActivity<AboutActivity>() }
+
+
         fl_check_new_version.setOnClickListener {
         //TODO
             }

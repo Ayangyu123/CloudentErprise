@@ -33,6 +33,7 @@ import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.DownLoadIngFile
 import com.ucas.cloudenterprise.model.DownLoadIngFileState
 import com.ucas.cloudenterprise.model.File_Bean
+import com.ucas.cloudenterprise.model.UpLoadCompletedFile
 import io.ipfs.api.IPFS
 import io.ipfs.api.NamedStreamable
 import io.ipfs.multiaddr.MultiAddress
@@ -277,7 +278,7 @@ class DaemonService : Service() {
     }
 
     fun GetFile(item:File_Bean) {
-//        diskIO.execute {  }
+
 
         daemon?.let {
             Thread(object:Runnable{
@@ -285,6 +286,7 @@ class DaemonService : Service() {
 
 
                     var ipfs = IPFS( MultiAddress(CORE_CLIENT_ADDRESS))
+                    Log.e("ok","item.fidhash=${item.fidhash}")
                     var filePointer = Multihash.fromBase58(item.fidhash)
 //                    var fileContents = ipfs.cat(filePointer)
                     var fileInputStream = ipfs.catStream(filePointer)
@@ -293,6 +295,7 @@ class DaemonService : Service() {
                         root.mkdirs()
                     }
 //                    val dest  = File(ROOT_DIR_PATH+System.currentTimeMillis())
+                    Log.e("ok","destroot="+ROOT_DIR_PATH.substring(0,ROOT_DIR_PATH.length-2))
                     var item_downing =DownLoadIngFile(
                         file_id = System.currentTimeMillis().toString(),
                         isDir = IS_FILE,
@@ -302,8 +305,8 @@ class DaemonService : Service() {
                         state = DownLoadIngFileState.DOWNLOADING
                     )
                     MyApplication.downLoad_Ing.add(item_downing)
-                    val dest  = File(ROOT_DIR_PATH+item.file_name)
-                    val fileOutputStream = dest.outputStream()
+//                    val dest  = File(ROOT_DIR_PATH+item.file_name)
+//                    val fileOutputStream = dest.outputStream()
                     val buffer=ByteArray(1024*4)
                     var sum:Long =0
                     var len =0
@@ -316,23 +319,28 @@ class DaemonService : Service() {
                             val progression = (sum * 1.0f / item.size * 100 ).toInt()
                         }
                     }finally {
-                        fileOutputStream.close()
+                        fileInputStream.close()
                     }
 
 
 
                     runOnUiThread(){
                         Log.e("ok","文件写入完毕")
+                        if(plugindaemon==null){
+                            Toastinfo("pulgDaemon 未启动")
+                            return@runOnUiThread
+                        }
                         OkGo.post<File>("http://127.0.0.1:9984/api/v0/down")
                             .params("hash","${item.fidhash}")
                             .isMultipart(true)
-                            .execute(object :FileCallback(){
+                            .execute(object :FileCallback(ROOT_DIR_PATH.substring(0,ROOT_DIR_PATH.length-2),item.file_name){
                             override fun onSuccess(response: Response<File>?) {
                                 Log.e("it","文件路径 ${response?.body()?.absolutePath}")
+                                Toastinfo("${item.file_name} 下载完成")
                             }
 
                         })
-                    Toastinfo("${item.file_name} 下载完成")
+
                     }
 
                 }
@@ -353,9 +361,8 @@ class DaemonService : Service() {
         Log.e("uri)", "data.getData()=" + uri)
         Log.e("uri)", "uri.getScheme()=" + uri.getScheme())
         Log.e("uri)", "uri.authority=" + uri.authority)
-        val inputsteam= contentResolver.openInputStream(uri)
-        val filemd5= MD5encode(inputsteam.readBytes())
-       OkGo.get<String>("${URL_ADD_File_CHECK}filemd5")
+        val filemd5= MD5encode(contentResolver.openInputStream(uri).readBytes())
+       OkGo.get<String>("${URL_ADD_File_CHECK}${filemd5}")
            .execute(object:StringCallback(){
                override fun onSuccess(response: Response<String>?) {
                    Log.e("ok",response?.body().toString())
@@ -363,13 +370,13 @@ class DaemonService : Service() {
                     if(JSONObject(response?.body().toString()).getInt("code")== REQUEST_SUCCESS_CODE_NODATA){
                         val cursor = contentResolver.query(uri, null, null, null, null, null)
                         var displayName: String? = null
-                        var size =0
+                        var size:Long =0
                         cursor?.use {
                             if (it.moveToFirst()) {
                                 displayName =
                                     it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                                 size =
-                                    it.getInt(it.getColumnIndex(OpenableColumns.SIZE))
+                                    it.getInt(it.getColumnIndex(OpenableColumns.SIZE)).toLong()
 
 
                             }
@@ -384,9 +391,21 @@ class DaemonService : Service() {
 
                                             var AesKey =  "${response?.body()}"
 
-                                             File(displayName).apply {
-                                                writeBytes(inputsteam.readBytes()
-                                                )}
+                                            if(!cacheDir[displayName!!].exists()){
+                                                cacheDir[displayName!!].createNewFile()
+                                                FileCP(contentResolver.openInputStream(uri),filesDir[displayName!!].outputStream())
+
+                                            }else{
+                                                if((cacheDir[displayName!!].length())!=size){
+                                                    cacheDir[displayName!!].delete()
+                                                    cacheDir[displayName!!].createNewFile()
+                                                    FileCP(contentResolver.openInputStream(uri),filesDir[displayName!!].outputStream())
+                                                }
+                                            }
+                                            Log.e("ok","size=${ filesDir[displayName!!].length()}")
+
+
+
 
                                             OkGo.post<String>("http://127.0.0.1:9984/api/v0/up")
                                                 .params("flag",JSONObject().apply {
@@ -398,11 +417,47 @@ class DaemonService : Service() {
                                                     put("RS",true)
                                                     put("Feed",true)
                                                 }.toString())
-                                                .params("file",File(""))
+                                                .params("file", filesDir[displayName!!].apply {
+                                                    Log.e("ok","fileinfo")
+                                                    Log.e("ok","filesize=${this.length()}")
+                                                    Log.e("ok","filesize=${this.absolutePath}")
+
+                                                })
                                                 .isMultipart(true)
+
                                                 .execute(object :StringCallback(){
                                                     override fun onSuccess(response: Response<String>?) {
                                                         Log.e("it","文件路径 ${response?.body()?.toString()}")
+
+                                                        val params = HashMap<String, Any>()
+                                                        params["file_name"] = displayName + ""
+                                                        params["is_dir"] = IS_FILE
+                                                        params["user_id"] = "${USER_ID}" //TODO
+                                                        params["fidhash"] = "${JSONObject(response?.body()?.toString()).getJSONObject("Encrypt").getString("Multihash").apply {
+                                                            Log.e("ok","fidhash=${this}")
+                                                        }}"
+                                                        params["filehash"] = "${filemd5.apply {
+                                                            Log.e("ok","fidhash=${this}")
+                                                        }}"
+                                                        params["pid"] = pid
+                                                        params["size"] = size
+                                                        OkGo.post<String>(URL_ADD_File).upJson(JSONObject(params))
+                                                            .tag(tag)
+                                                            .execute(object:StringCallback(){
+                                                                override fun onSuccess(response: Response<String>?) {
+                                                                    Toastinfo("${displayName} 上传完成")
+                                                                    MyApplication.upLoad_completed.add(0,
+                                                                        UpLoadCompletedFile("${displayName}"
+                                                                            ,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                                                                                Date()
+                                                                            )
+                                                                            ,filesDir[displayName!!].length().toString(),
+                                                                            false)
+                                                                    )
+                                                                    filesDir[displayName!!].delete()
+                                                                }
+
+                                                            })
                                                     }
 
                                                 })
@@ -418,40 +473,42 @@ class DaemonService : Service() {
 
 
                             return
-                            Thread(Runnable {
-                                val ipfs = IPFS(CORE_CLIENT_ADDRESS)
-                                val file = NamedStreamable.InputStreamWrapper(inputsteam)
-                                val addResult = ipfs.add(file)[0]
-                                Log.e("ifileContents", "addResult=" + addResult)
-
-                                runOnUiThread() {
-                                    addResult.apply {
-                                        val params = HashMap<String, Any>()
-                                        params["file_name"] = displayName + ""
-                                        params["is_dir"] = IS_FILE
-                                        params["user_id"] = "${USER_ID}" //TODO
-                                        params["fidhash"] = "${hash}"
-                                        params["pid"] = pid
-                                        params["size"] = size
-                                        OkGo.post<String>(URL_ADD_File).upJson(JSONObject(params))
-                                            .tag(tag)
-                                            .execute(object:StringCallback(){
-                                                override fun onSuccess(response: Response<String>?) {
-                                                    Toastinfo("${displayName} 上传完成")
-                                                }
-
-                                            })
-
-
-                                    }
-                                }
-                            }).start()
+//                            Thread(Runnable {
+//                                val ipfs = IPFS(CORE_CLIENT_ADDRESS)
+//                                val file = NamedStreamable.InputStreamWrapper(contentResolver.openInputStream(uri))
+//                                val addResult = ipfs.add(file)[0]
+//                                Log.e("ifileContents", "addResult=" + addResult)
+//
+//                                runOnUiThread() {
+//                                    addResult.apply {
+//                                        val params = HashMap<String, Any>()
+//                                        params["file_name"] = displayName + ""
+//                                        params["is_dir"] = IS_FILE
+//                                        params["user_id"] = "${USER_ID}" //TODO
+//                                        params["fidhash"] = "${hash}"
+//                                        params["pid"] = pid
+//                                        params["size"] = size
+//                                        OkGo.post<String>(URL_ADD_File).upJson(JSONObject(params))
+//                                            .tag(tag)
+//                                            .execute(object:StringCallback(){
+//                                                override fun onSuccess(response: Response<String>?) {
+//                                                    Toastinfo("${displayName} 上传完成")
+//                                                }
+//
+//                                            })
+//
+//
+//                                    }
+//                                }
+//                            }).start()
                         } else {
                             Log.e("ok","daemon服务未启动")
                             Toastinfo("coredaemon服务未启动")
                         }
 
 
+                    }else{
+                        Toastinfo("该文件已存在")
                     }
 
 

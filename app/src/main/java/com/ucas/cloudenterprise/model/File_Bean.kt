@@ -13,6 +13,7 @@ data class File_Bean(
     var user_id :String,
     var team_id :String,
     var fidhash :String,
+    var filehash :String,
     var pid :String,
     var compet_team :String,
     var compet_user :String,

@@ -16,10 +16,7 @@ import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.SelectTeamAdapter
-import com.ucas.cloudenterprise.app.COMP_ID
-import com.ucas.cloudenterprise.app.NET_GET
-import com.ucas.cloudenterprise.app.REQUEST_SUCCESS_CODE
-import com.ucas.cloudenterprise.app.URL_TEAM
+import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.Resource
 import com.ucas.cloudenterprise.model.Team
@@ -36,8 +33,10 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
         val ADD_TEAM=1
     }
 
+    val pid ="root"
     lateinit var  mAdapter: SelectTeamAdapter
     var mList = ArrayList<Team>()
+    lateinit var pid_stack : ArrayList<String>
     val TAG ="SelectMembersActivity"
     override fun GetContentViewId()= R.layout.activity_select_members
 
@@ -76,6 +75,8 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
     }
 
     override fun InitData() {
+        pid_stack = ArrayList()
+        pid_stack.add(pid)
         //<editor-fold desc="test">
         GetTeamMembers()
         //</editor-fold>
@@ -83,7 +84,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
     }
 
     private fun GetTeamMembers() {
-        NetRequest(URL_TEAM+"/$COMP_ID", NET_GET,null,this,this)
+        NetRequest(URL_GET_TEAM_LIST+"/$COMP_ID/team/${pid}", NET_GET,null,this,this)
 
     }
 
@@ -96,7 +97,6 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                 mList.clear()
                 mList.addAll( Gson().fromJson<List<Team>>(getJSONArray("data").toString(),object :TypeToken<List<Team>>(){}.type) )
                 mAdapter.notifyDataSetChanged()
-
 
             }else{
 

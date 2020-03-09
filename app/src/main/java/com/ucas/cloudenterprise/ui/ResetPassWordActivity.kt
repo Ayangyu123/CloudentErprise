@@ -57,22 +57,28 @@ class ResetPassWordActivity : BaseActivity(), BaseActivity.OnNetCallback {
     }
 
     fun resetpassword(view: View) {
+
+        if(TextUtils.isEmpty(editTextcurrpassword.text)){
+            Toastinfo("请输入当前密码")
+            return
+        }
+
         if(TextUtils.isEmpty(editTextnewpassword.text)){
-            Toastinfo("请输入密码")
+            Toastinfo("请输入新密码")
             return
         }
 
         if(TextUtils.isEmpty(et_confirm_password.text)){
-            Toastinfo("请确认密码")
+            Toastinfo("请输入新密码")
             return
         }
 
         if(!et_confirm_password.text.equals(editTextnewpassword.text)){
-            Toastinfo("两次密码不一致")
+            Toastinfo("两次新密码不一致")
             return
         }
 
-        NetRequest(URL_RESERT_PASSWORD, NET_POST,HashMap<String,Any>().apply {
+        NetRequest(URL_RESERT_PASSWORD, NET_POST,HashMap<String,Any>().apply {//TODO
             put("telephone","${editText_verification_code.text}")
             put("password","${et_confirm_password.text}")
         },this,this)

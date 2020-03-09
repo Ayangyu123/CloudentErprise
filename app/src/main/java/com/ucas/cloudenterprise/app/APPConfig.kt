@@ -52,7 +52,6 @@ var COMP: Company?=null  //企业ID
    val BOOTSTRAPS_ARRAY = arrayOf<String>(
        "/ip4/39.106.216.189/tcp/4001/ipfs/QmabYFoBnCwUYHCx5wU75wtQ57YxqNdHRbLwpX8rVA2Bzo",
       "/ip4/47.95.145.45/tcp/4001/ipfs/QmVU7hgAfBEk7Z9W2nxy6GqLVpX77fREZL2h1D3NZo5Zr1",
-
        "/ip4/47.95.145.45/tcp/14001/ipfs/QmRiBs6ah7wLLun1K7xixXdN9aNiWfhfJAaDGJ7vrhwYLn",
        "/ip4/47.95.145.45/tcp/14002/ipfs/QmRuZpejRyBo5CesX7LJKqyY6fEucEtGu4fzYDqCt6RwbW",
        "/ip4/47.95.145.45/tcp/14003/ipfs/QmTStppi6kEMk2jewvmTyXHawphgKyQooESXfFePGE8vTs",
@@ -94,6 +93,15 @@ var COMP: Company?=null  //企业ID
        com.ucas.cloudenterprise.R.drawable.user_guide_3
        ) //欢迎页面图片
    //</editor-fold>
+
+//<editor-fold desc=" WelcomActivity   ">
+val  PERMISSIONTOILLUSTRATE_GUIDES = arrayOf(
+    com.ucas.cloudenterprise.R.drawable.can_edit,
+    com.ucas.cloudenterprise.R.drawable.can_upload,
+    com.ucas.cloudenterprise.R.drawable.can_see
+) //欢迎页面图片
+//</editor-fold>
+
 //<editor-fold desc=" App主题色   ">
 val APP_COLOR ="#4F73DF"
 //</editor-fold>

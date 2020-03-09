@@ -13,7 +13,9 @@ import java.util.*
 operator fun File.get(path: String) = File(this, path)
 val Context.store get() = getExternalFilesDir(null)!![CORE_WORK_DIR]
 //val Context.cache get() = externalCacheDir(null)!![""]
+
 val Context.bin get() = filesDir[CORE_COMMAND_BIN]
+val Context.cacheDir get() = cacheDir
 val Context.pluginbin get() = filesDir["Plugin"]
 val Context.config get() = JsonParser().parse(FileReader(store[CORE_WORK_CONFIG])).asJsonObject
 

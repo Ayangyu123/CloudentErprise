@@ -388,7 +388,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                                                     Log.e("ok","DaemonService.daemon!!.isAlive=${DaemonService.daemon!!.isAlive}")
                                                     Log.e("ok","DaemonService.daemon!!.isAlive=${DaemonService.daemon!!.isAlive}")
 
-                                    if(DaemonService.daemon!=null && DaemonService.daemon!!.isAlive){
+                                    if(DaemonService.daemon!=null ){
                                         mainActivity.myBinder as DaemonService.MyBinder
                                         (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
                                     }else{
