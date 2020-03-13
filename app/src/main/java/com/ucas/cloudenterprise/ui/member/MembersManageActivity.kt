@@ -85,7 +85,7 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
         }
     }
     fun getMemberlist(){
-        NetRequest(URL_LIST_MEMBER +"company/$COMP_ID", NET_GET,null,this,this)
+        NetRequest(URL_LIST_MEMBER +"company/${COMP_ID}/status", NET_GET,null,this,this)
     }
 
     override fun InitData() {

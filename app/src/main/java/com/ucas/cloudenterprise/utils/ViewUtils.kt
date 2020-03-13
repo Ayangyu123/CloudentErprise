@@ -145,6 +145,18 @@ fun RightDrawable(RadioButton: TextView, ResourcesID: Int) {
     nav_up.setBounds(0, 0, nav_up.minimumWidth, nav_up.minimumHeight)
     RadioButton.setCompoundDrawables(null, null, nav_up, null)
 }
+fun LeftDrawable(RadioButton: TextView, ResourcesID: Int) {
+    //加下划线
+    val nav_up = MyApplication.context.resources.getDrawable(ResourcesID)
+    nav_up.setBounds(0, 0, nav_up.minimumWidth, nav_up.minimumHeight)
+    RadioButton.setCompoundDrawables(nav_up,null, null, null)
+}
+
+fun Drawablewhitenull(RadioButton: TextView) {
+    //加下划线
+
+    RadioButton.setCompoundDrawables(null, null, null, null)
+}
 
 
 

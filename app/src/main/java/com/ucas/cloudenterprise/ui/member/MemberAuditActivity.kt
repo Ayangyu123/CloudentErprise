@@ -89,7 +89,7 @@ class MemberAuditActivity : BaseActivity(), BaseActivity.OnNetCallback {
         }
 
     fun  getMemberAuditList(){
-        NetRequest("${URL_MEMBER_AUDIT_LIST}${COMP_ID}/status/${All_STATE}", NET_GET,null,this,this)
+        NetRequest("${URL_MEMBER_AUDIT_LIST}${COMP_ID}/status/${UNAUDIT_STATE}", NET_GET,null,this,this)
 
     }
 

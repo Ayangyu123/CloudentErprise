@@ -19,6 +19,8 @@ import com.ucas.cloudenterprise.app.REQUEST_SUCCESS_CODE
 import com.ucas.cloudenterprise.app.URL_ADD_MEMBER
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.BelongTeam
+import com.ucas.cloudenterprise.model.Juris
+import com.ucas.cloudenterprise.model.JurisItem
 import com.ucas.cloudenterprise.model.Team
 import com.ucas.cloudenterprise.ui.SelectMembersActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
@@ -66,18 +68,29 @@ class MemberAddActivity: BaseActivity(), BaseActivity.OnNetCallback {
      }
 
     override fun InitData() {
-        mTeamlist.add(BelongTeam("1579510310535725518-6950669919882193906","ming"))
-        mTeamsAdapter.notifyDataSetChanged()
+
       }
 
     fun AddTeams(view: View) {
-        startActivityForResult(intent<SelectMembersActivity>(),SelectMembersActivity.ADD_TEAM)
+        startActivityForResult(intent<SelectMembersActivity>().apply {
+            putExtra("fromtype",SelectMembersActivity.SELECT_TEAM)
+        },1)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode== Activity.RESULT_OK&&data!=null){
-            //TODO
+        if(resultCode== Activity.RESULT_OK&&data!=null){
+           var select_list= data.getSerializableExtra("select_list") as ArrayList<JurisItem>
+            var belongteam:BelongTeam
+            for (item in select_list){
+                belongteam = BelongTeam(item.juris_user_id,item.juris_user_name)
+                if(!mTeamlist.contains(belongteam)){
+                    mTeamlist.add(belongteam)
+                }
+
+            }
+            mTeamsAdapter.notifyDataSetChanged()
+
         }
     }
 

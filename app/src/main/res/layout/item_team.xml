@@ -14,7 +14,8 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:layout_gravity="center"
-        android:layout_margin="10dp"
+        android:drawablePadding="5dp"
+        android:layout_margin="5dp"
     tools:text="team"
     android:textColor="#588ECB"
     android:background="@drawable/bg_team"
@@ -23,7 +24,7 @@
     <ImageView
         android:id="@+id/iv_remove"
         android:layout_gravity="right"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
         android:src="@drawable/probationary_close_normal" />
 </FrameLayout>

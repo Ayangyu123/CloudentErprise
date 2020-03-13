@@ -25,7 +25,7 @@
             >
         <TextView
             android:id="@+id/tv_able_edit_count"
-            android:text="可编辑成员（共1人）"
+            android:text="可编辑成员"
             android:gravity="center_vertical"
             android:textSize="16dp"
             android:layout_width="0dp"
@@ -91,7 +91,7 @@
             >
             <TextView
                 android:id="@+id/tv_see_able_count"
-                android:text="可查看成员  （共1人）"
+                android:text="可查看成员  "
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:layout_width="0dp"
@@ -157,7 +157,7 @@
             >
             <TextView
                 android:id="@+id/tv_upload_able_count"
-                android:text="可上传成员  （共1人）"
+                android:text="可上传成员  "
                 android:gravity="center_vertical"
                 android:textSize="16dp"
                 android:layout_width="0dp"

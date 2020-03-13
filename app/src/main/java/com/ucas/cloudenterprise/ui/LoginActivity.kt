@@ -10,9 +10,11 @@ import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
+import com.ucas.cloudenterprise.utils.startService
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
@@ -38,7 +40,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         ACCESS_TOKEN = JSONObject(data).getString("access_token")
         REFRESH_TOKEN = JSONObject(data).getString("refresh_token")
         USER_ID = JSONObject(data).getString("user_id")
-
+        COMP_ID =USER_ID
 
         Log.e(TAG, "ACCESS_TOKEN=${ACCESS_TOKEN}")
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
@@ -60,6 +62,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     }
 
     override fun InitView() {
+        startService<DaemonService>()
         et_user_name.text = SetEt_Text("${user_name_param}")
         et_user_password.text = SetEt_Text("${password_param}")
     }

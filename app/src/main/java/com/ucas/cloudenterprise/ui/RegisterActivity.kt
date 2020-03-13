@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.app.Activity
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat.startActivity
@@ -16,8 +17,10 @@ import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.Company
 import com.ucas.cloudenterprise.model.Resource
 import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.VerifyUtils
 import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 import kotlin.collections.HashMap
 
@@ -31,7 +34,13 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
     override fun GetContentViewId()=R.layout.activity_register
 
-    override fun InitView() {}
+    override fun InitView() {
+        iv_back.setOnClickListener {
+            finish()
+        }
+        tv_title.text ="企业注册"
+        tv_edit.visibility = View.GONE
+    }
 
     override fun InitData() {}
 
@@ -43,6 +52,26 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
         Log.e(TAG,"comp_con_email=${et_comp_con_email.text}")
         Log.e(TAG,"comp_con_tel=${et_comp_con_tel.text}")
         Log.e(TAG,"vip_type=${vip_type}")
+        if(TextUtils.isEmpty(et_comp_name.text.toString())){
+            Toastinfo("请输入公司名称")
+            return
+        }
+
+        if(TextUtils.isEmpty(et_comp_con_tel.text.toString())){
+            Toastinfo("请输入公司联系手机号码")
+            return
+        }
+        if(!VerifyUtils.VerifyPhone(et_comp_con_tel.text.toString())){
+            Toastinfo("请输入正确的手机号码")
+            return
+        }
+
+        if(TextUtils.isEmpty(et_user_password.text.toString())){
+            Toastinfo("请输入公司密码")
+            return
+        }
+
+
         val params = HashMap<String,Any>()
         params["comp_name"] = "${et_comp_name.text}"
         params["comp_con_email"] = "${et_comp_con_email.text}"
@@ -72,9 +101,9 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
             }
 
-        tv_result.text = data
-        AddToken("Token_test")
-        startActivity<MainActivity>()
+//        tv_result.text = data
+//        AddToken("Token_test")
+//        startActivity<MainActivity>()
 
 
     }

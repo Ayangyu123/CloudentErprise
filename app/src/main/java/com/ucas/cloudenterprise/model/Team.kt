@@ -14,5 +14,8 @@ import java.io.Serializable
  var status :Int,
  var created_at:String,
  var updated_at:String,
- var company_id:String
+ var company_id:String,
+  var is_team:Boolean,
+ var people_count:Int,
+ var select_status:Boolean= false
 ):Serializable

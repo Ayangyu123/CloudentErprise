@@ -5,7 +5,7 @@ import java.io.Serializable
 /*
 上传完成
 * */
-class UpLoadCompletedFile(
+class CompletedFile(
     var file_name:String,
     var up_time:String,
     var file_size:String,

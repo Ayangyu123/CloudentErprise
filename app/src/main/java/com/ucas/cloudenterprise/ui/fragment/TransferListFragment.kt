@@ -25,6 +25,9 @@ class TransferListFragment: BaseFragment() {
         iv_back.visibility = View.GONE
         tv_title.text = "传输列表"
 
+        fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.DOWNLOAD))
+        fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.UPLOAD))
+
         viewpager_content.apply {
             adapter = object : FragmentPagerAdapter(activity!!.supportFragmentManager){
             override fun getItem(position: Int): Fragment {
@@ -50,15 +53,14 @@ class TransferListFragment: BaseFragment() {
                         0->{ //下载
 
                             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
-                            tv_myfiles.setTextColor( Color.parseColor("#4F73DF"))
-                            tv_othercommom.setTextColor( Color.parseColor("#AAAFC0"))
+//                            tv_download.setTextColor( Color.parseColor("#4F73DF"))
+//                            tv_upload.setTextColor( Color.parseColor("#AAAFC0"))
 
                         }
                         1->{ //上传
                             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
-                            iv_create_dir.isEnabled =false
-                            tv_othercommom.setTextColor( Color.parseColor("#4F73DF"))
-                            tv_myfiles.setTextColor( Color.parseColor("#AAAFC0"))
+//                            tv_upload.setTextColor( Color.parseColor("#4F73DF"))
+//                            tv_download.setTextColor( Color.parseColor("#AAAFC0"))
                             }
 
                     }

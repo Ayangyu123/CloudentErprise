@@ -18,9 +18,9 @@ data class File_Bean(
     var compet_team :String,
     var compet_user :String,
     var status :Int,
-    var share :Int,
-    var pshare :Int,
-    var store :Int,
+    var share :Int, //链接分享
+    var pshare :Int,//共享
+    var store :Int, //收藏
     var size :Long,
     var created_at :String,
     var updated_at :String,

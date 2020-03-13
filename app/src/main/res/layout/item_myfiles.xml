@@ -13,7 +13,7 @@
         android:layout_height="33dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="14dp"
-        android:src="@drawable/icon_list_folder" />
+        android:src="@drawable/icon_list_unknown" />
 
     <TextView
         android:id="@+id/tv_file_name"

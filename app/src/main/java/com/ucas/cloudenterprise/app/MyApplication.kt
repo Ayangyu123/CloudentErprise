@@ -1,19 +1,16 @@
 package com.ucas.cloudenterprise.app
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.preference.PreferenceManager
-import android.text.style.UpdateAppearance
+import android.content.SharedPreferences
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.lzy.okgo.OkGo
 import com.ucas.cloudenterprise.core.DaemonService
-import com.ucas.cloudenterprise.model.DownLoadCompletedFile
-import com.ucas.cloudenterprise.model.DownLoadIngFile
-import com.ucas.cloudenterprise.model.UpLoadCompletedFile
-import com.ucas.cloudenterprise.model.UpLoadIngFile
-import com.ucas.cloudenterprise.utils.startService
+import com.ucas.cloudenterprise.model.CompletedFile
+import com.ucas.cloudenterprise.model.LoadingFile
 import me.jessyan.autosize.AutoSize
 import me.jessyan.autosize.AutoSizeConfig
 import me.jessyan.autosize.external.ExternalAdaptManager
@@ -33,10 +30,22 @@ class MyApplication:Application() {
     companion object {
 //        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        lateinit var downLoad_Ing:ArrayList<DownLoadIngFile>
-        lateinit var downLoad_completed:ArrayList<DownLoadCompletedFile>
-        lateinit var upLoad_Ing:ArrayList<UpLoadIngFile>
-        lateinit var upLoad_completed:ArrayList<UpLoadCompletedFile>
+        lateinit var downLoad_Ing:ArrayList<LoadingFile>
+        lateinit var downLoad_completed:ArrayList<CompletedFile>
+        lateinit var upLoad_Ing:ArrayList<LoadingFile>
+        lateinit var upLoad_completed:ArrayList<CompletedFile>
+        private var instance: MyApplication? = null
+
+        fun getInstance(): MyApplication {
+            if (instance == null) {
+                synchronized(MyApplication::class.java) {
+                    if (instance == null) {
+                        instance = MyApplication()
+                    }
+                }
+            }
+            return instance!!
+        }
     }
     override fun onCreate() {
         super.onCreate()
@@ -52,6 +61,12 @@ class MyApplication:Application() {
             IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
 
 
+            downLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("downLoad_Ing",Gson().toJson(downLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
+            downLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("downLoad_completed",Gson().toJson(downLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
+            upLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("upLoad_Ing",Gson().toJson(upLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
+            upLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("upLoad_completed",Gson().toJson(upLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
+
+
 
         }
         AutoSizeConfig()
@@ -62,6 +77,10 @@ class MyApplication:Application() {
     private fun initOKGO() {
         OkGo.getInstance().init(this);
     }
+
+     fun GetSP(): SharedPreferences {
+         return   context.getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE)
+     }
 
     private fun AutoSizeConfig() {
         /**

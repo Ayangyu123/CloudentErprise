@@ -26,7 +26,7 @@ class MemberInfoActivity : BaseActivity() {
             tv_acc_name.text =acc_name+""
             tv_cap.text =capacity.toString()+""
             tv_phone.text = telphone+""
-            tv_email.text =email+""
+            tv_email.text =if(email==null) "" else email
             var tv_temname: View
             belong_team?.apply {
                 if(belong_team.isEmpty()){
@@ -40,7 +40,11 @@ class MemberInfoActivity : BaseActivity() {
                 }else{
                     for(item:BelongTeam in belong_team){
                         tv_temname= LayoutInflater.from(this@MemberInfoActivity).inflate(R.layout.item_team,null)
-                        tv_temname.tv_team_name.text= item.team_name
+                        tv_temname.apply {
+                            tv_team_name.text= item.team_name
+                            iv_remove.visibility =View.GONE
+                        }
+
                         ll_teams.addView(tv_temname)
                     }
                 }

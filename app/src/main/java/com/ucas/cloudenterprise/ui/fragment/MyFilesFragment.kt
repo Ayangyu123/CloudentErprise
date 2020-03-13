@@ -384,9 +384,6 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 //                        action ="downFiles"
 //                        putExtra("file",item)
 //                    })
-                                                    Log.e("ok","DaemonService.daemon=${DaemonService.daemon}")
-                                                    Log.e("ok","DaemonService.daemon!!.isAlive=${DaemonService.daemon!!.isAlive}")
-                                                    Log.e("ok","DaemonService.daemon!!.isAlive=${DaemonService.daemon!!.isAlive}")
 
                                     if(DaemonService.daemon!=null ){
                                         mainActivity.myBinder as DaemonService.MyBinder

@@ -68,12 +68,13 @@
             android:drawableLeft="@drawable/member_admin_icon"
             style="@style/personal_center_settings_textview" />
     <include layout="@layout/common_line"/>
+
     <TextView
         android:id="@+id/tv_reset_password"
+        style="@style/personal_center_settings_textview"
         android:layout_marginTop="10dp"
-        android:text="重置密码"
         android:drawableLeft="@drawable/member_admin_icon"
-        style="@style/personal_center_settings_textview" />
+        android:text="个人信息修改" />
     <include layout="@layout/common_line"/>
     <TextView
         android:id="@+id/tv_message_notification"

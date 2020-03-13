@@ -103,8 +103,6 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
         item.belong_team?.apply {
             var tv_temname :View
             if(this.isEmpty()){
-
-
                 tv_temname= LayoutInflater.from(this@MemberInfoEditActivity).inflate(R.layout.item_team,null)
                 tv_temname.tv_team_name.text="无"
                 ll_teams.addView(tv_temname)

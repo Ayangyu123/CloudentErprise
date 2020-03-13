@@ -64,7 +64,7 @@ class MemberAuditInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
     fun UpdateMemberAuditInfo(passresult:Boolean){
         NetRequest(URL_MEMBER_AUDIT_UPDATE_INFO, NET_PUT,HashMap<String,Any>().apply {
             put("member_id","${item.member_id}")
-            put("status","${ if(passresult) PASS_STATE else NOT_PASS_STATE}")
+            put("status", if(passresult) PASS_STATE else NOT_PASS_STATE)
         },this,this)
     }
 
@@ -77,7 +77,7 @@ class MemberAuditInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
     ) {
         JSONObject(data)?.apply {
             if (getInt("code")== REQUEST_SUCCESS_CODE){
-                Toastinfo("")//TODO
+                Toastinfo("审核完成")//TODO
                 setResult(Activity.RESULT_OK)
                 finish()
             }

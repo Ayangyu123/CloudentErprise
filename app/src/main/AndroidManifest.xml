@@ -39,6 +39,7 @@
         <!--  第一个启动的   activity （页面）   -->
 
         <activity android:name=".ui.LoginActivity">
+<!--        <activity android:name=".ui.MainActivity">-->
 <!--        <activity android:name=".ui.TeamAcitvity">-->
 <!--        <activity android:name=".ui.ChooseDestDirActivity">-->
 <!--        <activity android:name=".ui.message.MessageNotificationActivity">-->
@@ -52,7 +53,7 @@
         <activity android:name=".ui.MainActivity" android:launchMode="singleTop"/>
 
         <!--    注册页面     -->
-<!--        <activity android:name=".ui.SplashActivity" android:launchMode="singleTop"/>-->
+        <activity android:name=".ui.SplashActivity" android:launchMode="singleTop"/>
 
         <!-- 欢迎   页面-->
         <activity android:name=".ui.WelcomeActivity"/>

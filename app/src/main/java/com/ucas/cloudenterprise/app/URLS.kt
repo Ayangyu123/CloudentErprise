@@ -78,7 +78,7 @@ val URL_LIST_MEMBER = "${BASE_URL}member_list/" //添加成员
 val URL_SEARCH_MEMBER = "${BASE_URL}member_search/" //成员搜索
 
 val URL_MEMBER_AUDIT_LIST = "${BASE_URL}member_audit/company/"// :pid/status/:sts/" //get 成员审核列表  put 修改邀请信息
-val URL_MEMBER_AUDIT_UPDATE_INFO = "${BASE_URL}member_audit/company/"// :pid/status/:sts/" //成员审核列表
+val URL_MEMBER_AUDIT_UPDATE_INFO = "${BASE_URL}member_audit/company"    // :pid/status/:sts/" //成员审核列表
 
 val URL_ADD_File = "${BASE_URL}file_add" //添加文件
 val URL_ADD_File_CHECK = "${BASE_URL}file_check_hash/" //添加文件 检查
@@ -97,6 +97,7 @@ val URL_GET_COMPANY_INFO="${BASE_URL}company/"
 val URL_POST_FILE_JURIS="${BASE_URL}file_juris" //文件收藏 共享接口
 val URL_GET_FILE_JURIS="${BASE_URL}get_file_juris" //获取文件收藏
 val URL_PUT_FILE_JURIS="${BASE_URL}del_file_juris" //取消文件收藏
+val URL_SET_FILE_JURIS="${BASE_URL}set_file_juris" //取消文件收藏
 
 
 

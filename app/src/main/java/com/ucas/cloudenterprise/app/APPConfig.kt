@@ -127,6 +127,7 @@ fun AddToken( token:String){
 //val user_name_param="221669671319900160"
 //val user_name_param="18152173267"
 val user_name_param="13716496502"
+//val user_name_param="test"
 //val password_param= "rdXRcM"
 val password_param= "test"
 //</editor-fold>
