@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.member.MemberAuditInfoActivity"
+    android:orientation="vertical"
+    android:background="@color/root_linealayout_bg_color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/common_head"/>
+
+        <FrameLayout
+            android:id="@+id/fl_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:background="@android:color/white"
+            >
+        <TextView
+            android:id="@+id/tv_state"
+            android:layout_width="wrap_content"
+            android:drawablePadding="10dp"
+            android:layout_height="wrap_content"
+            tools:text="状态"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:drawableLeft="@drawable/invite_success_icon"
+            android:visibility="visible"
+           />
+        </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="成员名称"
+            />
+        <TextView
+            android:id="@+id/tv_acc_name"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="成员名称"
+            />
+
+
+    </LinearLayout>
+    <include layout="@layout/common_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="申请时间"
+            />
+        <TextView
+            android:id="@+id/tv_reason_time"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="成员名称"
+            />
+
+
+    </LinearLayout>
+    <include layout="@layout/common_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="手机号"
+            />
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="成员名称"
+            />
+
+
+    </LinearLayout>
+    <include layout="@layout/common_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="邮箱"
+            />
+        <TextView
+            android:id="@+id/tv_email"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="成员名称"
+            />
+
+
+    </LinearLayout>
+    <include layout="@layout/common_line"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:layout_marginTop="20dp"
+        android:padding="10dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="申请理由"
+            />
+        <TextView
+            android:id="@+id/tv_remark"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="成员名称"
+            />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_update_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:visibility="gone"
+        android:orientation="vertical"
+
+        >
+        <TextView
+            android:id="@+id/tv_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="通过"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@color/app_color"
+
+            />
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/tv_not_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:background="@color/app_color"
+            android:text="拒绝"
+            />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
