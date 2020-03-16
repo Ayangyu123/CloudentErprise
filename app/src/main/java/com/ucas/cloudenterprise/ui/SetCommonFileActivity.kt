@@ -132,7 +132,7 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
         tv_add_can_edit.setOnClickListener {
             startActivityForResult(Intent(this@SetCommonFileActivity,SelectMembersActivity::class.java).apply {
-                putExtra("fromtype",SelectMembersActivity.SELECT_TEAM_AND_MEMBER)
+                putExtra("formtype",SelectMembersActivity.SELECT_TEAM_AND_MEMBER)
             }, ADD_CAN_EDIT)
         }
         tv_add_can_upload.setOnClickListener {
@@ -162,15 +162,7 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
             when(fileitem.pshare){
                 //<editor-fold desc="收藏过">
                 -1->{
-                    ll_can_edit.visibility = View.VISIBLE
-
-                    ll_can_upload.visibility = View.VISIBLE
-//                       t.text =""
-                    ll_can_see.visibility = View.VISIBLE
-//                    ll_can_stv_cancel_commom.visibility = View.VISIBLE
-                       tv_able_edit_count.text =""
-
-                  getFilejuris()
+                    getFilejuris()
                 }
                 //<editor-fold desc="">
 
@@ -188,7 +180,7 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
     }
 
     private fun getFilejuris() {
-        NetRequest("${URL_GET_FILE_JURIS}/file_id/${fileitem.file_id}", NET_GET,null,this,object:BaseActivity.OnNetCallback{
+        NetRequest("${URL_GET_FILE_JURIS}/${fileitem.file_id}", NET_GET,null,this,object:BaseActivity.OnNetCallback{
             override fun OnNetPostSucces(
                 request: Request<String, out Request<Any, Request<*, *>>>?,
                 data: String
@@ -206,7 +198,6 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
                                 if(mCanEditList.isEmpty()){
                                     ll_can_edit.visibility = View.GONE
                                     tv_add_can_edit.visibility = View.VISIBLE
-                                    tv_able_edit_count.text ="可编辑成员（共0人）"
                                 }else{
                                     ll_can_edit.visibility = View.VISIBLE
                                     mCanEditAdApter.notifyDataSetChanged()

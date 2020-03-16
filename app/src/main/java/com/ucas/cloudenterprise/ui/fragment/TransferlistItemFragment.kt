@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.content.Context
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_transfer_list_item.*
 @author simpler
 @create 2020年02月29日  13:30
  */
-class TransferlistItemFragment(var type:Int) :BaseFragment(){
+class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
     companion object{
         val DOWNLOAD =0
         val UPLOAD =1
@@ -96,25 +97,45 @@ class TransferlistItemFragment(var type:Int) :BaseFragment(){
     private fun showDelBootomDialog(type:Int,position:Int,status:Int) {
         val topdrawable = mContext!!.resources.getDrawable( R.drawable.operate_delete_normal)
         topdrawable.setBounds(0, 0, topdrawable.minimumWidth, topdrawable.minimumHeight)
-        BottomSheetDialog(context!!).apply {
-           setContentView(LayoutInflater.from(activity).inflate(R.layout.item_bottom_myfiles, null).apply {
+        BottomSheetDialog(mContext!!).apply {
+           setContentView(LayoutInflater.from(mContext).inflate(R.layout.item_bottom_myfiles, null).apply {
                (this as TextView).apply {
                    text="删除"
                   setCompoundDrawablesWithIntrinsicBounds(null,topdrawable,null,null)
                    setOnClickListener {
                         when(type){
-                            DOWNLOAD->{}
+                            DOWNLOAD->{
+                                when(status){
+                                    ING ->{
+
+                                        MyApplication.downLoad_Ing.apply {
+                                            remove(this[position])
+                                        }
+                                        mIngAdapter.notifyDataSetChanged()
+                                    }
+                                    COMPLETED->{
+                                        MyApplication.upLoad_completed.apply {
+                                            remove(this[position])
+                                        }
+                                        mCompletedAdapter.notifyDataSetChanged()
+                                    }
+
+                                }
+                            }
                             UPLOAD->{
                                 when(status){
                                     ING ->{
 
-
-                                    }
-                                    COMPLETED->{
                                         MyApplication.upLoad_Ing.apply {
                                             remove(this[position])
-                                            mCompletedAdapter.notifyDataSetChanged()
                                         }
+                                        mIngAdapter.notifyDataSetChanged()
+                                    }
+                                    COMPLETED->{
+                                        MyApplication.upLoad_completed.apply {
+                                            remove(this[position])
+                                        }
+                                        mCompletedAdapter.notifyDataSetChanged()
                                     }
 
                                 }
@@ -125,7 +146,7 @@ class TransferlistItemFragment(var type:Int) :BaseFragment(){
                    }
                }
            })
-        }
+        }.show()
     }
 
     override fun initData(){

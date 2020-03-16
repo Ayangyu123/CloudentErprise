@@ -3,17 +3,13 @@ package com.ucas.cloudenterprise.ui.fragment
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.pm.PackageInfoCompat
 import com.lzy.okgo.request.base.Request
+import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
-import com.ucas.cloudenterprise.ui.AboutActivity
-import com.ucas.cloudenterprise.ui.LoginActivity
-import com.ucas.cloudenterprise.ui.ResetPassWordActivity
-import com.ucas.cloudenterprise.ui.SettingsActivity
-import com.ucas.cloudenterprise.ui.helpandfeedback.FeedbackInfoActivity
+import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.ui.helpandfeedback.HelpAndFeedbackActivity
 import com.ucas.cloudenterprise.ui.member.MembersManageActivity
 import com.ucas.cloudenterprise.ui.message.MessageNotificationActivity
@@ -33,8 +29,13 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
         tv_member_manager.setOnClickListener {
             mContext?.startActivity<MembersManageActivity>() }
 
+            if(IS_ROOT){
+                tv_member_manager.visibility =View.VISIBLE
+            }else {
+                tv_member_manager.visibility =View.GONE
+            }
         tv_reset_password.setOnClickListener {
-            mContext?.startActivity<ResetPassWordActivity>()
+            mContext?.startActivity<EditPersonalInfoActivity>()
         }
 
         tv_message_notification.setOnClickListener {
@@ -48,7 +49,7 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
 
 
         fl_check_new_version.setOnClickListener {
-        //TODO
+            (activity as MainActivity).CheckNewVersion()
             }
         tv_to_logout.setOnClickListener {
         //TODO
@@ -56,9 +57,8 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
             activity?.finish()
             }
 
-        var  pm: PackageManager = mContext?.getPackageManager()!!
-        var packageinfo =pm.getPackageInfo(mContext?.packageName,0)
-        tv_version.text = "V ${packageinfo.versionName}"
+
+        tv_version.text = "V ${BuildConfig.VERSION_NAME}"
 
 
     }

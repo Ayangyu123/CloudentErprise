@@ -25,11 +25,12 @@ class TransferListFragment: BaseFragment() {
         iv_back.visibility = View.GONE
         tv_title.text = "传输列表"
 
-        fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.DOWNLOAD))
-        fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.UPLOAD))
+        fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.DOWNLOAD,mContext!!))
+        fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.UPLOAD,mContext!!))
 
         viewpager_content.apply {
             adapter = object : FragmentPagerAdapter(activity!!.supportFragmentManager){
+//            adapter = object : FragmentPagerAdapter(activity!!.){
             override fun getItem(position: Int): Fragment {
                  return  fragmentlist[position]
             }

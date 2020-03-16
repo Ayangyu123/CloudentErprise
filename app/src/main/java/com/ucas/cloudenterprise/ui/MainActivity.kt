@@ -2,29 +2,19 @@ package com.ucas.cloudenterprise.ui
 
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
-import android.provider.OpenableColumns
-import android.util.Log
-import android.view.View
-import com.ucas.cloudenterprise.app.FILE_CHOOSER_RESULT_CODE
-import com.ucas.cloudenterprise.core.DaemonService
-import com.ucas.cloudenterprise.utils.FileCP
-import com.ucas.cloudenterprise.utils.get
-import com.ucas.cloudenterprise.utils.store
-import io.ipfs.api.IPFS
-import io.ipfs.api.NamedStreamable
-import io.ipfs.multiaddr.MultiAddress
-import io.ipfs.multihash.Multihash
-import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
 import android.content.pm.PackageManager
+import android.util.Log
 import android.view.KeyEvent
+import android.view.View
 import android.widget.RadioGroup
+import com.king.app.dialog.AppDialog
+import com.king.app.dialog.AppDialogConfig
+import com.king.app.updater.AppUpdater
+import com.lzy.okgo.request.base.Request
+import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
-import com.ucas.cloudenterprise.app.CORE_CLIENT_ADDRESS
-import com.ucas.cloudenterprise.app.ROOT_DIR_PATH
-import com.ucas.cloudenterprise.app.TEST_DOWN_FiLE_HASH
+import com.ucas.cloudenterprise.app.NET_GET
+import com.ucas.cloudenterprise.app.URLS_GET_VERSION_CHECK
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
@@ -32,7 +22,9 @@ import com.ucas.cloudenterprise.ui.fragment.OthersShareFragment
 import com.ucas.cloudenterprise.ui.fragment.PersonalCenterFragment
 import com.ucas.cloudenterprise.ui.fragment.TransferListFragment
 import com.ucas.cloudenterprise.utils.Toastinfo
-import me.rosuh.filepicker.config.FilePickerManager
+import com.ucas.cloudenterprise.utils.VerifyUtils
+import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
 
 
 class MainActivity : BaseActivity() {
@@ -105,7 +97,44 @@ class MainActivity : BaseActivity() {
 
     }
 
-    override fun InitData(){}
+    override fun InitData(){
+
+       CheckNewVersion()
+    }
+
+     fun CheckNewVersion() {
+        NetRequest("${URLS_GET_VERSION_CHECK}${BuildConfig.VERSION_CODE}", NET_GET,null,this,object:BaseActivity.OnNetCallback{
+            override fun OnNetPostSucces(
+                request: Request<String, out Request<Any, Request<*, *>>>?,
+                data: String
+            ) {
+                if(VerifyUtils.VerifyRequestData(data)){
+                    JSONObject(data).getJSONObject("data").apply {
+                       if (getBoolean("is_new")){
+                           //需要更新 TODO
+//一句代码，傻瓜式更新
+//                                            new AppUpdater(getContext(),url).start();
+//简单弹框升级
+                           val config = AppDialogConfig()
+                           config.setTitle("发现新版本")
+                               .setOk("升级")
+                               .setContent(getString("description") + "").onClickOk =
+                               View.OnClickListener {
+                                   AppUpdater.Builder()
+                                       .serUrl(getString("url"))
+                                       .setFilename("tuxingyun.apk")
+                                       .build(this@MainActivity)
+                                       .start()
+                                   AppDialog.INSTANCE.dismissDialog()
+                               }
+                           AppDialog.INSTANCE.showDialog(this@MainActivity, config)
+                       }
+                    }
+                }
+            }
+
+        } )
+    }
 
 
     fun checkPermission(): Boolean? {
@@ -138,6 +167,7 @@ class MainActivity : BaseActivity() {
         when(mLastFgIndex){
            0->{//我的文件
                if(!mMyFilesFragment.pid.equals("root")){
+                   mMyFilesFragment.pid_stack.remove(mMyFilesFragment.pid_stack[0])
                    mMyFilesFragment.pid=mMyFilesFragment.pid_stack[0]
                    mMyFilesFragment.GetFileList()
                    return  false

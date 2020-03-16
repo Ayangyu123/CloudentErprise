@@ -27,7 +27,8 @@ import com.ucas.cloudenterprise.utils.Toastinfo
 class BottomFilesOperateAdapter(
     val context: Context?,
     val item: File_Bean,
-    val isfile: Boolean
+    val isfile: Boolean,
+    val Permisssion:Int =3
 ) :RecyclerView.Adapter<BottomFilesOperateAdapter.ViewHolder>(){
     val TAG ="BottomFilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
@@ -59,6 +60,27 @@ class BottomFilesOperateAdapter(
             InfoList.removeAt(1)
             DrawableList.removeAt(1)
         }
+        when(Permisssion){
+            1->{
+                InfoList.remove("移动到")
+                InfoList.remove("重命名")
+                InfoList.remove("删除")
+                DrawableList.remove( R.drawable.operate_move_to_normal)
+                DrawableList.remove(R.drawable.operate_rename_normal)
+                DrawableList.remove(R.drawable.operate_delete_normal)
+
+            }
+            2->{
+                InfoList.remove("移动到")
+                InfoList.remove("重命名")
+                DrawableList.remove( R.drawable.operate_move_to_normal)
+                DrawableList.remove(R.drawable.operate_rename_normal)
+                    //TODO
+//                InfoList.remove("删除")
+//                DrawableList.remove(R.drawable.operate_delete_normal)
+            }
+        }
+
     }
 
     fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){

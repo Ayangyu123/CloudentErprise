@@ -2,12 +2,12 @@ package com.ucas.cloudenterprise.ui.fragment
 
 import android.app.Dialog
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,17 +22,16 @@ import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.adapter.FilesAdapter
 import com.ucas.cloudenterprise.app.*
-import com.ucas.cloudenterprise.app.MyApplication.Companion.context
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.File_Bean
-import com.ucas.cloudenterprise.ui.FileInfoActivity
-import com.ucas.cloudenterprise.ui.MainActivity
-import com.ucas.cloudenterprise.ui.SearchFileActivity
+import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.utils.GetFileDeleteTipsDialog
+import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
 import kotlinx.android.synthetic.main.common_head.*
+import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
 import kotlinx.android.synthetic.main.others_share_fragment.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import org.json.JSONObject
@@ -47,7 +46,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         data: String
     ) {
         when(request?.url){
-            URL_LIST_FILES +"$USER_ID/status/$IS_COMMON_DIR/p/${pid}/dir/$ALL_FILE"->{
+            URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE"->{
                 when(request.method.name){
                     HttpMethod.GET.name->{
                         //获取我的文件列表
@@ -82,7 +81,11 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
     var SortPOPwiond: PopupWindow?=null
     var FileDeleteTipsDialog: Dialog?=null
     var BottomFilesOperateDialog: BottomSheetDialog? =null
+    var ReanmeDialog:Dialog ?=null
     var pid ="root"
+    var Is_Checked_Sum =0
+    lateinit var pid_stack : ArrayList<String>
+    lateinit var pid_name_maps : HashMap<String,String>
 
     override fun initView() {
         tv_title.text ="他人共享"
@@ -125,6 +128,19 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                         }else{
                             iv_right_icon.visibility =View.VISIBLE
                             checkbox_is_checked.visibility = View.GONE
+
+                            rl_file_item_root.setOnClickListener {
+                                //如果不是文件，是文件夹 点击获取改文件夹下的内容 pid = 该文件id
+                                if(!isfile){
+                                    iv_back.visibility = View.VISIBLE
+                                    tv_title.text = item.file_name
+                                    pid_stack.add(0,item.file_id)
+                                    pid_name_maps.put( item.file_id, item.file_name)
+                                    pid = item.file_id
+                                    GetFileList()
+                                }
+                            }
+
                             iv_right_icon.setOnClickListener{
                                 ShowBottomFilesOperateDialog(item,isfile)
                             }
@@ -136,26 +152,27 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                         if(!isfile){
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
                         }else{
-                            var filetype = item.file_name.substringAfterLast(".")
-                            Log.e(TAG,"filetype is ${filetype}")
-                            if(filetype.equals("text")||filetype.equals("txt")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_txtfile)
-                            }
-                            if(filetype.equals("doc")||filetype.equals("docx")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_doc)
-                            }
-                            if(filetype.equals("pdf")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_pdf)
-                            }
-                            if(filetype.equals("exe")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_exe)
-                            }
-                            if(filetype.equals("apk")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_apk)
-                            }
-                            if(filetype in arrayOf("jpg","png","jpge","psd","svg")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_image)
-                            }
+                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
+//                            var filetype = item.file_name.substringAfterLast(".")
+//                            Log.e(TAG,"filetype is ${filetype}")
+//                            if(filetype.equals("text")||filetype.equals("txt")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_txtfile)
+//                            }
+//                            if(filetype.equals("doc")||filetype.equals("docx")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_doc)
+//                            }
+//                            if(filetype.equals("pdf")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_pdf)
+//                            }
+//                            if(filetype.equals("exe")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_exe)
+//                            }
+//                            if(filetype.equals("apk")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_apk)
+//                            }
+//                            if(filetype in arrayOf("jpg","png","jpge","psd","svg")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_image)
+//                            }
                         }
                     }
 
@@ -168,6 +185,36 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         //</editor-fold >
         //TODO 多选不显示
         tv_edit.visibility =View.INVISIBLE
+
+
+        //<editor-fold  desc ="返回按钮 设置" >
+        iv_back.setOnClickListener {
+
+            if( tv_edit.text.equals("编辑")&&  pid_name_maps.containsValue(tv_title.text.toString())&&pid_stack.size>1){ //选择文件夹显示返回
+
+                pid_name_maps.remove(pid_stack[0])
+                pid_stack.remove(pid_stack[0])
+                pid = pid_stack[0]
+                tv_title.text =pid_name_maps[pid_stack[0]]
+                if(pid.equals("root")){
+                    iv_back.visibility =View.INVISIBLE
+                }
+                GetFileList()
+
+            }else{ //多选操作显示
+                tv_title.text =  pid_name_maps[pid_stack[0]]//"我的文件"
+                tv_edit.text ="编辑"
+                iv_back.visibility =View.INVISIBLE
+                fileslist.forEach {
+                    it.is_show_checked_view =false
+                    it.is_checked =false
+                }
+                Is_Checked_Sum =0
+                adapter.notifyDataSetChanged()
+            }
+
+        }
+        //</editor-fold >
 
     }
 
@@ -197,21 +244,19 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                     var tv_text =holder.itemView as TextView
                     tv_text.text=iteminfo
                     tv_text.setCompoundDrawablesWithIntrinsicBounds(null,topdrawable,null,null)
-
                     tv_text.setOnClickListener{
                         var tv=it as TextView
                         when(tv.text.toString()){
                             "设置共享"->{ Toastinfo("设置共享")
                                 //TODO 文件夹分享页面
-                                mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+                                mContext?.startActivity(Intent(context, SetCommonFileActivity::class.java).apply {
                                     putExtra("file",item)
                                 })
 
                             }
-                            "链接分享"->{
-                                Toastinfo("链接分享")
+                            "链接分享"->{Toastinfo("链接分享")
                                 //TODO 跳转链接分享页面
-                                mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+                                mContext?.startActivity(Intent(context, LinkSharedActivity::class.java).apply {
                                     putExtra("file",item)
                                 })
                             }
@@ -231,25 +276,34 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 //                        putExtra("file",item)
 //                    })
 
-                                mainActivity.myBinder as DaemonService.MyBinder
-                                (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
+                                if(DaemonService.daemon!=null ){
+                                    mainActivity.myBinder as DaemonService.MyBinder
+                                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
+                                }else{
+                                    Toastinfo("未启动服务")
+                                }
+
 
                             }
-                            "复制到"->{
-                                Toastinfo("复制到")
+                            "复制到"->{Toastinfo("复制到")
+                                startActivityForResult(Intent(context, ChooseDestDirActivity::class.java).apply {
+                                    putExtra("file",item)
+                                    putExtra("type", ChooseDestDirActivity.COPY)
+                                }, ChooseDestDirActivity.COPY)}
+                            "移动到"->{Toastinfo("移动到")
+                                startActivityForResult(Intent(context, ChooseDestDirActivity::class.java).apply {
+                                    putExtra("file",item)
+                                    putExtra("type", ChooseDestDirActivity.MOVE)
+                                }, ChooseDestDirActivity.MOVE)
                             }
-                            "移动到"->{
-                                Toastinfo("移动到")
-                            }
-                            "重命名"->{
-                                Toastinfo("重命名")
+                            "重命名"->{Toastinfo("重命名")
+                                ShowRenameDialog(item)
                             }
                             "删除"->{
                                 Toastinfo("删除")
                                 ShowFileDeleteTipsDialog(item.file_id)
                             }
-                            "详细信息"->{
-                                Toastinfo("详细信息")
+                            "详细信息"->{Toastinfo("详细信息")
                                 mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
                                     putExtra("file",item)
                                 })
@@ -257,6 +311,65 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                         }
                         BottomFilesOperateDialog?.dismiss()
                     }
+//                    tv_text.setOnClickListener{
+//                        var tv=it as TextView
+//                        when(tv.text.toString()){
+//                            "设置共享"->{ Toastinfo("设置共享")
+//                                //TODO 文件夹分享页面
+//                                mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+//                                    putExtra("file",item)
+//                                })
+//
+//                            }
+//                            "链接分享"->{
+//                                Toastinfo("链接分享")
+//                                //TODO 跳转链接分享页面
+//                                mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+//                                    putExtra("file",item)
+//                                })
+//                            }
+//                            "下载"->{
+//                                Toastinfo("下载")
+//                                var  mainActivity=activity as MainActivity
+//                                if(!checkPermission(mainActivity)!!){
+//                                    Toastinfo("没有sd卡写入权限")
+//                                    return@setOnClickListener
+//                                }
+//                                if(item.is_dir== IS_DIR){
+//                                    Toastinfo("暂不支持下载文件夹")
+//                                    return@setOnClickListener
+//                                }
+////                    context.startService(Intent(context,DaemonService::class.java).apply {
+////                        action ="downFiles"
+////                        putExtra("file",item)
+////                    })
+//
+//                                mainActivity.myBinder as DaemonService.MyBinder
+//                                (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.GetFile(item)
+//
+//                            }
+//                            "复制到"->{
+//                                Toastinfo("复制到")
+//                            }
+//                            "移动到"->{
+//                                Toastinfo("移动到")
+//                            }
+//                            "重命名"->{
+//                                Toastinfo("重命名")
+//                            }
+//                            "删除"->{
+//                                Toastinfo("删除")
+//                                ShowFileDeleteTipsDialog(item.file_id)
+//                            }
+//                            "详细信息"->{
+//                                Toastinfo("详细信息")
+//                                mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
+//                                    putExtra("file",item)
+//                                })
+//                            }
+//                        }
+//                        BottomFilesOperateDialog?.dismiss()
+//                    }
                 }
 
             }
@@ -269,6 +382,44 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 
         BottomFilesOperateDialog?.show()
     }
+    //<editor-fold  desc ="重命名 Dialog" >
+    private fun ShowRenameDialog(item: File_Bean) {
+        ReanmeDialog =Dialog(mContext!!).apply {
+            var contentview =
+                LayoutInflater.from(mContext).inflate(R.layout.dialog_file_rename,null)
+            contentview.apply {
+                et_dir_name.text = SetEt_Text("${item.file_name}")
+                et_dir_name.addTextChangedListener {
+                    if(et_dir_name.text.equals(item.file_name)){
+                        tv_commit.isEnabled = false
+                    }else{
+                        tv_commit.isEnabled = true
+                    }
+
+                }
+                tv_cancle.setOnClickListener{
+                    ReanmeDialog?.dismiss()
+                }
+                tv_commit.setOnClickListener {
+                    NetRequest("${URL_FILE_RENAME}", NET_POST,HashMap<String,Any>().apply {
+                        put("user_id","${USER_ID}")
+                        put("file_id","${item.file_id}")
+                        put("file_name","${et_dir_name.text}")
+
+                    },this,this@OthersShareFragment)
+                    ReanmeDialog?.dismiss()
+                }
+
+            }
+            setContentView(contentview)
+            setCancelable(true)
+        }
+
+
+        ReanmeDialog?.show()
+    }
+    //</editor-fold >
+
 
     fun ShowFileDeleteTipsDialog(file_id:String) {
 
@@ -282,11 +433,17 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
     }
 
     override fun initData(){
+        pid_stack = ArrayList<String>().apply {
+            add(0,"root")
+        }
+        pid_name_maps = HashMap()
+        pid_name_maps.put("root","他人共享")
+        pid = pid_stack[0]
         GetFileList()
     }
 
     private fun GetFileList() {
-        GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/$IS_COMMON_DIR/p/${pid}/dir/$ALL_FILE",this,this)
+        GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE",this,this)
     }
 
     override fun GetRootViewID()= R.layout.others_share_fragment

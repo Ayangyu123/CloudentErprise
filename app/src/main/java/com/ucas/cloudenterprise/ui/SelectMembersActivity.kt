@@ -140,7 +140,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                             tv_members_count.visibility = View.INVISIBLE
 
                         }
-
+                        check_box_select_team_all.isChecked = select_status
                        check_box_select_team_all.setOnCheckedChangeListener { buttonView, isChecked ->
                             if(isChecked){
                                 if(is_team){
@@ -189,9 +189,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
 
         check_box_select_all.setOnCheckedChangeListener { buttonView, isChecked ->
-            for (item in mList){
-                item.select_status =isChecked
-            }
+
             if(isChecked){
                 teamcount ++
                 mSelectList.add(JurisItem(pid,tv_team_name.text.toString(),1))
@@ -211,6 +209,10 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                 mSelectAdapter.notifyDataSetChanged()
             }
             tv_select_info.text = "已选${getteamcountinfo()}${getmembercountinfo()}"
+            for (item in mList){
+                item.select_status =isChecked
+            }
+            mAdapter.notifyDataSetChanged()
         }
 
 

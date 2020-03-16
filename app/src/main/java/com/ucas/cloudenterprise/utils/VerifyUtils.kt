@@ -1,6 +1,7 @@
 package com.ucas.cloudenterprise.utils
 
-import kotlinx.android.synthetic.main.activity_forget_password.*
+import com.ucas.cloudenterprise.app.REQUEST_SUCCESS_CODE
+import org.json.JSONObject
 import java.util.regex.Pattern
 
 /**
@@ -17,4 +18,12 @@ object VerifyUtils {
     fun Verify(s:String,regex :String):Boolean{
         return  Pattern.compile(regex).matcher(s).matches()
     }
+
+    fun VerifyRequestData(json_data:String):Boolean{
+        if(JSONObject(json_data).getInt("code")== REQUEST_SUCCESS_CODE){
+            return true
+        }
+        return false
+    }
+
 }

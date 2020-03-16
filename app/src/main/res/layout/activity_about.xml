@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:background="@color/root_linealayout_bg_color"
+    tools:context=".ui.AboutActivity"
     android:layout_height="match_parent">
 
     <include layout="@layout/common_head"/>
@@ -69,8 +70,10 @@
         </LinearLayout>
         <include layout="@layout/common_line"/>
         <LinearLayout
+            android:id="@+id/ll_Services_Agreement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="GotoWebActivity"
             android:padding="10dp"
             >
             <TextView

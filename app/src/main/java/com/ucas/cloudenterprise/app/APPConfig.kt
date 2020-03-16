@@ -18,9 +18,10 @@ import java.security.NoSuchAlgorithmException
 @create 2019年12月27日  14:51
  */
 
-var COMP_ID ="220874840104505344" //企业ID
+var COMP_ID ="" //企业ID
 val  team_id = "1578371132474935000-7696043959137995161"
 var  USER_ID = ""
+var IS_ROOT =false
 var COMP: Company?=null  //企业ID
   //<editor-fold desc="core文件目录">
   val CORE_COMMAND_BIN = "core_bin" //core命令目录名称

@@ -40,7 +40,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         ACCESS_TOKEN = JSONObject(data).getString("access_token")
         REFRESH_TOKEN = JSONObject(data).getString("refresh_token")
         USER_ID = JSONObject(data).getString("user_id")
-        COMP_ID =USER_ID
+        COMP_ID = JSONObject(data).getString("company_id")
+        IS_ROOT = USER_ID.equals(COMP_ID)
 
         Log.e(TAG, "ACCESS_TOKEN=${ACCESS_TOKEN}")
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")

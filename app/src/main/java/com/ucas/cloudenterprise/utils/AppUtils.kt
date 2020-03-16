@@ -1,5 +1,8 @@
 package com.ucas.cloudenterprise.utils
 
+import android.content.Context
+import android.content.pm.PackageManager
+import com.ucas.cloudenterprise.BuildConfig
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,6 +32,12 @@ object AppUtils {
     fun Stringtotimestamp(time:String):Long{
         var sd = SimpleDateFormat("yyyy/MM/dd", Locale.CHINA)
         return  sd.parse(time).time.toString().substring(0,10).toLong()
+    }
+
+
+    fun GetVerSionCode():Int{
+        return  BuildConfig.VERSION_CODE
+
     }
 }
 

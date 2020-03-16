@@ -72,22 +72,27 @@
     <TextView
         android:id="@+id/tv_reset_password"
         style="@style/personal_center_settings_textview"
-        android:layout_marginTop="10dp"
         android:drawableLeft="@drawable/member_admin_icon"
         android:text="个人信息修改" />
     <include layout="@layout/common_line"/>
     <TextView
         android:id="@+id/tv_message_notification"
         android:text="消息通知"
+        android:visibility="gone"
         android:drawableLeft="@drawable/message_notification_setting_icon"
         style="@style/personal_center_settings_textview" />
-    <include layout="@layout/common_line"/>
+    <include layout="@layout/common_line"
+        android:visibility="gone"
+        />
     <TextView
         android:id="@+id/tv_setting"
         android:text="设置"
+        android:visibility="gone"
         android:drawableLeft="@drawable/settings_setting_icon"
         style="@style/personal_center_settings_textview" />
-    <include layout="@layout/common_line"/>
+    <include layout="@layout/common_line"
+        android:visibility="gone"
+        />
     <TextView
         android:id="@+id/tv_user_feedback"
         android:text="用户反馈"
