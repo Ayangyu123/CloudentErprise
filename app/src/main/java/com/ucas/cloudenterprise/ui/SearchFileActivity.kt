@@ -11,6 +11,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,19 +24,19 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.adapter.FilesAdapter
-import com.ucas.cloudenterprise.app.IS_DIR
+import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.app.MyApplication.Companion.context
-import com.ucas.cloudenterprise.app.NET_POST
-import com.ucas.cloudenterprise.app.URL_FILE_SEARCH
-import com.ucas.cloudenterprise.app.USER_ID
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.utils.GetFileDeleteTipsDialog
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.VerifyUtils
+import io.ipfs.multibase.Multibase
 import kotlinx.android.synthetic.main.activity_searchfile.*
 import kotlinx.android.synthetic.main.common_head.*
+import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import org.json.JSONObject
 
@@ -46,9 +47,11 @@ import org.json.JSONObject
 class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
 
     val TAG ="SearchFileActivity"
+    var searchtype = 1 // 1 my  2 other
     var fileslist = ArrayList<File_Bean>()
     lateinit var adapter:FilesAdapter
     var FileDeleteTipsDialog:Dialog ? =null
+    var ReanmeDialog:Dialog ?=null
 
     override fun OnNetPostSucces(
         request: Request<String, out Request<Any, Request<*, *>>>?,
@@ -84,9 +87,11 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
         }
         when (intent.getStringExtra("from")) {
             "myfiles" -> {
+                searchtype =1
                 et_search_key_word.hint = SetEt_Text("搜索我的文件")
             }
             "commonfiles" -> {
+                searchtype =2
                 et_search_key_word.hint = SetEt_Text("他人共享的文件")
             }
         }
@@ -147,26 +152,27 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
                         if(!isfile){
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
                         }else{
-                            var filetype = item.file_name.substringAfterLast(".")
-                            Log.e(TAG,"filetype is ${filetype}")
-                            if(filetype.equals("text")||filetype.equals("txt")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_txtfile)
-                            }
-                            if(filetype.equals("doc")||filetype.equals("docx")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_doc)
-                            }
-                            if(filetype.equals("pdf")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_pdf)
-                            }
-                            if(filetype.equals("exe")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_exe)
-                            }
-                            if(filetype.equals("apk")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_apk)
-                            }
-                            if(filetype in arrayOf("jpg","png","jpge","psd","svg")){
-                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_image)
-                            }
+                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
+//                            var filetype = item.file_name.substringAfterLast(".")
+//                            Log.e(TAG,"filetype is ${filetype}")
+//                            if(filetype.equals("text")||filetype.equals("txt")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_txtfile)
+//                            }
+//                            if(filetype.equals("doc")||filetype.equals("docx")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_doc)
+//                            }
+//                            if(filetype.equals("pdf")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_pdf)
+//                            }
+//                            if(filetype.equals("exe")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_exe)
+//                            }
+//                            if(filetype.equals("apk")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_apk)
+//                            }
+//                            if(filetype in arrayOf("jpg","png","jpge","psd","svg")){
+//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_image)
+//                            }
                         }
                     }
 
@@ -188,7 +194,7 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
         val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
         contentview.layoutManager = GridLayoutManager(context,4)
         Log.e(TAG,"isfile is ${isfile}")
-        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile)
+        contentview.adapter = if(searchtype==2) BottomFilesOperateAdapter(context,item,isfile,item.weight) else BottomFilesOperateAdapter(context,item,isfile)
         (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
             override fun onItemClick(
                 holder: RecyclerView.ViewHolder,
@@ -207,6 +213,71 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
 
                     tv_text.setOnClickListener{
                         var tv=it as TextView
+                        when(tv.text.toString()){
+                            "设置共享"->{ Toastinfo("设置共享")
+                                //TODO 文件夹分享页面
+                             startActivity(Intent(context, SetCommonFileActivity::class.java).apply {
+                                    putExtra("file",item)
+                                })
+
+                            }
+                            "链接分享"->{Toastinfo("链接分享")
+                                //TODO 跳转链接分享页面
+                                startActivity(Intent(context, LinkSharedActivity::class.java).apply {
+                                    putExtra("file",item)
+                                })
+                            }
+                            "下载"->{
+                                Toastinfo("下载")
+
+                                if(!com.ucas.cloudenterprise.app.checkPermission(this@SearchFileActivity)!!){
+                                    Toastinfo("没有sd卡写入权限")
+                                    return@setOnClickListener
+                                }
+                                if(item.is_dir== IS_DIR){
+                                    Toastinfo("暂不支持下载文件夹")
+                                    return@setOnClickListener
+                                }
+//                    context.startService(Intent(context,DaemonService::class.java).apply {
+//                        action ="downFiles"
+//                        putExtra("file",item)
+//                    })
+
+                                if(DaemonService.daemon!=null ){
+                                                                    context.startService(Intent(context,DaemonService::class.java).apply {
+                                                                            action ="downFiles"
+                                                                            putExtra("file",item)
+                                                                        })
+                                }else{
+                                    Toastinfo("未启动服务")
+                                }
+
+
+                            }
+                            "复制到"->{Toastinfo("复制到")
+                                startActivityForResult(Intent(context, ChooseDestDirActivity::class.java).apply {
+                                    putExtra("file",item)
+                                    putExtra("type", ChooseDestDirActivity.COPY)
+                                }, ChooseDestDirActivity.COPY)}
+                            "移动到"->{Toastinfo("移动到")
+                                startActivityForResult(Intent(context, ChooseDestDirActivity::class.java).apply {
+                                    putExtra("file",item)
+                                    putExtra("type", ChooseDestDirActivity.MOVE)
+                                }, ChooseDestDirActivity.MOVE)
+                            }
+                            "重命名"->{Toastinfo("重命名")
+                                ShowRenameDialog(item)
+                            }
+                            "删除"->{
+                                Toastinfo("删除")
+                                ShowFileDeleteTipsDialog(item)
+                            }
+                            "详细信息"->{Toastinfo("详细信息")
+                                startActivity(Intent(context, FileInfoActivity::class.java).apply {
+                                    putExtra("file",item)
+                                })
+                            }
+                        }
                         when(tv.text.toString()){
                             "设置共享"->{ Toastinfo("设置共享")
                                 //TODO 文件夹分享页面
@@ -245,7 +316,7 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
                             "重命名"->{Toastinfo("重命名")}
                             "删除"->{
                                 Toastinfo("删除")
-                                ShowFileDeleteTipsDialog(item.file_id)
+                                ShowFileDeleteTipsDialog(item)
                             }
                             "详细信息"->{Toastinfo("详细信息")
                                startActivity(Intent(context, FileInfoActivity::class.java).apply {
@@ -269,10 +340,26 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
     }
 
 
-    fun ShowFileDeleteTipsDialog(file_id:String) {
+    fun ShowFileDeleteTipsDialog(item: File_Bean) {
 
         FileDeleteTipsDialog = GetFileDeleteTipsDialog(this,View.OnClickListener {FileDeleteTipsDialog?.dismiss()  },View.OnClickListener{
-//            DeleteFile(file_id,this,this)
+            val params = HashMap<String, Any>()
+            params["file_id"] = "${item.file_id}"
+            params["user_id"] = USER_ID
+            if(searchtype ==2){
+            params["falg"] = 1}
+            NetRequest(URL_DELETE_FILE, NET_PUT, params, this, object :BaseActivity.OnNetCallback{
+                override fun OnNetPostSucces(
+                    request: Request<String, out Request<Any, Request<*, *>>>?,
+                    data: String
+                ) {
+                    Toastinfo("删除文件成功")
+                    fileslist.remove(item)
+                    adapter.notifyDataSetChanged()
+
+                }
+
+            })
             FileDeleteTipsDialog!!.dismiss()
 
         })
@@ -291,12 +378,111 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
         NetRequest("${URL_FILE_SEARCH}", NET_POST,HashMap<String,Any>().apply{
             put("user_id","$USER_ID")
             put("file_name","${et_search_key_word.text}")
+            if(searchtype==2){
+                put("falg","1")
+            }
         },this,this)
 
     }
 
+    //<editor-fold  desc ="重命名 Dialog" >
+    private fun ShowRenameDialog(item: File_Bean) {
+        ReanmeDialog =Dialog(this@SearchFileActivity).apply {
+            var contentview =
+                LayoutInflater.from(this@SearchFileActivity).inflate(R.layout.dialog_file_rename,null)
+            contentview.apply {
+                et_dir_name.text = SetEt_Text("${item.file_name}")
+                et_dir_name.addTextChangedListener {
+                    if(et_dir_name.text.equals(item.file_name)){
+                        tv_commit.isEnabled = false
+                    }else{
+                        tv_commit.isEnabled = true
+                    }
 
+                }
+                tv_cancle.setOnClickListener{
+                    ReanmeDialog?.dismiss()
+                }
+                tv_commit.setOnClickListener {
+                    NetRequest("$URL_FILE_RENAME", NET_POST,HashMap<String,Any>().apply {
+                        put("user_id","${USER_ID}")
+                        put("file_id","${item.file_id}")
+                        put("file_name","${et_dir_name.text}")
+
+                    },this,object :BaseActivity.OnNetCallback{
+                        override fun OnNetPostSucces(
+                            request: Request<String, out Request<Any, Request<*, *>>>?,
+                            data: String
+                        ) {
+                            if(VerifyUtils.VerifyRequestData(data)){
+
+                            }
+                        }
+
+                    })
+                    ReanmeDialog?.dismiss()
+                }
+
+            }
+            setContentView(contentview)
+            setCancelable(true)
+        }
+
+
+        ReanmeDialog?.show()
+    }
+    //</editor-fold >
 
     override fun InitData() {
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if ( data !=null) {
+
+            when(requestCode){
+//                FILE_CHOOSER_RESULT_CODE ->{ //选择文件上传文件
+//
+//                    var  mainActivity=activity as MainActivity
+//                    mainActivity.myBinder as DaemonService.MyBinder
+//                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(data.dataString,pid,this,this)
+//
+//
+//                }
+                ChooseDestDirActivity.COPY ->{ //文件复制
+                    var   file_id= data.getStringExtra("file_id")
+                    var  pid= data.getStringExtra("pid")
+                    var params =HashMap<String,Any>().apply {
+                        put("user_id","${ USER_ID}")
+                        put("file_id",file_id)
+                        put("pid",pid)
+                        if(searchtype==2){
+                        put("falg",1)}
+                    }
+                    NetRequest(URL_FILE_COPY, NET_POST,params,this,this)
+
+                }
+                ChooseDestDirActivity.MOVE ->{ //文件移动
+                    var   file_id= data.getStringExtra("file_id")
+                    var  pid= data.getStringExtra("pid")
+                    var params =HashMap<String,Any>().apply {
+                        put("user_id","${ USER_ID}")
+                        put("file_id",file_id)
+                        put("pid",pid)
+                        if(searchtype==2){
+                        put("falg",1)}
+                    }
+                    NetRequest(URL_FILE_MOV, NET_POST,params,this,this)
+                }
+
+            }
+
+
+
+
+        }
+
+
+    }
+
 }

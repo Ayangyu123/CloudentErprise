@@ -70,6 +70,10 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
             Toastinfo("请输入公司密码")
             return
         }
+        if(!check_box_register_able.isChecked){
+           Toastinfo("请阅读服务协议后勾选")
+            return
+        }
 
 
         val params = HashMap<String,Any>()
@@ -119,6 +123,8 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
         NetRequest(URL_LOGIN, NET_POST,params,this,this)
 
     }
+
+    fun GotoWebActivity(view: View) = startActivity<CommonWebActivity>()
 
 
 }

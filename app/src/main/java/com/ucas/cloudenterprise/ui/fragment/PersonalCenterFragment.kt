@@ -13,8 +13,11 @@ import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.ui.helpandfeedback.HelpAndFeedbackActivity
 import com.ucas.cloudenterprise.ui.member.MembersManageActivity
 import com.ucas.cloudenterprise.ui.message.MessageNotificationActivity
+import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.startActivity
+import kotlinx.android.synthetic.main.activity_reset_password.*
 import kotlinx.android.synthetic.main.personal_center_fragment.*
+import kotlinx.android.synthetic.main.personal_center_fragment.tv_reset_password
 import org.json.JSONObject
 
 /**
@@ -48,6 +51,7 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
             mContext?.startActivity<AboutActivity>() }
 
 
+
         fl_check_new_version.setOnClickListener {
             (activity as MainActivity).CheckNewVersion()
             }
@@ -65,8 +69,46 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
 
     override fun initData() {
 
-        NetRequest(URL_GET_COMPANY_INFO+"${USER_ID}", NET_GET,null,this,this)
+
+        GetPersonalInfo()
+
+//        NetRequest(URL_GET_COMPANY_INFO+"${USER_ID}", NET_GET,null,this,this)
     }
+
+    //<editor-fold desc="获取个人信息">
+    private fun GetPersonalInfo() {
+        NetRequest("${URL_GET_USER_INFO}${USER_ID}", NET_GET,null,this,object :BaseActivity.OnNetCallback{
+            override fun OnNetPostSucces(
+                request: Request<String, out Request<Any, Request<*, *>>>?,
+                data: String
+            ) {
+                if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
+
+                    JSONObject(data).getJSONObject("data").apply {
+
+
+                        tv_cap_info.text ="容量：${getInt("used_cap")}GB/${getInt("total_cap")}GB"
+                        progressbar_cap.apply {
+//                            capacity
+                            max=getInt("total_cap")*100
+                            progress = getInt("used_cap")*100
+                        }
+
+                        tv_user_name.text = getString("acc_name")
+//                       var  phone = getString("telphone")
+//                       var  email = getString("email")
+//                        et_acc_name.text = SetEt_Text(getString("acc_name"))
+//                        editText_phone.text = SetEt_Text(getString("telphone"))
+//
+//                        phone = getString("telphone")
+//                        editText_eamil.text= SetEt_Text(getString("email"))
+                    }
+                }
+            }
+
+        })
+    }
+    //</editor-fold>
 
     override fun GetRootViewID()= R.layout.personal_center_fragment
     companion object{

@@ -106,6 +106,19 @@ abstract class BaseFragment : Fragment() {
         NetRequest(URL_DELETE_FILE, NET_PUT, params, tag, onNetCallback)
 
     }
+    fun DeleteFile(
+        fileid: String,
+        flag:Int,
+        tag: Any,
+        onNetCallback: BaseActivity.OnNetCallback
+    ) {
+        val params = HashMap<String, Any>()
+        params["file_id"] = "${fileid}"
+        params["user_id"] = USER_ID
+        params["falg"] = flag
+        NetRequest(URL_DELETE_FILE, NET_PUT, params, tag, onNetCallback)
+
+    }
     //</editor-fold>
 
 

@@ -46,6 +46,14 @@ class MemberAuditActivity : BaseActivity(), BaseActivity.OnNetCallback {
          addItemDecoration(DividerItemDecoration(this@MemberAuditActivity, DividerItemDecoration.VERTICAL))
 
         }
+        //<editor-fold desc ="swipeRefresh settings">
+        swipeRefresh.setColorSchemeResources(R.color.app_color)
+        swipeRefresh.setOnRefreshListener {
+            mMemberAuditlist.clear()
+            getMemberAuditList()
+            swipeRefresh.isRefreshing = false
+        }
+        //</editor-fold >
 
 
         mAdapter.SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{

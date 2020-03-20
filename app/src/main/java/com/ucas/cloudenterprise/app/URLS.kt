@@ -104,6 +104,7 @@ val URL_ADD_File = "${BASE_URL}file_add" //添加文件
 val URL_ADD_File_CHECK = "${BASE_URL}file_check_hash/" //添加文件 检查
 val URL_DELETE_FILE = "${BASE_URL}file" //删除文件
 val URL_LIST_FILES = "${BASE_URL}user_file/list/" //文件列表
+val URL_GET_FILE_JURIS_LIST = "${BASE_URL}get_file_juris_list/" //文件列表
 val URL_FILE_SEARCH = "${BASE_URL}file_search"
 val URL_FILE_RENAME = "${BASE_URL}file_rename"
 val URL_FILE_MOV = "${BASE_URL}file_mov"

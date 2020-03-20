@@ -13,46 +13,58 @@
         android:layout_marginTop="10dp"
         android:background="@android:color/white"
         >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:padding="10dp"
-            android:orientation="horizontal">
+            tools:visibility="gone">
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="仅WIFI环境上传/下载"
-                />
+                android:text="仅WIFI环境上传/下载" />
+
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/checkbox_left_to_right"
-                android:checked="true"/>
+                android:checked="true" />
 
         </LinearLayout>
-        <include layout="@layout/common_line"/>
+
+        <include
+            layout="@layout/common_line"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:orientation="horizontal"
             android:padding="10dp"
-            android:orientation="horizontal">
+            tools:visibility="gone">
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="消息通知提示"
-                />
+                android:text="消息通知提示" />
+
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:button="@drawable/checkbox_left_to_right"
-                android:checked="true"/>
+                android:checked="true" />
 
         </LinearLayout>
-        <include layout="@layout/common_line"/>
+
+        <include
+            layout="@layout/common_line"
+            tools:visibility="gone" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,13 +113,15 @@
 
         </RelativeLayout>
         <include layout="@layout/common_line"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="视频插件安装"
-            android:gravity="center_vertical|left"
             android:drawableRight="@drawable/personalcenter_guide_arrow"
-            android:padding="10dp"/>
+            android:gravity="center_vertical|left"
+            android:padding="10dp"
+            android:text="视频插件安装"
+            tools:visibility="gone" />
 
 
     </LinearLayout>

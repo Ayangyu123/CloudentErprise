@@ -28,7 +28,7 @@ class BottomFilesOperateAdapter(
     val context: Context?,
     val item: File_Bean,
     val isfile: Boolean,
-    val Permisssion:Int =3
+    val Permisssion:Int =4
 ) :RecyclerView.Adapter<BottomFilesOperateAdapter.ViewHolder>(){
     val TAG ="BottomFilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
@@ -54,11 +54,13 @@ class BottomFilesOperateAdapter(
     )
     init {
         if(isfile){
-            InfoList.removeAt(0)
-            DrawableList.removeAt(0)
+            InfoList.remove(  "设置共享")
+            DrawableList.remove( R.drawable.operate_share_dir_normal)
         }else{
-            InfoList.removeAt(1)
-            DrawableList.removeAt(1)
+            InfoList.remove("链接分享")
+            InfoList.remove("下载")
+            DrawableList.remove( R.drawable.operate_link_share_normal)
+            DrawableList.remove( R.drawable.operate_download_normal)
         }
         when(Permisssion){
             1->{

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:padding="10dp"
     android:id="@+id/ll_root"
@@ -10,7 +11,7 @@
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="管理员"/>
+        tools:text="管理员"/>
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -21,6 +22,7 @@
         android:id="@+id/tv_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:text="状态" />
 
     <ImageView

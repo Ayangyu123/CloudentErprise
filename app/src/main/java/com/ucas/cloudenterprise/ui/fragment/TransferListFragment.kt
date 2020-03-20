@@ -24,7 +24,7 @@ class TransferListFragment: BaseFragment() {
     override fun initView() {
         iv_back.visibility = View.GONE
         tv_title.text = "传输列表"
-
+        tv_edit.visibility =View.GONE
         fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.DOWNLOAD,mContext!!))
         fragmentlist.add(TransferlistItemFragment(TransferlistItemFragment.UPLOAD,mContext!!))
 

@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.app.Activity
 import android.content.AbstractThreadedSyncAdapter
+import android.content.ClipData
 import android.content.Context
 import android.util.Log
 import android.view.View
@@ -34,6 +35,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
     companion object{
         val SELECT_TEAM_AND_MEMBER:Int=1
         val SELECT_TEAM:Int=2
+        val UPDATE_SELECT_INFO=3
     }
 
     var pid ="root"
@@ -45,6 +47,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
     var mSelectList = ArrayList<JurisItem>()
     var teamcount = 0
     var membercount = 0
+    var select_list= ArrayList<String>()
     lateinit var pid_stack : ArrayList<String>
     val TAG ="SelectMembersActivity"
     override fun GetContentViewId()= R.layout.activity_select_members
@@ -60,7 +63,27 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
             SELECT_TEAM_AND_MEMBER->{
                 tv_title.text ="选择成员"
             }
+            UPDATE_SELECT_INFO->{
+                tv_title.text ="选择成员"
 
+
+                   for (jurisItem in intent.getSerializableExtra("select_list") as ArrayList<JurisItem>) {
+                       select_list.add(jurisItem.juris_user_id)
+                       Log.e("ok","select_list = ${select_list.toString()}")
+                       mSelectList.add(jurisItem)
+                       when(jurisItem.juris_flag){
+                           1->{//团队
+
+                               teamcount++
+                           }
+                           else->{//个人
+                               membercount++
+                           }
+                       }
+                   }
+
+
+            }
            }
         tv_commit.setOnClickListener {
             setResult(Activity.RESULT_OK,intent.putExtra("select_list",mSelectList))
@@ -141,6 +164,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
                         }
                         check_box_select_team_all.isChecked = select_status
+
                        check_box_select_team_all.setOnCheckedChangeListener { buttonView, isChecked ->
                             if(isChecked){
                                 if(is_team){
@@ -276,13 +300,26 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
 //                }
                 if(!getJSONObject("data").isNull("team_list")){
                     mList.addAll( Gson().fromJson<List<Team>>(getJSONObject("data").getJSONArray("team_list").toString(),object :TypeToken<List<Team>>(){}.type) )
-                    if(fromtype== SELECT_TEAM){
-                        for (item in mList){
-                            if(item.is_team==false){
-                                mList.remove(item)
+                    when(fromtype){
+                        SELECT_TEAM->{
+                            for (item in mList){
+                                if(item.is_team==false){
+                                    mList.remove(item)
+                                }
                             }
                         }
+                        UPDATE_SELECT_INFO->{
+                                check_box_select_all.isChecked =select_list.contains(pid)
+
+                            for (item in mList){
+                                if(select_list.contains(item.team_id)){
+                                    item.select_status =true
+                                }
+                            }
+                        }
+
                     }
+
                     mAdapter.notifyDataSetChanged()
                 }else{
                     Toastinfo("请添加团队成员")

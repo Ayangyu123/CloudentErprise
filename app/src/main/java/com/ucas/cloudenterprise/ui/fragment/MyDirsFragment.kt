@@ -37,8 +37,8 @@ class MyDirsFragment(val isUncommonDir: Int,var pid:String) : BaseFragment(),Bas
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
     ) {
-        when(request?.url){
-         "$URL_LIST_FILES$USER_ID/status/$isUncommonDir/p/${pid}/dir/$IS_DIR"->{
+//        when(request?.url){
+//         "$URL_LIST_FILES$USER_ID/status/$isUncommonDir/p/${pid}/dir/$IS_DIR"->{
 
              if(JSONObject(data).isNull("data")){
                  ll_empty.visibility = View.VISIBLE
@@ -63,10 +63,10 @@ class MyDirsFragment(val isUncommonDir: Int,var pid:String) : BaseFragment(),Bas
              }else if(showtype==ChooseDestDirActivity.SHOW_OTHERSHARED&&isUncommonDir== IS_COMMON_DIR){
                  (activity as ChooseDestDirActivity).tv_dest_dir_commit.isEnabled = fileslist.isEmpty()
              }
-
-         }
-
-        }
+//
+//         }
+//
+//        }
     }
 
 
@@ -118,8 +118,16 @@ class MyDirsFragment(val isUncommonDir: Int,var pid:String) : BaseFragment(),Bas
 
     }
 
-    public fun GetFileList() {
-        GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/${isUncommonDir}/p/${pid}/dir/$IS_DIR",this,this)
+     fun GetFileList() {
+        if(IS_COMMON_DIR==isUncommonDir){
+            GetFilesListForNet(URL_GET_FILE_JURIS_LIST +"${USER_ID}/p/${pid}",this,this)
+        }else {
+            GetFilesListForNet(
+                URL_LIST_FILES + "$USER_ID/status/${isUncommonDir}/p/${pid}/dir/$IS_DIR",
+                this,
+                this
+            )
+        }
     }
 
     override fun initData() {

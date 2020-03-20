@@ -81,8 +81,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:textColor="@android:color/holo_red_dark"
+            android:padding="3dp"
+            android:textColor="@android:color/white"
             android:background="@drawable/bg_membermanager"
+
             android:text="管理员"/>
         <View
             android:layout_width="0dp"
@@ -92,9 +94,11 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:src="@drawable/personalcenter_guide_arrow"
             />
     </LinearLayout>
+    <include  layout="@layout/common_line"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rc_members"
             android:layout_width="match_parent"

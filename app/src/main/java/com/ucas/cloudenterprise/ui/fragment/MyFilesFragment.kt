@@ -204,6 +204,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                             fileslist.sortBy { it.created_at }
                         }
                     }
+                    adapter.notifyDataSetChanged()
 
                     SortPOPwiond?.dismiss()
                 })
@@ -262,6 +263,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
 
         //<editor-fold  desc ="返回按钮 设置" >
+        iv_back.visibility =View.GONE
         iv_back.setOnClickListener {
 
             if( tv_edit.text.equals("编辑")&&  pid_name_maps.containsValue(tv_title.text)&&pid_stack.size>1){ //选择文件夹显示返回

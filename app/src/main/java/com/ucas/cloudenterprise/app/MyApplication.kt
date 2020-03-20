@@ -11,6 +11,8 @@ import com.lzy.okgo.OkGo
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.CompletedFile
 import com.ucas.cloudenterprise.model.LoadingFile
+import com.ucas.cloudenterprise.ui.LoginActivity
+import com.ucas.cloudenterprise.utils.startActivity
 import me.jessyan.autosize.AutoSize
 import me.jessyan.autosize.AutoSizeConfig
 import me.jessyan.autosize.external.ExternalAdaptManager
@@ -71,6 +73,13 @@ class MyApplication:Application() {
         }
         AutoSizeConfig()
         initOKGO()
+
+        object :Thread.UncaughtExceptionHandler{
+            override fun uncaughtException(t: Thread?, e: Throwable?) {
+                startActivity<LoginActivity>()
+            }
+
+        }
 
     }
 

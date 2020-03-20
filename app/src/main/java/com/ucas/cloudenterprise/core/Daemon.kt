@@ -72,7 +72,7 @@ class DaemonService : Service() {
         }
 
     }
-
+    //<editor-fold desc="安装">
     fun install() {
 
         val type = CPU_ABI.let {
@@ -152,7 +152,9 @@ class DaemonService : Service() {
         }
         /*********core install   完成  写入flag 下次直接执行 star*******/
     }
+    //</editor-fold>
 
+    //<editor-fold desc="开启底层服务">
     fun start() {
         if(daemon!=null){
           stop()
@@ -166,8 +168,6 @@ class DaemonService : Service() {
         }
         Runtime.getRuntime().exec(
             "${pluginbin.absolutePath}"
-//            ,
-//            arrayOf(String(Base64.getDecoder().decode(CORE_PATH), StandardCharsets.UTF_8 )+"=${store.absolutePath}")//此处字符串为环境变量
 
         ).apply {
             plugindaemon = this
@@ -175,24 +175,34 @@ class DaemonService : Service() {
                                 Log.e("it"," plugindaemon it="+it)
                 logs.add(it) }
         }
-           getplugin()
+           getpluginVersion()
 
 
     }
-    fun getplugin(){
+    //</editor-fold>
+
+
+    //<editor-fold desc="获取插件版本">
+    fun getpluginVersion(){
         OkGo.get<String>("http://127.0.0.1:9984/api/v0/version").execute(object :StringCallback(){
             override fun onSuccess(response: Response<String>?) {
                 Log.e("it","${response?.body().toString()}")
             }
         })
     }
+    //</editor-fold>
 
+
+    //<editor-fold desc="停止底层服务">
     fun stop() {
         plugindaemon?.destroy()
         daemon?.destroy()
         plugindaemon = null
         daemon = null
     }
+    //</editor-fold>
+
+
 
     fun add(){
       if(daemon!=null){
@@ -349,7 +359,7 @@ class DaemonService : Service() {
     }
         //</editor-fold>
 
-    //<editor-fold desc=" 添加文件  ">
+    //<editor-fold desc=" 上传文件  ">
     fun AddFile(
         uri: String,
         pid: String,
@@ -386,7 +396,7 @@ class DaemonService : Service() {
                         if (daemon != null ) {//&& daemon!!.isAlive
                             if(plugindaemon!=null){//&& plugindaemon!!.isAlive
                                 Log.e("ok","准备上传")
-                                getplugin()
+                                getpluginVersion()
                                 //TODO
                                 val destfile = filesDir[displayName!!]
                                 val  inputStream =contentResolver.openInputStream(uri).apply {
@@ -611,29 +621,7 @@ fun main() {
 //                fileOutputStream.close()
             }
 
-//            while(curr!=total){
-//                if(counttimer==null){
-//                    counttimer= Timer()
-//
-//                    counttimer.scheduleAtFixedRate(object :TimerTask(){
-//                        override fun run() {
-//                            if(curr!=total){
-//
-//                                println("${curr}")
-//                            }else{
-//                                print("")
-//                                this.cancel()
-//                            }
-//                        }
-//                    },0,10)
-//                }
-//                curr += 1
-//                if(curr==total){
-//                println(curr)
-//                counttimer=null
-//                }
-//
-//            }
+
         }
     }.start()
 

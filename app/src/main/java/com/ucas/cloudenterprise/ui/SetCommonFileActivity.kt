@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -58,10 +59,15 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
         iv_back.setOnClickListener {
             finish()
         }
+        tv_edit.visibility =View.GONE
         tv_edit.text ="权限说明"
         tv_edit.setOnClickListener {
             startActivity<PermissionToIllustrateActivity>()
         }
+
+
+
+
 
         mCanEditAdApter = JurisAdapter(this, mCanEditList)
         rc_can_edit.adapter = mCanEditAdApter
@@ -147,10 +153,35 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
         }
 
 
+        //<editor-fold desc="修改">
+        tv_see_able.setOnClickListener {
+            startActivityForResult(Intent(this@SetCommonFileActivity,SelectMembersActivity::class.java).apply {
+                putExtra("formtype",SelectMembersActivity.UPDATE_SELECT_INFO)
+                putExtra("select_list",mCanSeeList)
+            },ADD_CAN_SEE)
+        }
+        tv_add_upload_able.setOnClickListener {
+            startActivityForResult(Intent(this@SetCommonFileActivity,SelectMembersActivity::class.java).apply {
+                putExtra("formtype",SelectMembersActivity.UPDATE_SELECT_INFO)
+                putExtra("select_list",mCanUploadList)
+            }, ADD_CAN_UPLOAD)
+        }
+        tv_add_editable.setOnClickListener {
+            startActivityForResult(Intent(this@SetCommonFileActivity,SelectMembersActivity::class.java).apply {
+                putExtra("formtype",SelectMembersActivity.UPDATE_SELECT_INFO)
+                putExtra("select_list",mCanEditList)
+            }, ADD_CAN_EDIT)
+        }
+
+
+        //</editor-fold>
+
+
+
         tv_cancel_commom.setOnClickListener {
             NetRequest(URL_PUT_FILE_JURIS, NET_PUT,HashMap<String,Any>().apply {
                 put("file_id",fileitem.file_id)
-                put("status", -1)//(状态)
+//                put("status", -1)//(状态)
             },this,this)
 
         }
@@ -185,54 +216,65 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
                 request: Request<String, out Request<Any, Request<*, *>>>?,
                 data: String
             ) {
+                Log.e("ok",data)
                 if(!JSONObject(data).isNull("data")&&JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
 
                     var juris_obj = Gson().fromJson<List<Juris>>(JSONObject(data).getJSONObject("data").getJSONArray("juris_obj").toString(),object :TypeToken<List<Juris>>(){}.type)
 
-
+                    mCanEditList.clear()
+                    mCanSeeList.clear()
+                    mCanUploadList.clear()
                     for (juris in juris_obj) {
                         when(juris.role_id){
                             CANEDIT_ID->{//可编辑
-                                mCanEditList.clear()
-                                mCanEditList.addAll(juris.juris_item)
-                                if(mCanEditList.isEmpty()){
-                                    ll_can_edit.visibility = View.GONE
-                                    tv_add_can_edit.visibility = View.VISIBLE
-                                }else{
-                                    ll_can_edit.visibility = View.VISIBLE
-                                    mCanEditAdApter.notifyDataSetChanged()
-                                    tv_add_can_edit.visibility = View.GONE
-                                }
+
+                                mCanEditList.add(juris.juris_item[0])
+
                             }
                             CANSEE_ID->{ //可查看
-                                mCanSeeList.clear()
-                                mCanSeeList.addAll(juris.juris_item)
-                                if(mCanSeeList.isEmpty()){
-                                    ll_can_see.visibility = View.GONE
-                                    tv_add_can_see.visibility = View.VISIBLE
-                                }else{
-                                    ll_can_see.visibility = View.VISIBLE
-                                    mCanSeeAdApter.notifyDataSetChanged()
-                                    tv_add_can_see.visibility = View.GONE
-                                }
+
+                                mCanSeeList.add(juris.juris_item[0])
+
                             }
                             CANUPLOAD_ID->{ //可上传
-                                mCanUploadList.clear()
-                                mCanUploadList.addAll(juris.juris_item)
-                                if(mCanUploadList.isEmpty()){
-                                    ll_can_upload.visibility = View.GONE
-                                    tv_add_can_upload.visibility = View.VISIBLE
-                                }else{
-                                    ll_can_upload.visibility = View.VISIBLE
-                                    mCanUploadAdApter.notifyDataSetChanged()
-                                    tv_add_can_upload.visibility = View.GONE
-                                }
+
+                                mCanUploadList.add(juris.juris_item[0])
+
                             }
 
 
                         }
                     }
 
+                    if(mCanEditList.isEmpty()){
+                        ll_can_edit.visibility = View.GONE
+                        tv_add_can_edit.visibility = View.VISIBLE
+                    }else{
+                        ll_can_edit.visibility = View.VISIBLE
+                        mCanEditAdApter.notifyDataSetChanged()
+                        tv_add_can_edit.visibility = View.GONE
+                    }
+                    if(mCanSeeList.isEmpty()){
+                        ll_can_see.visibility = View.GONE
+                        tv_add_can_see.visibility = View.VISIBLE
+                    }else{
+                        ll_can_see.visibility = View.VISIBLE
+                        mCanSeeAdApter.notifyDataSetChanged()
+                        tv_add_can_see.visibility = View.GONE
+                    }
+                    if(mCanUploadList.isEmpty()){
+                        ll_can_upload.visibility = View.GONE
+                        tv_add_can_upload.visibility = View.VISIBLE
+                    }else{
+                        ll_can_upload.visibility = View.VISIBLE
+                        mCanUploadAdApter.notifyDataSetChanged()
+                        tv_add_can_upload.visibility = View.GONE
+                    }
+                    if(mCanEditList.isEmpty()&&mCanSeeList.isEmpty()&&mCanUploadList.isEmpty()){
+                        Toastinfo("数据异常")
+                    }else{
+                        tv_cancel_commom.visibility =View.VISIBLE
+                    }
 
                 }
             }
@@ -247,13 +289,29 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
            var jurisItems= data.getSerializableExtra("select_list") as ArrayList<JurisItem>
                 when(requestCode){
                     ADD_CAN_EDIT->{
-                        mCanEditList.addAll(jurisItems)
+                       for(item  in jurisItems){
+                           if(!mCanEditList.contains(item)){
+                               mCanEditList.add(item)
+                           }
+                       }
+
+                        Log.e("ok","mCanEditList ="+mCanEditList.toString())
                     }
                     ADD_CAN_UPLOAD->{
-                        mCanUploadList.addAll(jurisItems)
+
+                        for(item  in jurisItems){
+                            if(!mCanUploadList.contains(item)){
+                                mCanUploadList.add(item)
+                            }
+                        }
                     }
                     ADD_CAN_SEE->{
                         mCanSeeList.addAll(jurisItems)
+                        for(item  in jurisItems){
+                            if(!mCanSeeList.contains(item)){
+                                mCanSeeList.add(item)
+                            }
+                        }
                     }
 
                 }

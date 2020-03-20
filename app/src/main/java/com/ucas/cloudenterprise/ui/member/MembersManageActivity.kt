@@ -12,10 +12,7 @@ import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.MemberInfoAdapter
-import com.ucas.cloudenterprise.app.COMP_ID
-import com.ucas.cloudenterprise.app.NET_GET
-import com.ucas.cloudenterprise.app.URL_LIST_MEMBER
-import com.ucas.cloudenterprise.app.URL_TEAM
+import com.ucas.cloudenterprise.app.*
 
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.File_Bean
@@ -85,7 +82,7 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
         }
     }
     fun getMemberlist(){
-        NetRequest(URL_LIST_MEMBER +"company/${COMP_ID}/status", NET_GET,null,this,this)
+        NetRequest(URL_LIST_MEMBER +"company/${COMP_ID}/status/$PASS_STATE", NET_GET,null,this,this)
     }
 
     override fun InitData() {
@@ -100,7 +97,17 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
         JSONObject(data).apply {
             if(!isNull("data")&&getInt("code")==200){
                 mMemberlist.clear()
-                mMemberlist.addAll(Gson().fromJson<List<MemberInfo>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<MemberInfo>>(){}.type) as ArrayList<MemberInfo>)
+               for(item in Gson().fromJson<List<MemberInfo>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<MemberInfo>>(){}.type) as ArrayList<MemberInfo>){
+
+                   //TODO
+                   if(item.puuid.equals("root")){
+                        tv_member_manager.text=item.acc_name
+
+                 }else{
+                       mMemberlist.add(item)
+                   }
+               }
+
                 adapter.notifyDataSetChanged()
             }
         }

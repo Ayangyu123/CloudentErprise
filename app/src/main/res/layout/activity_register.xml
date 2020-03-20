@@ -73,7 +73,6 @@
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
-        android:layout_marginBottom="50dp"
         >
         <TextView
             android:layout_width="100dp"
@@ -86,6 +85,27 @@
             style="@style/register_edittext_style"/>
 
     </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="50dp"
+            >
+            <CheckBox
+                android:id="@+id/check_box_register_able"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical|left"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:onClick="GotoWebActivity"
+                style="@style/register_edittext_style"
+                android:gravity="center_vertical"
+                android:text="我已阅读《服务协议》" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_register"

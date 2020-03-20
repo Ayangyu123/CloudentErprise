@@ -16,11 +16,13 @@
         android:layout_width="match_parent"
         android:layout_height="1px"
         />
+
     <RadioButton
         android:id="@+id/rb_sort_by_time"
-        android:text="按时间排序"
+        style="@style/checkbox_sort"
         android:button="@drawable/sort_by_name"
-        style="@style/checkbox_sort" />
+        android:checked="true"
+        android:text="按时间排序" />
 
 
 

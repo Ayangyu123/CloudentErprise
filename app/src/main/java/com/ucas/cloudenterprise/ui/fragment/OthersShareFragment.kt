@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
 import kotlinx.android.synthetic.main.others_share_fragment.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
+import kotlinx.android.synthetic.main.top_file_operate.*
 import org.json.JSONObject
 
 /**
@@ -46,7 +47,8 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         data: String
     ) {
         when(request?.url){
-            URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE"->{
+//            URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE"->{
+            URL_GET_FILE_JURIS_LIST +"$USER_ID"+"/p/${pid}"->{
                 when(request.method.name){
                     HttpMethod.GET.name->{
                         //获取我的文件列表
@@ -70,6 +72,33 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 
                 }
             }
+            URL_ADD_File->{
+
+                Toastinfo("添加文件列表成功")
+                //刷新列表
+                //TODO USER_ID ->PID
+                GetFileList()
+            }
+            URL_DELETE_FILE ->{
+                Toastinfo("删除文件成功")
+                //TODO USER_ID ->PID
+                GetFileList()
+            }
+            URL_FILE_RENAME ->{
+                Toastinfo("文件重命名成功")
+                GetFileList()
+
+            }
+            URL_FILE_COPY ->{
+                Toastinfo("文件复制成功")
+                GetFileList()
+
+            }
+            URL_FILE_MOV ->{
+                Toastinfo("文件移动成功")
+                GetFileList()
+
+            }
         }
     }
 
@@ -88,11 +117,9 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
     lateinit var pid_name_maps : HashMap<String,String>
 
     override fun initView() {
-        tv_title.text ="他人共享"
+        tv_title.text ="内部共享"
         iv_back.visibility =View.INVISIBLE
-        view_head_to_search_activity.setOnClickListener {
-            startActivity(Intent(mContext, SearchFileActivity::class.java).putExtra("form","commonfiles"))
-        }
+
 
         //<editor-fold desc=" 设置files RecyclerView  ">
         adapter = FilesAdapter(mContext,fileslist)
@@ -186,6 +213,25 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         //TODO 多选不显示
         tv_edit.visibility =View.INVISIBLE
 
+        //<editor-fold  desc ="搜索按钮 设置" >
+        view_head_to_search_activity.setOnClickListener {
+            startActivity(Intent(mContext, SearchFileActivity::class.java).putExtra("form","commonfiles"))
+        }
+       //</editor-fold >
+
+        //<editor-fold desc ="swipeRefresh settings">
+        swipeRefresh.setColorSchemeResources(R.color.app_color)
+        swipeRefresh.setOnRefreshListener {
+            fileslist.clear()
+            GetFileList()
+            swipeRefresh.isRefreshing = false
+        }
+        //</editor-fold >
+
+
+        //<editor-fold  desc ="刷新 设置" >
+        tv_refresh.setOnClickListener {  GetFileList() }
+        //</editor-fold >
 
         //<editor-fold  desc ="返回按钮 设置" >
         iv_back.setOnClickListener {
@@ -228,7 +274,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
         contentview.layoutManager = GridLayoutManager(context,4)
         Log.e(TAG,"isfile is ${isfile}")
-        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile)
+        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight)
         (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
             override fun onItemClick(
                 holder: RecyclerView.ViewHolder,
@@ -424,7 +470,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
     fun ShowFileDeleteTipsDialog(file_id:String) {
 
         FileDeleteTipsDialog = GetFileDeleteTipsDialog(mContext!!,View.OnClickListener {FileDeleteTipsDialog?.dismiss()  },View.OnClickListener{
-            DeleteFile(file_id,this,this)
+            DeleteFile(file_id,1,this,this)
             FileDeleteTipsDialog?.dismiss()
 
         })
@@ -437,17 +483,67 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
             add(0,"root")
         }
         pid_name_maps = HashMap()
-        pid_name_maps.put("root","他人共享")
+        pid_name_maps.put("root","内部共享")
         pid = pid_stack[0]
         GetFileList()
     }
 
-    private fun GetFileList() {
-        GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE",this,this)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if ( data !=null) {
+
+            when(requestCode){
+//                FILE_CHOOSER_RESULT_CODE ->{ //选择文件上传文件
+//
+//                    var  mainActivity=activity as MainActivity
+//                    mainActivity.myBinder as DaemonService.MyBinder
+//                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(data.dataString,pid,this,this)
+//
+//
+//                }
+                ChooseDestDirActivity.COPY ->{ //文件复制
+                    var   file_id= data.getStringExtra("file_id")
+                    var  pid= data.getStringExtra("pid")
+                    var params =HashMap<String,Any>().apply {
+                        put("user_id","${ USER_ID}")
+                        put("file_id",file_id)
+                        put("pid",pid)
+                        put("falg",1)
+                    }
+                    NetRequest(URL_FILE_COPY, NET_POST,params,this,this)
+
+                }
+                ChooseDestDirActivity.MOVE ->{ //文件移动
+                    var   file_id= data.getStringExtra("file_id")
+                    var  pid= data.getStringExtra("pid")
+                    var params =HashMap<String,Any>().apply {
+                        put("user_id","${ USER_ID}")
+                        put("file_id",file_id)
+                        put("pid",pid)
+                        put("falg",1)
+                    }
+                    NetRequest(URL_FILE_MOV, NET_POST,params,this,this)
+                }
+
+            }
+
+
+
+
+        }
+
+
+    }
+
+
+     fun GetFileList() {
+//        GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE",this,this)
+        GetFilesListForNet(URL_GET_FILE_JURIS_LIST +"$USER_ID"+"/p/${pid}",this,this)
     }
 
     override fun GetRootViewID()= R.layout.others_share_fragment
     companion object{
+
          private var instance: OthersShareFragment? = null
 
         fun getInstance( param1:Boolean?,  param2:String?): OthersShareFragment {

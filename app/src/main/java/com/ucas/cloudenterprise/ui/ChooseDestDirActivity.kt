@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.text.TextUtils
+import android.view.KeyEvent
 import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -186,6 +187,31 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
     }
     override fun InitData(){
 
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+            when(viewpager_content.currentItem){
+                SHOW_MYFILES->{
+                   if( !mMyFilesDirFragment.pid.equals("root")){
+                       mMyFilesDirFragment.pid_stack.removeAt(0)
+                       mMyFilesDirFragment.pid =mMyFilesDirFragment.pid_stack[0]
+                       mMyFilesDirFragment.GetFileList()
+                       return false
+                   }
+                }
+                SHOW_OTHERSHARED->{
+                    if( !mOthersShareDirFragment.pid.equals("root")){
+                        mOthersShareDirFragment.pid_stack.removeAt(0)
+                        mOthersShareDirFragment.pid =mOthersShareDirFragment.pid_stack[0]
+                        mOthersShareDirFragment.GetFileList()
+                        return false
+                    }
+
+                }
+            }
+
+
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun OnNetPostSucces(

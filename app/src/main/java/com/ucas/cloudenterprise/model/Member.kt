@@ -14,7 +14,10 @@ var comp_name:String,//    "comp_id":"国科环宇xxxx",(公司名称 // )
 var acc_name:String,//    "acc_name": "wkeej20192",(账号名称)
 var email:String,//    "email":"ysh@sina.com",(邮件)
 var telphone:String,//    "telphone": "13789012375",(电话)
+var puuid:String,//    "telphone": "13789012375",(电话)
+var pid:String,//    "telphone": "13789012375",(电话)
 var capacity:Int,//    "capacity":10G,(容量)
+var status:Int,//    "capacity":10G,(容量)
 var belong_team:ArrayList<BelongTeam>,//    "belong_team": [
 //    "belong_teamId":"12345678754",(所属团队id)
 //    ]

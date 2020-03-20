@@ -21,7 +21,8 @@
     <RadioGroup
         android:id="@+id/rg_main_bottom"
         android:layout_width="match_parent"
-        android:layout_height="82dp"
+        android:layout_height="57dp"
+        android:gravity="center_vertical"
         android:background="@android:color/white"
         android:orientation="horizontal">
 
@@ -35,7 +36,7 @@
             android:id="@+id/rb_others_share"
             style="@style/main_riado_button"
             android:drawableTop="@drawable/tab_sharefile"
-            android:text="他人共享" />
+            android:text="内部共享" />
 
         <RadioButton
             android:id="@+id/rb_transfer_list"

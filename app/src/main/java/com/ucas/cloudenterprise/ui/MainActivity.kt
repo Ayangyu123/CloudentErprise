@@ -24,6 +24,7 @@ import com.ucas.cloudenterprise.ui.fragment.TransferListFragment
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 
 
@@ -170,11 +171,26 @@ class MainActivity : BaseActivity() {
                    mMyFilesFragment.pid_stack.remove(mMyFilesFragment.pid_stack[0])
                    mMyFilesFragment.pid=mMyFilesFragment.pid_stack[0]
                    mMyFilesFragment.GetFileList()
+                   if(mMyFilesFragment.pid.equals("root")&&mMyFilesFragment.iv_back.visibility==View.VISIBLE){
+                       mMyFilesFragment.iv_back.visibility=View.GONE
+                       mMyFilesFragment.tv_title.text="我的文件"
+                   }
                    return  false
                }
            }
             1->{// 共享文件
+                if(!mOthersShareFragment.pid.equals("root")){
+                    mOthersShareFragment.pid_stack.remove(mOthersShareFragment.pid_stack[0])
+                    mOthersShareFragment.pid=mOthersShareFragment.pid_stack[0]
 
+                    mOthersShareFragment.GetFileList()
+                    if(mOthersShareFragment.pid.equals("root")&&mOthersShareFragment.iv_back.visibility==View.VISIBLE){
+                        mOthersShareFragment.iv_back.visibility=View.GONE
+                        mOthersShareFragment.tv_title.text="内部共享"
+
+                    }
+                    return  false
+                }
             }
 
         }
