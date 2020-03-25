@@ -46,7 +46,9 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
         tv_setting.setOnClickListener {
             mContext?.startActivity<SettingsActivity>() }
         tv_user_feedback.setOnClickListener {
-            mContext?.startActivity<HelpAndFeedbackActivity>() }
+            mContext?.startActivity<SimpleFeedBackAcitivity>()
+//            mContext?.startActivity<HelpAndFeedbackActivity>()
+        }
         tv_about.setOnClickListener {
             mContext?.startActivity<AboutActivity>() }
 
