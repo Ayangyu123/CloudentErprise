@@ -32,7 +32,7 @@ var COMP: Company?=null  //企业ID
 
   val CORE_CLIENT_ADDRESS ="/ip4/127.0.0.1/tcp/5001" //client 地址
   val TEST_DOWN_FiLE_HASH ="QmU6yMLXAku4komAi1bGyh3UwLdDcrY1NQ12QijnKAiNQ8" //client 地址
-  var ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/"//${USER_ID}/" //client 地址
+  var ROOT_DIR_PATH= ""//Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/"""//${USER_ID}/" //client 地址
 
   //</editor-fold>
 

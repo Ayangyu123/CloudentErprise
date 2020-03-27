@@ -67,6 +67,17 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
             layoutmanager =layoutmanager
             adapter=mIngAdapter
             addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
+            mIngAdapter.SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
+                override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
+                    (holder as LoadingFileAdapter.ViewHolder).apply {
+                        var item= mIngAdapter.list[position]
+                        tv_file_name.text =item.file_name
+
+                    }
+                }
+
+            })
+
         }
         rc_completed.apply {
             layoutmanager =layoutmanager

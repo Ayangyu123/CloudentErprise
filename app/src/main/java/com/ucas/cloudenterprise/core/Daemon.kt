@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
+import android.os.Environment
 import android.os.IBinder
 import android.provider.OpenableColumns
 import android.util.Log
@@ -27,12 +28,17 @@ import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.loadclient.DownWebSocketClient
 import com.ucas.cloudenterprise.model.*
 import io.ipfs.api.IPFS
 import io.ipfs.multiaddr.MultiAddress
 import io.ipfs.multihash.Multihash
+import org.java_websocket.WebSocket
+import org.java_websocket.client.WebSocketClient
+import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
 import java.io.File
+import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -307,6 +313,10 @@ class DaemonService : Service() {
                 Log.e("ok","item.fidhash=${task.file_hash}")
                 var filePointer = Multihash.fromBase58(task.file_hash)
                 var fileInputStream = ipfs.catStream(filePointer)
+                if(ROOT_DIR_PATH.equals("")){
+                    ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+                }
+
                 val root =  File(ROOT_DIR_PATH)
                 if(!root.exists()){
                     root.mkdirs()
@@ -328,15 +338,46 @@ class DaemonService : Service() {
                     fileInputStream.close()
                 }
 
+                       var downclient:WebSocketClient? =null
+
+                downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down")){
+                           override fun onOpen(handshakedata: ServerHandshake?) {
+                               Log.e("WebSocketClient","onOpen")
+
+                               send(JSONObject(HashMap<String,String>().apply {
+                                   put("Hash",task.file_hash.toString())
+                               }).toString())
+                               Log.e("sended","onOpen")
+                           }
+
+                           override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                               Log.e("WebSocketClient","onClose")
+                               Log.e("WebSocketClient","reason is ${reason}")
+                               Log.e("WebSocketClient","code is ${code}")
+                               Log.e("WebSocketClient","remote is ${remote}")
+                           }
+
+                           override fun onMessage(message: String?) {
+                               Log.e("WebSocketClient","onMessage")
+                           }
+
+                           override fun onError(ex: java.lang.Exception?) {
+                               Log.e("WebSocketClient","onError")
+                           }
+
+                       }
+                downclient.connect()
 
 
-
+//
+//                DownWebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),"${task.file_hash}").connectBlocking()
+//                return@execute
 
                 OkGo.post<File>("http://127.0.0.1:9984/api/v0/down")
                     .params("hash","${task.file_hash}")
                     .isMultipart(true)
                     .execute(object :
-                        FileCallback(ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2),task.file_name){
+                        FileCallback(ROOT_DIR_PATH,task.file_name){
                         override fun onSuccess(response: Response<File>?) {
 
                             MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
@@ -559,71 +600,100 @@ class DaemonService : Service() {
 }
 
 fun main() {
-
-    Thread{
-        run {
-            val srcfile=File("/Users/simple/Desktop/7.zip")
-            var destfile = File("/Users/simple/Desktop/testzip")
-            var  total:Long=srcfile.length()
-            println("srcfile size =${total}")
-
-            var counttimer:Timer ?= null
-            if(destfile.exists()){
-                destfile.delete()
-            }
-            destfile.createNewFile()
-//            var fileOutputStream = destfile.outputStream()
-            var fileInputStream = srcfile.inputStream()
-            var buffer=ByteArray(1024*4)
-            var last_size:Long =0
-            var sum:Long =0
-            var len =0
-            val off =0
-            var last_progression =0
-            var progression =0
-
-            try {
-                while(fileInputStream.read(buffer).apply { len =this }>0){
-//                        Thread.sleep(10)
-//                    fileOutputStream.write(buffer,off,len)
-                    sum+=len.toLong()
-                     progression = (sum * 1.0 / total * 100 ).toInt()
-                    if(counttimer==null){
-                        counttimer= Timer()
-
-                        counttimer.scheduleAtFixedRate(object :TimerTask(){
-                            override fun run() {
-
-                                println("当前时间${SimpleDateFormat("HH:mm:ss").format(Date())}")
-                                println("当前size${sum}")
-                                println("last_size 前一秒size ${last_size}")
-                                println("当前速度 ${sum-last_size}")
-                                last_size =sum
-                                if(progression!=last_progression){
-                                println("当前进度为${progression}")
-                                last_progression =progression
-                                }
-                                if(sum==total){
-                                    print("下载完成")
-                                    this.cancel()
-                                    counttimer =null
-
-                                }
-                            }
-                        },0,1000)
-                    }
-//                    println("当前进度为${progression} ")
-
-                }
 //
-            }finally {
-                counttimer=null
-//                fileOutputStream.close()
-            }
+//    Thread{
+//        run {
+//            val srcfile=File("/Users/simple/Desktop/7.zip")
+//            var destfile = File("/Users/simple/Desktop/testzip")
+//            var  total:Long=srcfile.length()
+//            println("srcfile size =${total}")
+//
+//            var counttimer:Timer ?= null
+//            if(destfile.exists()){
+//                destfile.delete()
+//            }
+//            destfile.createNewFile()
+////            var fileOutputStream = destfile.outputStream()
+//            var fileInputStream = srcfile.inputStream()
+//            var buffer=ByteArray(1024*4)
+//            var last_size:Long =0
+//            var sum:Long =0
+//            var len =0
+//            val off =0
+//            var last_progression =0
+//            var progression =0
+//
+//            try {
+//                while(fileInputStream.read(buffer).apply { len =this }>0){
+////                        Thread.sleep(10)
+////                    fileOutputStream.write(buffer,off,len)
+//                    sum+=len.toLong()
+//                     progression = (sum * 1.0 / total * 100 ).toInt()
+//                    if(counttimer==null){
+//                        counttimer= Timer()
+//
+//                        counttimer.scheduleAtFixedRate(object :TimerTask(){
+//                            override fun run() {
+//
+//                                println("当前时间${SimpleDateFormat("HH:mm:ss").format(Date())}")
+//                                println("当前size${sum}")
+//                                println("last_size 前一秒size ${last_size}")
+//                                println("当前速度 ${sum-last_size}")
+//                                last_size =sum
+//                                if(progression!=last_progression){
+//                                println("当前进度为${progression}")
+//                                last_progression =progression
+//                                }
+//                                if(sum==total){
+//                                    print("下载完成")
+//                                    this.cancel()
+//                                    counttimer =null
+//
+//                                }
+//                            }
+//                        },0,1000)
+//                    }
+////                    println("当前进度为${progression} ")
+//
+//                }
+////
+//            }finally {
+//                counttimer=null
+////                fileOutputStream.close()
+//            }
+//
+//
+//        }
+//    }.start()
 
 
+   val downclient=object :WebSocketClient(URI.create("ws://10.0.130.45:9984/api/v0/ws/down")){
+        override fun onOpen(handshakedata: ServerHandshake?) {
+            println("onOpen")
+
+            send(JSONObject(HashMap<String,String>().apply {
+                put("Hash","QmQXnnSQ9wrGJgjX5fna78o3migiVDN57DdRbLB12W8ShP")
+            }).toString())
+            println("onOpen")
         }
-    }.start()
+
+        override fun onClose(code: Int, reason: String?, remote: Boolean) {
+            println("onClose")
+            println("reason is ${reason}")
+            println("code is ${code}")
+            println("remote is ${remote}")
+        }
+
+        override fun onMessage(message: String?) {
+            println("onMessage")
+        }
+
+        override fun onError(ex: java.lang.Exception?) {
+            println("onError")
+        }
+
+    }
+    downclient.connect()
 
 }
 
