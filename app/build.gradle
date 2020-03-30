@@ -94,6 +94,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
         //websocket
     implementation "org.java-websocket:Java-WebSocket:1.4.1"
+//    implementation "org.java-websocket:Java-WebSocket:1.3.8"
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0"

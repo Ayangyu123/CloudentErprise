@@ -11,7 +11,7 @@
         android:id="@+id/iv_file_type"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/icon_list_folder"
+        android:src="@drawable/icon_list_unknown"
         android:layout_gravity="center_vertical"
         />
         <LinearLayout
@@ -21,11 +21,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/tv_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:gravity="center_vertical"
                 tools:text="文件名称"/>
+            <ProgressBar
+                android:id="@+id/progress_download"
+                style="?android:progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="0"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,13 +68,7 @@
        android:layout_margin="10dp"
        android:layout_gravity="center_vertical"
        >
-       <ProgressBar
-           android:id="@+id/progress_download"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
-           android:max="100"
-           android:progress="0"
-           />
+
        <ImageView
            android:id="@+id/iv_down_flag"
            android:layout_width="match_parent"

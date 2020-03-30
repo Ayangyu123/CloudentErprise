@@ -15,6 +15,7 @@ import android.os.Build.CPU_ABI
 import android.os.Environment
 import android.os.IBinder
 import android.provider.OpenableColumns
+import android.text.TextUtils
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
@@ -33,8 +34,12 @@ import com.ucas.cloudenterprise.model.*
 import io.ipfs.api.IPFS
 import io.ipfs.multiaddr.MultiAddress
 import io.ipfs.multihash.Multihash
+import okhttp3.Request
+import okhttp3.WebSocketListener
+import okio.ByteString
 import org.java_websocket.WebSocket
 import org.java_websocket.client.WebSocketClient
+import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
 import java.io.File
@@ -309,45 +314,19 @@ class DaemonService : Service() {
 
                 MyApplication.downLoad_Ing.add(task)
                 task. Ingstatus =IngFileState.ING
-                var ipfs = IPFS( MultiAddress(CORE_CLIENT_ADDRESS))
                 Log.e("ok","item.fidhash=${task.file_hash}")
-                var filePointer = Multihash.fromBase58(task.file_hash)
-                var fileInputStream = ipfs.catStream(filePointer)
-                if(ROOT_DIR_PATH.equals("")){
-                    ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
-                }
 
-                val root =  File(ROOT_DIR_PATH)
-                if(!root.exists()){
-                    root.mkdirs()
-                }
-                Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
+                 var downclient:WebSocketClient? =null
 
-                val buffer=ByteArray(1024*4)
-                var sum:Long =0
-                var len =0
-
-
-                try {
-                    while (fileInputStream.read(buffer).apply { len =this }>0){
-//                            fileOutputStream.write(buffer,off,len)
-                        sum+=len.toLong()
-                        val progression = (sum * 1.0f / task.file_size * 100 ).toInt()
-                    }
-                }finally {
-                    fileInputStream.close()
-                }
-
-                       var downclient:WebSocketClient? =null
-
-                downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down")){
+                 downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),
+                    Draft_6455()
+                    ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
                            override fun onOpen(handshakedata: ServerHandshake?) {
                                Log.e("WebSocketClient","onOpen")
 
                                send(JSONObject(HashMap<String,String>().apply {
                                    put("Hash",task.file_hash.toString())
                                }).toString())
-                               Log.e("sended","onOpen")
                            }
 
                            override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -355,10 +334,51 @@ class DaemonService : Service() {
                                Log.e("WebSocketClient","reason is ${reason}")
                                Log.e("WebSocketClient","code is ${code}")
                                Log.e("WebSocketClient","remote is ${remote}")
+
+                               if(ROOT_DIR_PATH.equals("")){
+                                   ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+                               }
+
+                               val root =  File(ROOT_DIR_PATH)
+                               if(!root.exists()){
+                                   root.mkdirs()
+                               }
+                               Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
+
+                               //                OkGo.post<File>("http://127.0.0.1:9984/api/v0/down")
+                               OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
+                                   .params("hash","${task.file_hash}")
+                                   .isMultipart(true)
+                                   .execute(object :
+                                       FileCallback(ROOT_DIR_PATH,task.file_name){
+                                       override fun onSuccess(response: Response<File>?) {
+
+                                           MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                                               Date()
+                                           )
+                                               ,task.file_size.toString(),
+                                               false))
+                                           MyApplication.downLoad_Ing.remove(task)
+                                           Log.e("it","文件路径 ${response?.body()?.absolutePath}")
+                                           Toastinfo("${task.file_name} 下载完成")
+                                       }
+
+                                   })
+
                            }
 
                            override fun onMessage(message: String?) {
-                               Log.e("WebSocketClient","onMessage")
+                               Log.e("WebSocketClient","onMessage ${message}")
+                               if(TextUtils.isEmpty(message)){
+                                   return
+                               }
+
+                               JSONObject(message).apply {
+                                   task.progress= getDouble("Percent").toInt()
+                                   //TODO 速度显示
+                                   task.Speed= getString("Speed")
+                               }
+
                            }
 
                            override fun onError(ex: java.lang.Exception?) {
@@ -373,24 +393,9 @@ class DaemonService : Service() {
 //                DownWebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),"${task.file_hash}").connectBlocking()
 //                return@execute
 
-                OkGo.post<File>("http://127.0.0.1:9984/api/v0/down")
-                    .params("hash","${task.file_hash}")
-                    .isMultipart(true)
-                    .execute(object :
-                        FileCallback(ROOT_DIR_PATH,task.file_name){
-                        override fun onSuccess(response: Response<File>?) {
 
-                            MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                                Date()
-                            )
-                                ,task.file_size.toString(),
-                                false))
-                            MyApplication.downLoad_Ing.remove(task)
-                            Log.e("it","文件路径 ${response?.body()?.absolutePath}")
-                            Toastinfo("${task.file_name} 下载完成")
-                        }
 
-                    })
+
             }
             }
 
@@ -666,14 +671,56 @@ fun main() {
 //        }
 //    }.start()
 
+//        OkGo.getInstance().okHttpClient.newWebSocket(Request.Builder().url("ws://192.168.0.11:9984/api/v0/ws/down").build(),object :WebSocketListener(){
+//            override fun onOpen(webSocket: okhttp3.WebSocket, response: okhttp3.Response) {
+//                super.onOpen(webSocket, response)
+//                println("onOpen")
+//            }
+//
+//            override fun onFailure(
+//                webSocket: okhttp3.WebSocket,
+//                t: Throwable,
+//                response: okhttp3.Response
+//            ) {
+//                super.onFailure(webSocket, t, response)
+//                println("onFailure")
+//            }
+//
+//            override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
+//                super.onClosing(webSocket, code, reason)
+//                println("onClosing")
+//                println("code is ${code}")
+//                println("reason is $reason")
+//            }
+//
+//            override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
+//                super.onMessage(webSocket, text)
+//                println("onMessage text" )
+//                println("text is ${text}")
+//            }
+//
+//            override fun onMessage(webSocket: okhttp3.WebSocket, bytes: ByteString) {
+//                super.onMessage(webSocket, bytes)
+//                println("onMessage  bytes")
+//            }
+//
+//            override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
+//                super.onClosed(webSocket, code, reason)
+//                println("onMessage  bytes")
+//            }
+//        })
 
-   val downclient=object :WebSocketClient(URI.create("ws://10.0.130.45:9984/api/v0/ws/down")){
+
+//   val downclient=object :WebSocketClient(URI.create("ws://192.168.0.11:9984/api/v0/ws/down")){
+//   val downclient=object :WebSocketClient(URI.create("ws://121.40.165.18:8800")){
+   val downclient=object :WebSocketClient(URI.create("ws://echo.websocket.org")){
         override fun onOpen(handshakedata: ServerHandshake?) {
             println("onOpen")
 
-            send(JSONObject(HashMap<String,String>().apply {
-                put("Hash","QmQXnnSQ9wrGJgjX5fna78o3migiVDN57DdRbLB12W8ShP")
-            }).toString())
+//            send(JSONObject(HashMap<String,String>().apply {
+//                put("Hash","QmQXnnSQ9wrGJgjX5fna78o3migiVDN57DdRbLB12W8ShP")
+//            }).toString())
+            send("test")
             println("onOpen")
         }
 
@@ -686,14 +733,17 @@ fun main() {
 
         override fun onMessage(message: String?) {
             println("onMessage")
+            println("onMessage $message")
         }
 
         override fun onError(ex: java.lang.Exception?) {
             println("onError")
         }
 
-    }
-    downclient.connect()
+    }.apply {
+
+   }
+    downclient.connectBlocking()
 
 }
 

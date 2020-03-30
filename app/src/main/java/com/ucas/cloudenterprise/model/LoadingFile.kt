@@ -18,4 +18,5 @@ data class LoadingFile(
     val dest_file: File?=null,
     val pid :String?=null,
     var Ingstatus:IngFileState = IngFileState.WAITING,
-    var progress:Int=0):Serializable
+    var progress:Int=0,
+    var Speed:String=""):Serializable

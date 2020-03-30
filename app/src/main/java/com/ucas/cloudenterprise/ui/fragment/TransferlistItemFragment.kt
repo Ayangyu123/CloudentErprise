@@ -27,7 +27,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
         val ING=2
         val COMPLETED=3
     }
-    var mcountDownTimer =  object :CountDownTimer(24 * 60 * 60 * 1000, 1000){
+    var mcountDownTimer =  object :CountDownTimer(24 * 60 * 60 * 1000, 1*1000){
         override fun onFinish() {
 
         }
@@ -72,6 +72,8 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                     (holder as LoadingFileAdapter.ViewHolder).apply {
                         var item= mIngAdapter.list[position]
                         tv_file_name.text =item.file_name
+                        tv_curr_size.text=item.Speed
+                            progress_download.progress =item.progress
 
                     }
                 }

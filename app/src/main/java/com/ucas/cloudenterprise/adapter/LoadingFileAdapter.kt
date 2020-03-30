@@ -14,7 +14,7 @@ class LoadingFileAdapter(var context: Context?, var list:ArrayList<LoadingFile>)
     val TAG ="FilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(com.ucas.cloudenterprise.R.layout.item_myfiles, parent,false)
+        var view = LayoutInflater.from(parent.context).inflate(com.ucas.cloudenterprise.R.layout.item_down_ing, parent,false)
         return ViewHolder(view)
     }
     fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){
@@ -43,6 +43,8 @@ class LoadingFileAdapter(var context: Context?, var list:ArrayList<LoadingFile>)
         var checkbox_is_checked =itemView.findViewById<CheckBox>(com.ucas.cloudenterprise.R.id.checkbox_is_checked)
         var tv_file_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
         var tv_file_create_time =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_create_time)
+        var tv_curr_size =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_curr_size)
+        var progress_download =itemView.findViewById<ProgressBar>(com.ucas.cloudenterprise.R.id.progress_download)
 
 
 
