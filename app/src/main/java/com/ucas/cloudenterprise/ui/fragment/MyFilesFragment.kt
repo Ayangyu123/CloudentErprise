@@ -40,6 +40,7 @@ import kotlinx.android.synthetic.main.dialog_create_new_dir.et_dir_name
 import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import kotlinx.android.synthetic.main.top_file_operate.*
+import me.rosuh.filepicker.config.FilePickerManager
 import org.json.JSONObject
 
 
@@ -157,8 +158,14 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                             Toastinfo("没有sd卡读取权限")
                             return@setOnClickListener
                         }
-                        var mintent =  Intent(Intent.ACTION_GET_CONTENT)
-                        mintent.addCategory(Intent.CATEGORY_OPENABLE)
+
+            FilePickerManager
+                .from(this)
+//                .setTheme(getRandomTheme())
+                .enableSingleChoice()
+                .forResult(FilePickerManager.REQUEST_CODE)
+//                        var mintent =  Intent(Intent.ACTION_GET_CONTENT)
+//                        mintent.addCategory(Intent.CATEGORY_OPENABLE)
 
 //                       when(it.id){
 //                           R.id.tv_image->{
@@ -178,10 +185,10 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 //                           }
 //                           R.id.tv_all->{
 //                               Toastinfo("全部")
-                               mintent.setType("*/*")
+//                               mintent.setType("*/*")
 //                           }
 //                       }
-                        startActivityForResult(Intent.createChooser(mintent,"文件选择"),FILE_CHOOSER_RESULT_CODE)
+//                        startActivityForResult(Intent.createChooser(mintent,"文件选择"),FILE_CHOOSER_RESULT_CODE)
 //                        UpFileTypeDialog?.dismiss()
 //                    })
 //            }
@@ -601,11 +608,13 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         if ( data !=null) {
 
             when(requestCode){
-                FILE_CHOOSER_RESULT_CODE ->{ //选择文件上传文件
+                FilePickerManager.REQUEST_CODE ->{ //选择文件上传文件
 
+                   Log.e("ok","file  path"+FilePickerManager.obtainData()[0])
                         var  mainActivity=activity as MainActivity
                         mainActivity.myBinder as DaemonService.MyBinder
-                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(data.dataString,pid,this,this)
+                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(FilePickerManager.obtainData()[0],pid)
+//                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(data.dataString,pid,this,this)
 
 
                 }

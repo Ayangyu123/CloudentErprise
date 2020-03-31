@@ -33,8 +33,18 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
         }
 
         override fun onTick(millisUntilFinished: Long) {
-            mIngAdapter.notifyDataSetChanged()
-            mCompletedAdapter.notifyDataSetChanged()
+            mIngAdapter?.apply {
+                if(!list.isEmpty()){
+                    notifyDataSetChanged()
+                }
+
+            }
+
+            mCompletedAdapter?.apply {
+                if(!list.isEmpty()){
+                    notifyDataSetChanged()
+                }
+            }
         }
 
     }
@@ -155,7 +165,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
 
                             }
                         }
-
+                       dismiss()
                    }
                }
            })
@@ -181,8 +191,9 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
 
         }else{
             tv_no_task_info.visibility = View.GONE
-            mcountDownTimer.start()
+
         }
+        mcountDownTimer.start()
 
     }
 

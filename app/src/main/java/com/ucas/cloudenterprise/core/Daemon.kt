@@ -47,6 +47,7 @@ import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadPoolExecutor
 import kotlin.collections.HashMap
 
 class DaemonService : Service() {
@@ -54,6 +55,9 @@ class DaemonService : Service() {
     var mMyBinder :  MyBinder ? =null
     val  downexecutor = Executors.newFixedThreadPool(3)
     val  upexecutor = Executors.newFixedThreadPool(3)
+    var  uptaskmap =HashMap<String,Runnable>()
+    var  downtaskmap =HashMap<String,Runnable>()
+
     override fun onBind(intent: Intent): IBinder? = mMyBinder
     companion object {
         var daemon: Process? = null
@@ -213,7 +217,24 @@ class DaemonService : Service() {
     }
     //</editor-fold>
 
-
+    //<editor-fold desc="停止文件加载">
+    fun LoadFileStop(loadfile:LoadingFile) {
+        loadfile?.apply{
+            when(loadfile.load_type_falg){
+                0->{
+                    uptaskmap[loadfile.file_MD5]?.apply {
+                        (upexecutor as ThreadPoolExecutor).remove(this)
+                    }
+                    }
+                1->{
+                    downtaskmap[loadfile.file_MD5]?.apply {
+                        (downexecutor as ThreadPoolExecutor).remove(this)
+                    }
+                }
+            }
+        }
+    }
+    //</editor-fold>
 
     fun add(){
       if(daemon!=null){
@@ -309,94 +330,92 @@ class DaemonService : Service() {
                 Toastinfo("pulgDaemon 未启动")
                 return
             }
-            downexecutor.execute {
-                val task = LoadingFile(1,item.file_name,null,item.fidhash,item.size)
+            val task = LoadingFile(1,item.file_name,null,item.fidhash,item.size)
 
-                MyApplication.downLoad_Ing.add(task)
-                task. Ingstatus =IngFileState.ING
-                Log.e("ok","item.fidhash=${task.file_hash}")
+            MyApplication.downLoad_Ing.add(task)
+            task. Ingstatus =IngFileState.ING
+            Log.e("ok","item.fidhash=${task.file_hash}")
+            object :Runnable{
+                override fun run() {
+                    var downclient:WebSocketClient? =null
 
-                 var downclient:WebSocketClient? =null
+                    downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),
+                        Draft_6455()
+                        ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
+                        override fun onOpen(handshakedata: ServerHandshake?) {
+                            Log.e("WebSocketClient","onOpen")
 
-                 downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),
-                    Draft_6455()
-                    ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
-                           override fun onOpen(handshakedata: ServerHandshake?) {
-                               Log.e("WebSocketClient","onOpen")
+                            send(JSONObject(HashMap<String,String>().apply {
+                                put("Hash",task.file_hash.toString())
+                            }).toString())
+                        }
 
-                               send(JSONObject(HashMap<String,String>().apply {
-                                   put("Hash",task.file_hash.toString())
-                               }).toString())
-                           }
+                        override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                            Log.e("WebSocketClient","onClose")
+                            Log.e("WebSocketClient","reason is ${reason}")
+                            Log.e("WebSocketClient","code is ${code}")
+                            Log.e("WebSocketClient","remote is ${remote}")
 
-                           override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                               Log.e("WebSocketClient","onClose")
-                               Log.e("WebSocketClient","reason is ${reason}")
-                               Log.e("WebSocketClient","code is ${code}")
-                               Log.e("WebSocketClient","remote is ${remote}")
+                            if(ROOT_DIR_PATH.equals("")){
+                                ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+                            }
 
-                               if(ROOT_DIR_PATH.equals("")){
-                                   ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
-                               }
+                            val root =  File(ROOT_DIR_PATH)
+                            if(!root.exists()){
+                                root.mkdirs()
+                            }
+                            Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
 
-                               val root =  File(ROOT_DIR_PATH)
-                               if(!root.exists()){
-                                   root.mkdirs()
-                               }
-                               Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
+                            //                OkGo.post<File>("http://127.0.0.1:9984/api/v0/down")
+                            OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
+                                .params("hash","${task.file_hash}")
+                                .isMultipart(true)
+                                .execute(object :
+                                    FileCallback(ROOT_DIR_PATH,task.file_name){
+                                    override fun onSuccess(response: Response<File>?) {
 
-                               //                OkGo.post<File>("http://127.0.0.1:9984/api/v0/down")
-                               OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
-                                   .params("hash","${task.file_hash}")
-                                   .isMultipart(true)
-                                   .execute(object :
-                                       FileCallback(ROOT_DIR_PATH,task.file_name){
-                                       override fun onSuccess(response: Response<File>?) {
+                                        MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                                            Date()
+                                        )
+                                            ,task.file_size.toString(),
+                                            false))
+                                        MyApplication.downLoad_Ing.remove(task)
+                                        Log.e("it","文件路径 ${response?.body()?.absolutePath}")
+                                        Toastinfo("${task.file_name} 下载完成")
+                                    }
 
-                                           MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                                               Date()
-                                           )
-                                               ,task.file_size.toString(),
-                                               false))
-                                           MyApplication.downLoad_Ing.remove(task)
-                                           Log.e("it","文件路径 ${response?.body()?.absolutePath}")
-                                           Toastinfo("${task.file_name} 下载完成")
-                                       }
+                                })
 
-                                   })
+                        }
 
-                           }
+                        override fun onMessage(message: String?) {
+                            Log.e("WebSocketClient","onMessage ${message}")
+                            if(TextUtils.isEmpty(message)){
+                                return
+                            }
 
-                           override fun onMessage(message: String?) {
-                               Log.e("WebSocketClient","onMessage ${message}")
-                               if(TextUtils.isEmpty(message)){
-                                   return
-                               }
+                            JSONObject(message).apply {
+                                task.progress= getDouble("Percent").toInt()
+                                //TODO 速度显示
+                                task.Speed= getString("Speed")
+                            }
 
-                               JSONObject(message).apply {
-                                   task.progress= getDouble("Percent").toInt()
-                                   //TODO 速度显示
-                                   task.Speed= getString("Speed")
-                               }
+                        }
 
-                           }
+                        override fun onError(ex: java.lang.Exception?) {
+                            Log.e("WebSocketClient","onError")
+                        }
 
-                           override fun onError(ex: java.lang.Exception?) {
-                               Log.e("WebSocketClient","onError")
-                           }
+                    }
+                    downclient.connect()
+                }
 
-                       }
-                downclient.connect()
-
-
-//
-//                DownWebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),"${task.file_hash}").connectBlocking()
-//                return@execute
-
-
-
-
+            }.apply {
+                downtaskmap.put("${item.fidhash}",this)
+                downexecutor.execute(this)
             }
+
+
             }
 
 
@@ -450,69 +469,123 @@ class DaemonService : Service() {
                                 }
 
                                 val uptask = LoadingFile(0,displayName!!,filemd5,null,size,inputStream,destfile,pid)
-                                upexecutor.execute {
-
-                                    println("开始执行")
-                                    Log.e("uptask","开始执行")
-                                    uptask.Ingstatus = IngFileState.ING
-                                    try {
-                                        println("复制文件")
-                                        if(!destfile.exists()){
-                                            destfile.createNewFile()
-                                            FileCP(inputStream,destfile.outputStream())
-
-                                        }else{
-                                            if((destfile.length())!=size){
-                                                destfile.delete()
+                                object :Runnable{
+                                    override fun run() {
+                                        println("开始执行")
+                                        Log.e("uptask","开始执行")
+                                        uptask.Ingstatus = IngFileState.ING
+                                        try {
+                                            println("复制文件")
+                                            if(!destfile.exists()){
                                                 destfile.createNewFile()
                                                 FileCP(inputStream,destfile.outputStream())
+
+                                            }else{
+                                                if((destfile.length())!=size){
+                                                    destfile.delete()
+                                                    destfile.createNewFile()
+                                                    FileCP(inputStream,destfile.outputStream())
+                                                }
                                             }
+
+                                            uptask.progress=25
+                                            var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(tag).converter(StringConvert()).adapt()
+                                            val AesKey_response: Response<String> = AesKey_adapt.execute()
+                                            val AesKey =  "${AesKey_response?.body()}"
+                                            Log.e("ok","aeskay = ${AesKey}")
+                                            uptask.progress=30
+
+
+//                                        var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/up")
+                                            var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/pack")
+                                                .params("flag",JSONObject().apply {
+                                                    put("MetaHash",uptask.file_MD5)
+                                                    put("MetaSize",uptask.file_size)
+                                                    put("Gzip",true)
+                                                    put("Aes",true)
+                                                    put("AesKey",AesKey)
+                                                    put("RS",true)
+                                                    put("Feed",true)
+                                                }.toString())
+                                                .params("file", uptask.dest_file)
+                                                .isMultipart(true)
+                                                .tag(tag).converter(StringConvert()).adapt()
+                                            val Uploadfile_response:Response<String> =  Uploadfile_adapt.execute()
+                                            val Multihash= JSONObject(Uploadfile_response.body().toString()).getJSONObject("Encrypt").getString("Multihash")
+
+                                            uptask.progress=80
+
+                                            var downclient:WebSocketClient? =null
+
+                                            downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/up"),
+                                                Draft_6455()
+                                                ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
+                                                override fun onOpen(handshakedata: ServerHandshake?) {
+                                                    Log.e("WebSocketClient","onOpen")
+
+                                                    send(JSONObject(HashMap<String,String>().apply {
+                                                        put("Hash",Multihash)
+                                                    }).toString())
+                                                }
+
+                                                override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                                                    Log.e("WebSocketClient","onClose")
+                                                    Log.e("WebSocketClient","reason is ${reason}")
+                                                    Log.e("WebSocketClient","code is ${code}")
+                                                    Log.e("WebSocketClient","remote is ${remote}")
+
+                                                    val params = HashMap<String, Any>()
+                                                    params["file_name"] = uptask.file_name + ""
+                                                    params["is_dir"] = IS_FILE
+                                                    params["user_id"] = "$USER_ID" //TODO
+                                                    params["fidhash"] = "${Multihash}"
+                                                    params["filehash"] = "${filemd5}"
+                                                    params["pid"] = pid
+                                                    params["size"] = size
+                                                    uptask.progress=100
+                                                    UploadFileMetaInfo(params,tag,displayName!!,size.toString(),1)
+
+
+
+
+                                                }
+
+                                                override fun onMessage(message: String?) {
+                                                    Log.e("WebSocketClient","onMessage ${message}")
+                                                    if(TextUtils.isEmpty(message)){
+                                                        return
+                                                    }
+
+                                                    JSONObject(message).apply {
+                                                        uptask.progress= getDouble("Percent").toInt()
+                                                        //TODO 速度显示
+                                                        uptask.Speed= getString("Speed")
+                                                    }
+
+                                                }
+
+                                                override fun onError(ex: java.lang.Exception?) {
+                                                    Log.e("WebSocketClient","onError")
+                                                }
+
+                                            }
+                                            downclient.connect()
+
+
+
+
+                                        } catch (e:Exception) {
+                                            e.printStackTrace()
                                         }
 
-                                        uptask.progress=25
-                                        var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(tag).converter(StringConvert()).adapt()
-                                        val AesKey_response: Response<String> = AesKey_adapt.execute()
-                                        val AesKey =  "${AesKey_response?.body()}"
-                                        Log.e("ok","aeskay = ${AesKey}")
-                                        uptask.progress=30
-
-
-                                        var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/up")
-                                            .params("flag",JSONObject().apply {
-                                                put("MetaHash",uptask.file_MD5)
-                                                put("MetaSize",uptask.file_size)
-                                                put("Gzip",true)
-                                                put("Aes",true)
-                                                put("AesKey",AesKey)
-                                                put("RS",true)
-                                                put("Feed",true)
-                                            }.toString())
-                                            .params("file", uptask.dest_file)
-                                            .isMultipart(true)
-                                            .tag(tag).converter(StringConvert()).adapt()
-                                        val Uploadfile_response:Response<String> =  Uploadfile_adapt.execute()
-                                       val Multihash= JSONObject(Uploadfile_response.body().toString()).getJSONObject("Encrypt").getString("Multihash")
-
-                                        uptask.progress=80
-
-
-
-                                        val params = HashMap<String, Any>()
-                                        params["file_name"] = uptask.file_name + ""
-                                        params["is_dir"] = IS_FILE
-                                        params["user_id"] = "$USER_ID" //TODO
-                                        params["fidhash"] = "${Multihash}"
-                                        params["filehash"] = "${filemd5}"
-                                        params["pid"] = pid
-                                        params["size"] = size
-                                        uptask.progress=100
-                                        UploadFileMetaInfo(params,tag,displayName!!,size.toString(),1)
-
-
-                                    } catch (e:Exception) {
-                                        e.printStackTrace()
                                     }
+
+                                }.apply {
+                                    uptaskmap.put("${uptaskmap}",this)
+                                    upexecutor.execute(this)
                                 }
+
+
 
                             }else{
                                 Log.e("ok","plugindaemon服务未启动")
@@ -540,6 +613,172 @@ class DaemonService : Service() {
                         params["pid"] = pid
                         params["size"] = size
                         UploadFileMetaInfo(params,tag,displayName!!,size.toString(),0)
+                    }
+
+
+
+               }
+
+           })
+        //TODO
+
+    }
+    //</editor-fold>
+    // <editor-fold desc=" 上传文件  ">
+    fun AddFile(
+        filepath: String,
+        pid: String
+    ) {
+        val destfile =File(filepath)
+        val filemd5= MD5encode(destfile.readBytes())
+       OkGo.get<String>("${URL_ADD_File_CHECK}${filemd5}")
+           .execute(object:StringCallback(){
+               override fun onSuccess(response: Response<String>?) {
+                   Log.e("ok",response?.body().toString())
+
+
+                    if(!(JSONObject(response?.body().toString()).getInt("code")== REQUEST_SUCCESS_CODE)){
+
+
+
+                        if (daemon != null ) {//&& daemon!!.isAlive
+                            if(plugindaemon!=null){//&& plugindaemon!!.isAlive
+                                Log.e("ok","准备上传")
+
+                                val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile.inputStream(),destfile,pid)
+                                object :Runnable{
+                                    override fun run() {
+                                        println("开始执行")
+                                        Log.e("uptask","开始执行")
+                                        uptask.Ingstatus = IngFileState.ING
+                                        try {
+
+
+                                            uptask.progress=25
+                                            var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(filemd5).converter(StringConvert()).adapt()
+                                            val AesKey_response: Response<String> = AesKey_adapt.execute()
+                                            val AesKey =  "${AesKey_response?.body()}"
+                                            Log.e("ok","aeskay = ${AesKey}")
+                                            uptask.progress=30
+
+
+//                                        var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/up")
+                                            var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/pack")
+                                                .params("flag",JSONObject().apply {
+                                                    put("MetaHash",uptask.file_MD5)
+                                                    put("MetaSize",uptask.file_size)
+                                                    put("Gzip",true)
+                                                    put("Aes",true)
+                                                    put("AesKey",AesKey)
+                                                    put("RS",true)
+                                                    put("Feed",true)
+                                                }.toString())
+                                                .params("file", uptask.dest_file)
+                                                .isMultipart(true)
+                                                .tag(filemd5).converter(StringConvert()).adapt()
+                                            val Uploadfile_response:Response<String> =  Uploadfile_adapt.execute()
+                                            val Multihash= JSONObject(Uploadfile_response.body().toString()).getJSONObject("Encrypt").getString("Multihash")
+
+                                            uptask.progress=80
+
+                                            var downclient:WebSocketClient? =null
+
+                                            downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/up"),
+                                                Draft_6455()
+                                                ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
+                                                override fun onOpen(handshakedata: ServerHandshake?) {
+                                                    Log.e("WebSocketClient","onOpen")
+
+                                                    send(JSONObject(HashMap<String,String>().apply {
+                                                        put("Hash",Multihash)
+                                                    }).toString())
+                                                }
+
+                                                override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                                                    Log.e("WebSocketClient","onClose")
+                                                    Log.e("WebSocketClient","reason is ${reason}")
+                                                    Log.e("WebSocketClient","code is ${code}")
+                                                    Log.e("WebSocketClient","remote is ${remote}")
+
+                                                    val params = HashMap<String, Any>()
+                                                    params["file_name"] = uptask.file_name + ""
+                                                    params["is_dir"] = IS_FILE
+                                                    params["user_id"] = "$USER_ID" //TODO
+                                                    params["fidhash"] = "${Multihash}"
+                                                    params["filehash"] = "${filemd5}"
+                                                    params["pid"] = pid
+                                                    params["size"] = destfile.length()
+                                                    uptask.progress=100
+                                                    UploadFileMetaInfo(params,filemd5,destfile.name,destfile.length().toString(),1)
+
+
+
+
+                                                }
+
+                                                override fun onMessage(message: String?) {
+                                                    Log.e("WebSocketClient","onMessage ${message}")
+                                                    if(TextUtils.isEmpty(message)){
+                                                        return
+                                                    }
+
+                                                    JSONObject(message).apply {
+                                                        uptask.progress= getDouble("Percent").toInt()
+                                                        //TODO 速度显示
+                                                        uptask.Speed= getString("Speed")
+                                                    }
+
+                                                }
+
+                                                override fun onError(ex: java.lang.Exception?) {
+                                                    Log.e("WebSocketClient","onError")
+                                                }
+
+                                            }
+                                            downclient.connect()
+
+
+
+
+                                        } catch (e:Exception) {
+                                            e.printStackTrace()
+                                        }
+
+                                    }
+
+                                }.apply {
+                                    uptaskmap.put("${uptaskmap}",this)
+                                    upexecutor.execute(this)
+                                }
+
+
+
+                            }else{
+                                Log.e("ok","plugindaemon服务未启动")
+                            }
+
+
+                        } else {
+                            Log.e("ok","daemon服务未启动")
+                            Toastinfo("coredaemon服务未启动")
+                        }
+
+
+                    }else{
+                        Log.e("ok","该文件已存在")
+                        val params = HashMap<String, Any>()
+                        params["file_name"] = destfile.name + ""
+                        params["is_dir"] = IS_FILE
+                        params["user_id"] = "${USER_ID}" //TODO
+                        params["fidhash"] = "${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
+                            Log.e("ok","fidhash=${this}")
+                        }}"
+                        params["filehash"] = "${filemd5.apply {
+                            Log.e("ok","fidhash=${this}")
+                        }}"
+                        params["pid"] = pid
+                        params["size"] = destfile.length()
+                        UploadFileMetaInfo(params,filemd5,destfile.name,destfile.length().toString(),0)
                     }
 
 
@@ -591,6 +830,7 @@ class DaemonService : Service() {
     }
 
     override fun onDestroy() {
+        Log.e("ok"," daemon onDestroy")
         MyApplication.getInstance().GetSP().edit().apply {
          putString("downLoad_Ing",Gson().toJson(MyApplication.downLoad_Ing))
          putString("downLoad_completed",Gson().toJson(MyApplication.downLoad_completed))
@@ -598,6 +838,13 @@ class DaemonService : Service() {
          putString("upLoad_completed",Gson().toJson(MyApplication.upLoad_completed))
             commit()
         }
+        if(downexecutor!=null&&!downexecutor.isShutdown){
+            downexecutor.shutdown()
+        }
+        if(upexecutor!=null&&!upexecutor.isShutdown){
+            upexecutor.shutdown()
+        }
+
 
 
         super.onDestroy()
@@ -605,121 +852,12 @@ class DaemonService : Service() {
 }
 
 fun main() {
-//
-//    Thread{
-//        run {
-//            val srcfile=File("/Users/simple/Desktop/7.zip")
-//            var destfile = File("/Users/simple/Desktop/testzip")
-//            var  total:Long=srcfile.length()
-//            println("srcfile size =${total}")
-//
-//            var counttimer:Timer ?= null
-//            if(destfile.exists()){
-//                destfile.delete()
-//            }
-//            destfile.createNewFile()
-////            var fileOutputStream = destfile.outputStream()
-//            var fileInputStream = srcfile.inputStream()
-//            var buffer=ByteArray(1024*4)
-//            var last_size:Long =0
-//            var sum:Long =0
-//            var len =0
-//            val off =0
-//            var last_progression =0
-//            var progression =0
-//
-//            try {
-//                while(fileInputStream.read(buffer).apply { len =this }>0){
-////                        Thread.sleep(10)
-////                    fileOutputStream.write(buffer,off,len)
-//                    sum+=len.toLong()
-//                     progression = (sum * 1.0 / total * 100 ).toInt()
-//                    if(counttimer==null){
-//                        counttimer= Timer()
-//
-//                        counttimer.scheduleAtFixedRate(object :TimerTask(){
-//                            override fun run() {
-//
-//                                println("当前时间${SimpleDateFormat("HH:mm:ss").format(Date())}")
-//                                println("当前size${sum}")
-//                                println("last_size 前一秒size ${last_size}")
-//                                println("当前速度 ${sum-last_size}")
-//                                last_size =sum
-//                                if(progression!=last_progression){
-//                                println("当前进度为${progression}")
-//                                last_progression =progression
-//                                }
-//                                if(sum==total){
-//                                    print("下载完成")
-//                                    this.cancel()
-//                                    counttimer =null
-//
-//                                }
-//                            }
-//                        },0,1000)
-//                    }
-////                    println("当前进度为${progression} ")
-//
-//                }
-////
-//            }finally {
-//                counttimer=null
-////                fileOutputStream.close()
-//            }
-//
-//
-//        }
-//    }.start()
 
-//        OkGo.getInstance().okHttpClient.newWebSocket(Request.Builder().url("ws://192.168.0.11:9984/api/v0/ws/down").build(),object :WebSocketListener(){
-//            override fun onOpen(webSocket: okhttp3.WebSocket, response: okhttp3.Response) {
-//                super.onOpen(webSocket, response)
-//                println("onOpen")
-//            }
-//
-//            override fun onFailure(
-//                webSocket: okhttp3.WebSocket,
-//                t: Throwable,
-//                response: okhttp3.Response
-//            ) {
-//                super.onFailure(webSocket, t, response)
-//                println("onFailure")
-//            }
-//
-//            override fun onClosing(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
-//                super.onClosing(webSocket, code, reason)
-//                println("onClosing")
-//                println("code is ${code}")
-//                println("reason is $reason")
-//            }
-//
-//            override fun onMessage(webSocket: okhttp3.WebSocket, text: String) {
-//                super.onMessage(webSocket, text)
-//                println("onMessage text" )
-//                println("text is ${text}")
-//            }
-//
-//            override fun onMessage(webSocket: okhttp3.WebSocket, bytes: ByteString) {
-//                super.onMessage(webSocket, bytes)
-//                println("onMessage  bytes")
-//            }
-//
-//            override fun onClosed(webSocket: okhttp3.WebSocket, code: Int, reason: String) {
-//                super.onClosed(webSocket, code, reason)
-//                println("onMessage  bytes")
-//            }
-//        })
-
-
-//   val downclient=object :WebSocketClient(URI.create("ws://192.168.0.11:9984/api/v0/ws/down")){
-//   val downclient=object :WebSocketClient(URI.create("ws://121.40.165.18:8800")){
    val downclient=object :WebSocketClient(URI.create("ws://echo.websocket.org")){
         override fun onOpen(handshakedata: ServerHandshake?) {
             println("onOpen")
 
-//            send(JSONObject(HashMap<String,String>().apply {
-//                put("Hash","QmQXnnSQ9wrGJgjX5fna78o3migiVDN57DdRbLB12W8ShP")
-//            }).toString())
+
             send("test")
             println("onOpen")
         }
