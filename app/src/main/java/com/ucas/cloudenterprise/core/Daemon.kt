@@ -1,6 +1,7 @@
 package com.ucas.cloudenterprise.core
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_MIN
@@ -58,6 +59,46 @@ class DaemonService : Service() {
     var  uptaskmap =HashMap<String,Runnable>()
     var  downtaskmap =HashMap<String,Runnable>()
 
+    val notificationBuilder = NotificationCompat.Builder(this, "sweetipfs")
+
+    val notification
+        @SuppressLint("RestrictedApi")
+        get() = notificationBuilder.apply {
+            mActions.clear()
+            setOngoing(true)
+            setOnlyAlertOnce(true)
+            color = parseColor("#69c4cd")
+            setSmallIcon(R.drawable.ic_launcher)
+            setShowWhen(false)
+            setContentTitle("Sweet Core")
+
+            val open = pendingActivity<MainActivity>()
+            setContentIntent(open)
+            addAction(R.drawable.ic_launcher, "Open", open)
+
+            if (daemon == null) {
+                setContentText("CORE is not running")
+
+                val start = pendingService(intent<DaemonService>().action("start"))
+                addAction(R.drawable.ic_launcher, "start", start)
+            } else {
+                setContentText("CORE is running")
+
+                val restart = pendingService(intent<DaemonService>().action("restart"))
+                addAction(R.drawable.ic_launcher, "restart", restart)
+
+                val stop = pendingService(intent<DaemonService>().action("stop"))
+                addAction(R.drawable.ic_launcher, "stop", stop)
+
+                val add = pendingService(intent<DaemonService>().action("add"))
+                addAction(R.drawable.ic_launcher, "add", add)
+            }
+
+            val exit = pendingService(intent<DaemonService>().action("exit"))
+            addAction(R.drawable.ic_launcher, "exit", exit)
+
+        }
+
     override fun onBind(intent: Intent): IBinder? = mMyBinder
     companion object {
         var daemon: Process? = null
@@ -68,17 +109,18 @@ class DaemonService : Service() {
     override fun onCreate() {
         super.onCreate()
         mMyBinder = MyBinder(this)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             NotificationChannel("sweetipfs", "Sweet IPFS", IMPORTANCE_MIN).apply {
                 description = "Sweet IPFS"
                 getSystemService(NotificationManager::class.java)
                     .createNotificationChannel(this)
             }
-
+            startForeground(1, notification.build())
+        }
 
         if(IS_NOT_INSTALLED){
             install()
-
         }
 
         if(!IS_NOT_INSTALLED){
@@ -114,7 +156,7 @@ class DaemonService : Service() {
         pluginbin.setExecutable(true)
             /*********core bin  复制 完成*******/
         logs.clear()
-        exec("init").apply {
+        exec("init --profile=lowpower").apply {
             Log.e(TAG,"init 开始执行")
             read {
                 Log.e("it","it="+it)
@@ -161,11 +203,12 @@ class DaemonService : Service() {
 
             /*********core config  复制 完成*******/
 
-
+        IS_NOT_INSTALLED = false
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
-            edit().putBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,false).commit()
+            edit().putBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,IS_NOT_INSTALLED).commit()
         }
         /*********core install   完成  写入flag 下次直接执行 star*******/
+
     }
     //</editor-fold>
 
@@ -249,45 +292,6 @@ class DaemonService : Service() {
       }
     }
 
-    val notificationBuilder = NotificationCompat.Builder(this, "sweetipfs")
-
-    val notification
-        @SuppressLint("RestrictedApi")
-        get() = notificationBuilder.apply {
-            mActions.clear()
-            setOngoing(true)
-            setOnlyAlertOnce(true)
-            color = parseColor("#69c4cd")
-            setSmallIcon(R.drawable.ic_launcher)
-            setShowWhen(false)
-            setContentTitle("Sweet Core")
-
-            val open = pendingActivity<MainActivity>()
-            setContentIntent(open)
-            addAction(R.drawable.ic_launcher, "Open", open)
-
-            if (daemon == null) {
-                setContentText("CORE is not running")
-
-                val start = pendingService(intent<DaemonService>().action("start"))
-                addAction(R.drawable.ic_launcher, "start", start)
-            } else {
-                setContentText("CORE is running")
-
-                val restart = pendingService(intent<DaemonService>().action("restart"))
-                addAction(R.drawable.ic_launcher, "restart", restart)
-
-                val stop = pendingService(intent<DaemonService>().action("stop"))
-                addAction(R.drawable.ic_launcher, "stop", stop)
-
-                val add = pendingService(intent<DaemonService>().action("add"))
-                addAction(R.drawable.ic_launcher, "add", add)
-            }
-
-            val exit = pendingService(intent<DaemonService>().action("exit"))
-            addAction(R.drawable.ic_launcher, "exit", exit)
-
-        }
 
     override fun onStartCommand(i: Intent?, f: Int, id: Int) = START_STICKY.also {
         super.onStartCommand(i, f, id)
@@ -333,7 +337,7 @@ class DaemonService : Service() {
             val task = LoadingFile(1,item.file_name,null,item.fidhash,item.size)
 
             MyApplication.downLoad_Ing.add(task)
-            task. Ingstatus =IngFileState.ING
+            task. Ingstatus =LoadIngStatus.TRANSFERING
             Log.e("ok","item.fidhash=${task.file_hash}")
             object :Runnable{
                 override fun run() {
@@ -397,7 +401,10 @@ class DaemonService : Service() {
                             JSONObject(message).apply {
                                 task.progress= getDouble("Percent").toInt()
                                 //TODO 速度显示
-                                task.Speed= getString("Speed")
+                                getString("Speed")?.apply {
+                                    if(this.toLong()!=0L)
+                                        task.Speed=(this.toLong()/1024).toString()+"KB/s"
+                                }
                             }
 
                         }
@@ -473,7 +480,7 @@ class DaemonService : Service() {
                                     override fun run() {
                                         println("开始执行")
                                         Log.e("uptask","开始执行")
-                                        uptask.Ingstatus = IngFileState.ING
+                                        uptask.Ingstatus = LoadIngStatus.TRANSFERING
                                         try {
                                             println("复制文件")
                                             if(!destfile.exists()){
@@ -488,12 +495,12 @@ class DaemonService : Service() {
                                                 }
                                             }
 
-                                            uptask.progress=25
+
                                             var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(tag).converter(StringConvert()).adapt()
                                             val AesKey_response: Response<String> = AesKey_adapt.execute()
                                             val AesKey =  "${AesKey_response?.body()}"
                                             Log.e("ok","aeskay = ${AesKey}")
-                                            uptask.progress=30
+
 
 
 //                                        var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/up")
@@ -636,6 +643,8 @@ class DaemonService : Service() {
                override fun onSuccess(response: Response<String>?) {
                    Log.e("ok",response?.body().toString())
 
+                   val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile.inputStream(),destfile,pid)
+                    MyApplication.upLoad_Ing.add(uptask)
 
                     if(!(JSONObject(response?.body().toString()).getInt("code")== REQUEST_SUCCESS_CODE)){
 
@@ -645,21 +654,19 @@ class DaemonService : Service() {
                             if(plugindaemon!=null){//&& plugindaemon!!.isAlive
                                 Log.e("ok","准备上传")
 
-                                val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile.inputStream(),destfile,pid)
+
                                 object :Runnable{
                                     override fun run() {
                                         println("开始执行")
                                         Log.e("uptask","开始执行")
-                                        uptask.Ingstatus = IngFileState.ING
+                                        uptask.Ingstatus = LoadIngStatus.TRANSFERING
                                         try {
 
-
-                                            uptask.progress=25
                                             var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(filemd5).converter(StringConvert()).adapt()
                                             val AesKey_response: Response<String> = AesKey_adapt.execute()
                                             val AesKey =  "${AesKey_response?.body()}"
                                             Log.e("ok","aeskay = ${AesKey}")
-                                            uptask.progress=30
+
 
 
 //                                        var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/up")
@@ -676,10 +683,14 @@ class DaemonService : Service() {
                                                 .params("file", uptask.dest_file)
                                                 .isMultipart(true)
                                                 .tag(filemd5).converter(StringConvert()).adapt()
+                                            val pack_start_time=java.lang.System.currentTimeMillis()
+                                            Log.e("WebSocketClient","start pacak ${pack_start_time}")
                                             val Uploadfile_response:Response<String> =  Uploadfile_adapt.execute()
                                             val Multihash= JSONObject(Uploadfile_response.body().toString()).getJSONObject("Encrypt").getString("Multihash")
-
-                                            uptask.progress=80
+                                            val pack_end_time=java.lang.System.currentTimeMillis()
+                                            Log.e("WebSocketClient","end pacak $pack_end_time ")
+                                            Log.e("WebSocketClient"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
+                                            uptask.progress = 50
 
                                             var downclient:WebSocketClient? =null
 
@@ -723,9 +734,13 @@ class DaemonService : Service() {
                                                     }
 
                                                     JSONObject(message).apply {
-                                                        uptask.progress= getDouble("Percent").toInt()
+                                                        uptask.progress= (getDouble("Percent")*100).toInt()
                                                         //TODO 速度显示
-                                                        uptask.Speed= getString("Speed")
+                                                        getString("Speed")?.apply {
+                                                            if(this.toLong()!=0L)
+                                                                uptask.Speed=(this.toLong()/1024).toString()+"KB/s"
+                                                        }
+
                                                     }
 
                                                 }
@@ -735,6 +750,7 @@ class DaemonService : Service() {
                                                 }
 
                                             }
+                                            downclient.setConnectionLostTimeout(0)
                                             downclient.connect()
 
 
@@ -809,8 +825,15 @@ class DaemonService : Service() {
                             ,size,
                             false)
                     )
+
+                    for (loadingFile in MyApplication.upLoad_Ing) {
+                        if(loadingFile.dest_file?.name.equals(displayName)){
+                            MyApplication.upLoad_Ing.remove(loadingFile)
+                            break
+                        }
+                    }
                     if(type==1){
-                        filesDir[displayName!!].delete()
+                        filesDir[displayName!!]?.delete()
                     }
 
                 }
@@ -829,8 +852,15 @@ class DaemonService : Service() {
 
     }
 
+
     override fun onDestroy() {
         Log.e("ok"," daemon onDestroy")
+        for (loadingFile in MyApplication.downLoad_Ing) {
+            loadingFile.Ingstatus = LoadIngStatus.WAITING
+        }
+        for (loadingFile in MyApplication.upLoad_Ing) {
+            loadingFile.Ingstatus = LoadIngStatus.WAITING
+        }
         MyApplication.getInstance().GetSP().edit().apply {
          putString("downLoad_Ing",Gson().toJson(MyApplication.downLoad_Ing))
          putString("downLoad_completed",Gson().toJson(MyApplication.downLoad_completed))
@@ -838,6 +868,7 @@ class DaemonService : Service() {
          putString("upLoad_completed",Gson().toJson(MyApplication.upLoad_completed))
             commit()
         }
+        Log.e("ok"," daemon onDestroy w sp ok")
         if(downexecutor!=null&&!downexecutor.isShutdown){
             downexecutor.shutdown()
         }

@@ -15,6 +15,7 @@ import com.ucas.cloudenterprise.adapter.CompletedAdapter
 import com.ucas.cloudenterprise.adapter.LoadingFileAdapter
 import com.ucas.cloudenterprise.app.MyApplication
 import com.ucas.cloudenterprise.base.BaseFragment
+import com.ucas.cloudenterprise.model.LoadIngStatus
 import kotlinx.android.synthetic.main.fragment_transfer_list_item.*
 /**
 @author simpler
@@ -27,7 +28,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
         val ING=2
         val COMPLETED=3
     }
-    var mcountDownTimer =  object :CountDownTimer(24 * 60 * 60 * 1000, 1*1000){
+    var mcountDownTimer =  object :CountDownTimer(24 * 60 * 60 * 1000, 3*1000){
         override fun onFinish() {
 
         }
@@ -45,6 +46,23 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                     notifyDataSetChanged()
                 }
             }
+
+            ll_ing.visibility = if(mIngAdapter.list.isEmpty()) View.GONE else View.VISIBLE
+            ll_completed.visibility = if(mCompletedAdapter.list.isEmpty()) View.GONE else View.VISIBLE
+            if(mIngAdapter.list.isEmpty()&&mCompletedAdapter.list.isEmpty()){
+                //没有任务   TODO
+                tv_no_task_info.visibility = View.VISIBLE
+                when(type){
+                    DOWNLOAD->{tv_no_task_info.text= "暂无下载任务"}
+                    UPLOAD->{tv_no_task_info.text= "暂无上传任务"}
+                }
+
+            }else{
+                tv_no_task_info.visibility = View.GONE
+
+            }
+
+
         }
 
     }
@@ -82,8 +100,19 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                     (holder as LoadingFileAdapter.ViewHolder).apply {
                         var item= mIngAdapter.list[position]
                         tv_file_name.text =item.file_name
-                        tv_curr_size.text=item.Speed
-                            progress_download.progress =item.progress
+
+                            progress_download.setProgress(item.progress,true)
+                        when(item.Ingstatus){
+                            LoadIngStatus.WAITING->{
+                                tv_curr_size.text="暂停"
+                            }
+                            LoadIngStatus.CONFIG->{
+                                tv_curr_size.text="压缩加密中"
+                            }
+                            LoadIngStatus.TRANSFERING->{
+                                tv_curr_size.text=item.Speed
+                            }
+                        }
 
                     }
                 }
@@ -178,21 +207,6 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
 
     override fun onResume() {
         super.onResume()
-
-        ll_ing.visibility = if(mIngAdapter.list.isEmpty()) View.GONE else View.VISIBLE
-        ll_completed.visibility = if(mCompletedAdapter.list.isEmpty()) View.GONE else View.VISIBLE
-        if(mIngAdapter.list.isEmpty()&&mCompletedAdapter.list.isEmpty()){
-            //没有任务   TODO
-            tv_no_task_info.visibility = View.VISIBLE
-            when(type){
-                DOWNLOAD->{tv_no_task_info.text= "暂无下载任务"}
-                UPLOAD->{tv_no_task_info.text= "暂无上传任务"}
-            }
-
-        }else{
-            tv_no_task_info.visibility = View.GONE
-
-        }
         mcountDownTimer.start()
 
     }

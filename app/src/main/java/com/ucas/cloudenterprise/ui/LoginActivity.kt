@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.view.View
 import com.lzy.okgo.OkGo
@@ -63,7 +64,14 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     }
 
     override fun InitView() {
-        startService<DaemonService>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+           startForegroundService( Intent(this, DaemonService::class.java))
+        } else {
+//            startService( Intent(this, ServedService.class));
+            startService<DaemonService>()
+        }
+
+
         et_user_name.text = SetEt_Text("${user_name_param}")
         et_user_password.text = SetEt_Text("${password_param}")
     }
