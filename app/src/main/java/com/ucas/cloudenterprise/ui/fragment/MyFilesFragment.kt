@@ -612,9 +612,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
                    Log.e("ok","file  path"+FilePickerManager.obtainData()[0])
                         var  mainActivity=activity as MainActivity
-                        mainActivity.myBinder as DaemonService.MyBinder
-                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(FilePickerManager.obtainData()[0],pid)
-//                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(data.dataString,pid,this,this)
+                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(FilePickerManager.obtainData()[0],pid)
 
 
                 }

@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui.fragment
 
 import android.content.Context
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -15,8 +16,12 @@ import com.ucas.cloudenterprise.adapter.CompletedAdapter
 import com.ucas.cloudenterprise.adapter.LoadingFileAdapter
 import com.ucas.cloudenterprise.app.MyApplication
 import com.ucas.cloudenterprise.base.BaseFragment
+import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.LoadIngStatus
+import com.ucas.cloudenterprise.ui.MainActivity
 import kotlinx.android.synthetic.main.fragment_transfer_list_item.*
+import me.rosuh.filepicker.config.FilePickerManager
+
 /**
 @author simpler
 @create 2020年02月29日  13:30
@@ -102,14 +107,37 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                         tv_file_name.text =item.file_name
 
                             progress_download.setProgress(item.progress,true)
+
+                        iv_down_flag.setOnClickListener { //点击按钮修改文件状态
+                            var  mainActivity=activity as MainActivity
+                            when(item.Ingstatus){
+                                LoadIngStatus.WAITING->{
+                                    item.Ingstatus = LoadIngStatus.TRANSFERING
+                                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.ReLoadFile(item)
+                                }
+                                LoadIngStatus.TRANSFERING->{
+                                    item.Ingstatus = LoadIngStatus.WAITING
+                                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(item)
+                                }
+                            }
+
+
+
+                            mIngAdapter.notifyDataSetChanged()
+                        }
+
+
                         when(item.Ingstatus){
                             LoadIngStatus.WAITING->{
-                                tv_curr_size.text="暂停"
+                                tv_curr_size.text="等待中"
+                                iv_down_flag.setImageResource(R.drawable.pause)
                             }
                             LoadIngStatus.CONFIG->{
+                                iv_down_flag.setImageResource(R.drawable.redownload)
                                 tv_curr_size.text="压缩加密中"
                             }
                             LoadIngStatus.TRANSFERING->{
+                                iv_down_flag.setImageResource(R.drawable.redownload)
                                 tv_curr_size.text=item.Speed
                             }
                         }
@@ -218,3 +246,5 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
 
     override fun GetRootViewID()= R.layout.fragment_transfer_list_item
 }
+
+
