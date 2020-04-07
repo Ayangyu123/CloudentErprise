@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
+import android.os.Build.SUPPORTED_ABIS
 import android.os.Environment
 import android.os.IBinder
 import android.provider.OpenableColumns
@@ -32,6 +33,7 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.loadclient.DownWebSocketClient
 import com.ucas.cloudenterprise.model.*
+import com.ucas.cloudenterprise.task.LoadFiileTask
 import io.ipfs.api.IPFS
 import io.ipfs.multiaddr.MultiAddress
 import io.ipfs.multihash.Multihash
@@ -109,6 +111,10 @@ class DaemonService : Service() {
     override fun onCreate() {
         super.onCreate()
         mMyBinder = MyBinder(this)
+        SUPPORTED_ABIS.forEach {
+            Log.e("ok","${it}")
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             NotificationChannel("sweetipfs", "Sweet IPFS", IMPORTANCE_MIN).apply {
@@ -156,7 +162,7 @@ class DaemonService : Service() {
         pluginbin.setExecutable(true)
             /*********core bin  复制 完成*******/
         logs.clear()
-        exec("init --profile=lowpower").apply {
+        exec("init --profile=lowpower").apply { // 低功耗模式
             Log.e(TAG,"init 开始执行")
             read {
                 Log.e("it","it="+it)
@@ -279,7 +285,10 @@ class DaemonService : Service() {
                 1->{// 下载
                     OkGo.getInstance().cancelTag(loadfile.file_MD5)
                     downtaskmap[loadfile.file_MD5]?.apply {
-                        (downexecutor as ThreadPoolExecutor).remove(this)
+                        (downexecutor as ThreadPoolExecutor).apply {
+                        remove(downtaskmap[loadfile.file_MD5])
+                        purge()
+                    }
                     }
                 }
             }
@@ -290,9 +299,13 @@ class DaemonService : Service() {
      fun  ReLoadFile(loadfile:LoadingFile){
             when(loadfile.load_type_falg){
                 0->{// 上传
+                    MyApplication.upLoad_Ing.remove(loadfile)
                       AddFile(loadfile.dest_file!!.absolutePath,loadfile.pid!!)
+
+
                 }
                 1->{ // 下载
+                    MyApplication.downLoad_Ing.remove(loadfile)
                         GetFile(loadfile.src_file_info!!)
                 }
             }
@@ -370,18 +383,21 @@ class DaemonService : Service() {
 
                         override fun onMessage(message: String?) {
                             Log.e("WebSocketClient","onMessage ${message}")
+                            if(task.Ingstatus!=LoadIngStatus.TRANSFERING){
+                                close()
+                            }
                             if(TextUtils.isEmpty(message)){
                                 return
                             }
 
                             JSONObject(message).apply {
-                                task.progress= getDouble("Percent").toInt()
+                                task.progress= (getDouble("Percent")*100).toInt()
                                 //TODO 速度显示
                                 getString("Speed")?.apply {
                                     if(this.toLong()!=0L)
                                         task.Speed=(this.toLong()/1024).toString()+"KB/s"
                                 }
-                                if(task.progress==1){ //下载完成
+                                if(task.progress==100){ //下载完成
                                     if(ROOT_DIR_PATH.equals("")){
                                         ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
                                     }
@@ -444,181 +460,172 @@ class DaemonService : Service() {
         filepath: String,
         pid: String
     ) {
+        if (daemon == null ){
+            Toastinfo("coredaemon服务未启动")
+            Log.e("ok","daemon服务未启动")
+            return
+        }
+        if (plugindaemon == null ){
+            Toastinfo("插件服务未启动")
+            Log.e("ok","plugindaemon服务未启动")
+            return
+        }
         val destfile =File(filepath)
         val filemd5= MD5encode(destfile.readBytes())
-       OkGo.get<String>("${URL_ADD_File_CHECK}${filemd5}")
-           .execute(object:StringCallback(){
-               override fun onSuccess(response: Response<String>?) {
-                   Log.e("ok",response?.body().toString())
-
-                   val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
-                    MyApplication.upLoad_Ing.add(uptask)
-
-                    if(!(JSONObject(response?.body().toString()).getInt("code")== REQUEST_SUCCESS_CODE)){
 
 
+        val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
+        val uploadtask =LoadFiileTask(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
 
-                        if (daemon != null ) {
-                            if(plugindaemon!=null){
-                                Log.e("ok","准备上传")
+        upexecutor.execute(uploadtask)
+        return
 
-
-                                object :Runnable{
-                                    override fun run() {
-                                        println("开始执行")
-                                        Log.e("uptask","开始执行")
-                                        uptask.Ingstatus = LoadIngStatus.CONFIG
-                                        try {
-
-                                            var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(filemd5).converter(StringConvert()).adapt()
-                                            val AesKey_response: Response<String> = AesKey_adapt.execute()
-                                            val AesKey =  "${AesKey_response?.body()}"
-                                            Log.e("ok","aeskay = ${AesKey}")
-                                            var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/pack")
-                                                .params("flag",JSONObject().apply {
-                                                    put("MetaHash",uptask.file_MD5)
-                                                    put("MetaSize",uptask.file_size)
-                                                    put("Gzip",true)
-                                                    put("Aes",true)
-                                                    put("AesKey",AesKey)
-                                                    put("RS",true)
-                                                    put("Feed",true)
-                                                }.toString())
-                                                .params("file", uptask.dest_file)
-                                                .isMultipart(true)
-                                                .tag(filemd5).converter(StringConvert()).adapt()
-                                            val pack_start_time=java.lang.System.currentTimeMillis()
-                                            Log.e("WebSocketClient","start pacak ${pack_start_time}")
-                                            val Uploadfile_response:Response<String> =  Uploadfile_adapt.execute()
-                                            val Multihash= JSONObject(Uploadfile_response.body().toString()).getJSONObject("Encrypt").getString("Multihash")
-                                            val pack_end_time=java.lang.System.currentTimeMillis()
-                                            Log.e("WebSocketClient","end pacak $pack_end_time ")
-                                            Log.e("WebSocketClient"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
-                                            uptask.progress = 50
-
-                                            var downclient:WebSocketClient? =null
-
-                                            downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/up"),
-                                                Draft_6455()
-                                                ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
-                                                override fun onOpen(handshakedata: ServerHandshake?) {
-                                                    Log.e("WebSocketClient","onOpen")
-
-                                                    send(JSONObject(HashMap<String,String>().apply {
-                                                        put("Hash",Multihash)
-                                                    }).toString())
-                                                }
-
-                                                override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                                                    Log.e("WebSocketClient","onClose")
-                                                    Log.e("WebSocketClient","reason is ${reason}")
-                                                    Log.e("WebSocketClient","code is ${code}")
-                                                    Log.e("WebSocketClient","remote is ${remote}")
+         MyApplication.upLoad_Ing.add(uptask)
+        Log.e("ok","准备上传")
 
 
+        object :Runnable{
+            override fun run() {
+                println("开始执行")
+                Log.e("uptask","开始执行")
+                uptask.Ingstatus = LoadIngStatus.CONFIG
+                try {
 
+                    var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(filemd5).converter(StringConvert()).adapt()
+                    val AesKey_response: Response<String> = AesKey_adapt.execute()
+                    val AesKey =  "${AesKey_response?.body()}"
+                    Log.e("ok","aeskay = ${AesKey}")
 
+                    var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/pack")
+                        .params("flag",JSONObject().apply {
+                            put("MetaHash",uptask.file_MD5)
+                            put("MetaSize",uptask.file_size)
+                            put("Gzip",true)
+                            put("Aes",true)
+                            put("AesKey",AesKey)
+                            put("RS",true)
+                            put("Feed",true)
+                        }.toString())
+                        .params("file", uptask.dest_file)
+                        .isMultipart(true)
+                        .tag(filemd5).converter(StringConvert()).adapt()
+                    val pack_start_time=java.lang.System.currentTimeMillis()
+                    Log.e("WebSocketClient","start pacak ${pack_start_time}")
+                    val Uploadfile_response:Response<String> =  Uploadfile_adapt.execute()
+                    val Multihash= JSONObject(Uploadfile_response.body().toString()).getJSONObject("Encrypt").getString("Multihash")
+                    val pack_end_time=java.lang.System.currentTimeMillis()
+                    Log.e("WebSocketClient","end pacak $pack_end_time ")
+                    Log.e("WebSocketClient"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
+                    uptask.progress = 50
 
+                    var downclient:WebSocketClient? =null
 
-                                                }
-
-                                                override fun onMessage(message: String?) {
-                                                    Log.e("WebSocketClient","onMessage ${message}")
-                                                    Log.e("WebSocketClient","uptask.Ingstatus is  ${uptask.Ingstatus}")
-                                                    if(uptask.Ingstatus!=LoadIngStatus.TRANSFERING){
-                                                        close()
-                                                    }
-                                                    if(TextUtils.isEmpty(message)){
-                                                        return
-                                                    }
-
-                                                    JSONObject(message).apply {
-                                                        uptask.progress= (getDouble("Percent")*100).toInt()
-                                                        //TODO 速度显示
-                                                        getString("Speed")?.apply {
-                                                            if(this.toLong()!=0L)
-                                                                uptask.Speed=(this.toLong()/1024).toString()+"KB/s"
-                                                        }
-                                                        if( uptask.progress==1){
-                                                            val params = HashMap<String, Any>()
-                                                            params["file_name"] = uptask.file_name + ""
-                                                            params["is_dir"] = IS_FILE
-                                                            params["user_id"] = "$USER_ID" //TODO
-                                                            params["fidhash"] = "${Multihash}"
-                                                            params["filehash"] = "${filemd5}"
-                                                            params["pid"] = pid
-                                                            params["size"] = destfile.length()
-                                                            uptask.progress=100
-                                                            UploadFileMetaInfo(params,filemd5,destfile.name,destfile.length().toString(),1)
-                                                        }
-
-                                                    }
-
-                                                }
-
-                                                override fun onError(ex: java.lang.Exception?) {
-                                                    Log.e("WebSocketClient","onError")
-                                                }
-
-                                            }
-                                            downclient.setConnectionLostTimeout(0)
-                                            downclient.connect()
-                                            uptask.Ingstatus =LoadIngStatus.TRANSFERING
-
-
-
-
-                                        } catch (e:Exception) {
-                                            e.printStackTrace()
-                                        }
-
-                                    }
-
-                                }.apply {
-                                    uptaskmap.put("${uptaskmap}",this)
-                                    upexecutor.execute(this)
-                                }
-
-
-
-                            }else{
-                                Log.e("ok","plugindaemon服务未启动")
-                            }
-
-
-                        } else {
-                            Log.e("ok","daemon服务未启动")
-                            Toastinfo("coredaemon服务未启动")
+                    downclient=object :WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/up"),
+                        Draft_6455()
+                        ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
+                        override fun onOpen(handshakedata: ServerHandshake?) {
+                            Log.e("WebSocketClient","onOpen")
+                            send(JSONObject(HashMap<String,String>().apply {
+                                put("Hash",Multihash)
+                            }).toString())
                         }
 
+                        override fun onClose(code: Int, reason: String?, remote: Boolean) {
+                            Log.e("WebSocketClient","onClose")
+                            Log.e("WebSocketClient","reason is ${reason}")
+                            Log.e("WebSocketClient","code is ${code}")
+                            Log.e("WebSocketClient","remote is ${remote}")
 
-                    }else{
-                        Log.e("ok","该文件已存在")
-                        val params = HashMap<String, Any>()
-                        params["file_name"] = destfile.name + ""
-                        params["is_dir"] = IS_FILE
-                        params["user_id"] = "${USER_ID}" //TODO
-                        params["fidhash"] = "${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
-                            Log.e("ok","fidhash=${this}")
-                        }}"
-                        params["filehash"] = "${filemd5.apply {
-                            Log.e("ok","fidhash=${this}")
-                        }}"
-                        params["pid"] = pid
-                        params["size"] = destfile.length()
-                        UploadFileMetaInfo(params,filemd5,destfile.name,destfile.length().toString(),0)
+                        }
+
+                        override fun onMessage(message: String?) {
+                            Log.e("WebSocketClient","onMessage ${message}")
+                            Log.e("WebSocketClient","uptask.Ingstatus is  ${uptask.Ingstatus}")
+                            if(uptask.Ingstatus!=LoadIngStatus.TRANSFERING){
+                                close()
+                            }
+                            if(TextUtils.isEmpty(message)){
+                                return
+                            }
+
+                            JSONObject(message).apply {
+                                uptask.progress= (getDouble("Percent")*100).toInt()
+                                //TODO 速度显示
+                                getString("Speed")?.apply {
+                                    if(this.toLong()!=0L)
+                                        uptask.Speed=(this.toLong()/1024).toString()+"KB/s"
+                                }
+                                if( uptask.progress==100){
+                                    val params = HashMap<String, Any>()
+                                    params["file_name"] = uptask.file_name + ""
+                                    params["is_dir"] = IS_FILE
+                                    params["user_id"] = "$USER_ID" //TODO
+                                    params["fidhash"] = "${Multihash}"
+                                    params["filehash"] = "${filemd5}"
+                                    params["pid"] = pid
+                                    params["size"] = destfile.length()
+                                    UploadFileMetaInfo(params,filemd5,destfile.name,destfile.length().toString(),1)
+                                }
+
+                            }
+
+                        }
+
+                        override fun onError(ex: java.lang.Exception?) {
+                            Log.e("WebSocketClient","onError")
+                        }
+
+                    }
+                    downclient.setConnectionLostTimeout(0)
+                    downclient.connect()
+                    uptask.Ingstatus =LoadIngStatus.TRANSFERING
+
+
+
+
+                } catch (e:Exception) {
+                    e.printStackTrace()
+                }
+
+            }
+
+        }.apply {
+            uptaskmap.put("${uptaskmap}",this)
+            upexecutor.execute(this)
+        }
+
+                         //1.获取文件md5值
+                         //2.aes加密key
+                         //3.pcak
+                         //4.transfer
+                         //5.提交metainfo
+
+
+
+
                     }
 
-
-
-               }
-
-           })
-        //TODO
-
-    }
     //</editor-fold>
 
+
+    //<editor-fold desc="META信息上传 JSON map">
+     fun  GetUploadFileJsonMap(file_name:String,fidhash:String,filemd5:String,pid: String,size:Long):HashMap<String,Any>{
+        val params = HashMap<String, Any>()
+        params["file_name"] = file_name + ""
+        params["is_dir"] = IS_FILE
+        params["user_id"] = "${USER_ID}" //TODO
+        params["fidhash"] = "${fidhash.apply {
+            Log.e("ok","fidhash=${this}")
+        }}"
+        params["filehash"] = "${filemd5.apply {
+            Log.e("ok","fidhash=${this}")
+        }}"
+        params["pid"] = pid
+        params["size"] = size
+        return  params
+    }
+
+    //</editor-fold>
     //<editor-fold desc="META信息上传">
    fun  UploadFileMetaInfo(params:HashMap<String,Any>,tag:Any,displayName:String,size:String,type:Int){ //type 0 没有调用up  1 从up接口
 
@@ -643,9 +650,6 @@ class DaemonService : Service() {
                             MyApplication.upLoad_Ing.remove(loadingFile)
                             break
                         }
-                    }
-                    if(type==1){
-                        filesDir[displayName!!]?.delete()
                     }
 
                 }

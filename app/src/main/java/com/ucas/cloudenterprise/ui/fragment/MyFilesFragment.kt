@@ -24,13 +24,17 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.HttpMethod
+import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
+import com.ucas.cloudenterprise.model.CompletedFile
 import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.common_head.*
@@ -42,6 +46,11 @@ import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import kotlinx.android.synthetic.main.top_file_operate.*
 import me.rosuh.filepicker.config.FilePickerManager
 import org.json.JSONObject
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 /**
@@ -611,8 +620,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                 FilePickerManager.REQUEST_CODE ->{ //选择文件上传文件
 
                    Log.e("ok","file  path"+FilePickerManager.obtainData()[0])
-                        var  mainActivity=activity as MainActivity
-                    (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(FilePickerManager.obtainData()[0],pid)
+                    CheckFileIsExists(FilePickerManager.obtainData()[0]) //检查文件是否存在
 
 
                 }
@@ -647,6 +655,39 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
 
     }
+
+        //<editor-fold desc="检查文件是否已存在">
+    private fun CheckFileIsExists(file_path: String) {
+            val destfile = File(file_path)
+            val file_md5 =MD5encode(destfile.readBytes())
+            OkGo.get<String>("${URL_ADD_File_CHECK}${file_md5}")
+                .execute(object: StringCallback(){
+                    override fun onSuccess(response: Response<String>?) {
+                        var  mainActivity=activity as MainActivity
+                        response?.apply {
+                            if(!VerifyUtils.VerifyRequestData(response!!.body())){ //文件不存在 去添加
+                                Log.e("ok","该文件不存在")
+                                (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(file_path,pid)
+                            }else{//文件已存在 去添加 文件信息 秒传操作
+                                Log.e("ok","该文件已存在")
+                                (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.apply {
+                                    val params =GetUploadFileJsonMap(destfile.name,"${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
+//                                        Log.e("ok","fidhash=${this}")
+                                    }}","${file_md5.apply {
+//                                        Log.e("ok","fidhash=${this}")
+                                    }}",pid,destfile.length())
+                                    UploadFileMetaInfo(params,file_md5,destfile.name,destfile.length().toString(),0)
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                })
+    }
+    //</ediotr-fold>
 
 
 }
