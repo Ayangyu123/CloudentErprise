@@ -20,6 +20,7 @@ import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.ui.fragment.MyDirsFragment
 import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
+import com.ucas.cloudenterprise.ui.fragment.ShareDirsFragment
 import com.ucas.cloudenterprise.utils.GetCreateNewDirDialog
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
@@ -49,7 +50,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
     var   operatortype :Int = 0
     lateinit var  tv_dest_dir_commit:TextView
     lateinit var  mMyFilesDirFragment:MyDirsFragment
-    lateinit var  mOthersShareDirFragment:MyDirsFragment
+    lateinit var  mOthersShareDirFragment:ShareDirsFragment
     var  fragmentlist =ArrayList<BaseFragment>()
 
     override fun GetContentViewId() = R.layout.activity_choose_dest_dir
@@ -79,8 +80,8 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         }
         tv_dest_dir_commit.isEnabled =false
         fragmentlist.clear()
-        mMyFilesDirFragment =MyDirsFragment(IS_UNCOMMON_DIR,pid)
-        mOthersShareDirFragment = MyDirsFragment(IS_COMMON_DIR,pid)
+        mMyFilesDirFragment =MyDirsFragment(pid)
+        mOthersShareDirFragment = ShareDirsFragment(pid)
         fragmentlist.add(mMyFilesDirFragment)
         fragmentlist.add(mOthersShareDirFragment)
         viewpager_content.apply {
@@ -140,19 +141,34 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
 
         //<editor-fold  desc ="返回按钮 设置" >
         iv_back.setOnClickListener {
-            var destfargment:MyDirsFragment =  fragmentlist[viewpager_content.currentItem] as MyDirsFragment
-            destfargment.apply {
-                if( !this.pid.equals(this.pid_src)){ //选择文件夹显示返回
-                    this. pid_stack.remove(this.pid_stack[0])
-                    this.pid = this.pid_stack[0]
-                     this.GetFileList()
+            var destfargment =  fragmentlist[viewpager_content.currentItem]
+          when(destfargment){
+              is MyDirsFragment->{
+                  if( !destfargment.pid.equals(destfargment.pid_src)){ //选择文件夹显示返回
+                      destfargment. pid_stack.remove(destfargment.pid_stack[0])
+                      destfargment.pid = destfargment.pid_stack[0]
+                      destfargment.GetFileList()
 
-                }else{ //相等 返回
-                    finish()
+                  }else{ //相等 返回
+                      finish()
+                  }
               }
+              is ShareDirsFragment->{
+                  if( !destfargment.pid.equals(destfargment.pid_src)){ //选择文件夹显示返回
+                      destfargment. pid_stack.remove(destfargment.pid_stack[0])
+                      destfargment.pid = destfargment.pid_stack[0]
+                      destfargment.GetFileList()
+
+                  }else{ //相等 返回
+                      finish()
+                  }
+              }
+          }
 
 
-            }
+
+
+
 
         }
         //</editor-fold >

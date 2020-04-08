@@ -353,6 +353,11 @@ class DaemonService : Service() {
             }
             val task = LoadingFile(1,item.file_name,null,item.fidhash,item.size,src_file_info = item)
 
+//            val downloadtask =LoadFiileTask(1,item.file_name,null,item.fidhash,item.size,src_file_info = item)
+//
+//            downexecutor.execute(downloadtask)
+//        return
+
             MyApplication.downLoad_Ing.add(task)
             task. Ingstatus =LoadIngStatus.TRANSFERING
             Log.e("ok","item.fidhash=${task.file_hash}")
@@ -366,9 +371,6 @@ class DaemonService : Service() {
                         override fun onOpen(handshakedata: ServerHandshake?) {
                             Log.e("WebSocketClient","onOpen")
 
-                            send(JSONObject(HashMap<String,String>().apply {
-                                put("Hash",task.file_hash.toString())
-                            }).toString())
                         }
 
                         override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -475,10 +477,10 @@ class DaemonService : Service() {
 
 
         val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
-        val uploadtask =LoadFiileTask(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
-
-        upexecutor.execute(uploadtask)
-        return
+//        val uploadtask =LoadFiileTask(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
+//
+//        upexecutor.execute(uploadtask)
+//        return
 
          MyApplication.upLoad_Ing.add(uptask)
         Log.e("ok","准备上传")
@@ -561,7 +563,7 @@ class DaemonService : Service() {
                                     params["is_dir"] = IS_FILE
                                     params["user_id"] = "$USER_ID" //TODO
                                     params["fidhash"] = "${Multihash}"
-                                    params["filehash"] = "${filemd5}"
+                                    params["file_hash"] = "${filemd5}"
                                     params["pid"] = pid
                                     params["size"] = destfile.length()
                                     UploadFileMetaInfo(params,filemd5,destfile.name,destfile.length().toString(),1)
@@ -617,7 +619,7 @@ class DaemonService : Service() {
         params["fidhash"] = "${fidhash.apply {
             Log.e("ok","fidhash=${this}")
         }}"
-        params["filehash"] = "${filemd5.apply {
+        params["file_hash"] = "${filemd5.apply {
             Log.e("ok","fidhash=${this}")
         }}"
         params["pid"] = pid

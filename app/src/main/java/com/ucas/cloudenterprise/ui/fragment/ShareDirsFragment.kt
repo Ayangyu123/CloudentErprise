@@ -27,7 +27,7 @@ import org.json.JSONObject
 @author simpler
 @create 2020年01月10日  14:31
  */
-class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback {
+class ShareDirsFragment( var pid:String) : BaseFragment(),BaseActivity.OnNetCallback {
     lateinit var adapter:FilesAdapter
     lateinit var fileslist:ArrayList<File_Bean>
     var pid_src ="root"
@@ -39,12 +39,7 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
     ) {
 
 
-             var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
-
-
-
-
-
+        var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
         if(JSONObject(data).isNull("data")){
             ll_empty.visibility = View.VISIBLE
             swipeRefresh.visibility = View.INVISIBLE
@@ -61,9 +56,10 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
         fileslist.clear()
         fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
         adapter?.notifyDataSetChanged()
-        if(showtype==0){
+        if(showtype==1){
             (activity as ChooseDestDirActivity).tv_dest_dir_commit.isEnabled = fileslist.isEmpty()
         }
+
 
 
     }
@@ -110,7 +106,6 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
         swipeRefresh.setOnRefreshListener {
-//            fileslist.clear()
             GetFileList()
             swipeRefresh.isRefreshing = false
         }
@@ -120,11 +115,7 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 
      fun GetFileList() {
 
-            GetFilesListForNet(
-                URL_LIST_FILES + "$USER_ID/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/$IS_DIR",
-                this,
-                this
-            )
+            GetFilesListForNet(URL_GET_FILE_JURIS_LIST +"${USER_ID}/p/${pid}",this,this)
 
     }
 

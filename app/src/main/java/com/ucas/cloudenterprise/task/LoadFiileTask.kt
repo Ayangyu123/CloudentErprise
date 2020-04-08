@@ -1,15 +1,14 @@
 package com.ucas.cloudenterprise.task
 
 import android.graphics.Color.pack
+import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
 import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.FileCallback
 import com.lzy.okgo.convert.StringConvert
 import com.lzy.okgo.model.Response
-import com.ucas.cloudenterprise.app.IS_FILE
-import com.ucas.cloudenterprise.app.MyApplication
-import com.ucas.cloudenterprise.app.URL_ADD_File
-import com.ucas.cloudenterprise.app.USER_ID
+import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.CompletedFile
 import com.ucas.cloudenterprise.model.File_Bean
@@ -100,8 +99,6 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
 
             UpLoadTasKSetp.UPLOAD_TRANSFERING->{ // 已经获取完成AESKEY
                 UploadFileMetaInfo()
-
-
             }
             UpLoadTasKSetp.UPLOAD_META_INFO->{ // 已经获取完成AESKEY
                     //运行状态修改
@@ -124,7 +121,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
             put("file_name",file_name + "")
             put("is_dir",IS_FILE)
             put("user_id", "$USER_ID" )
-            put("fidhash", "$Multihash" )
+            put("fidhash", "$file_hash" )
             put("filehash", "$file_MD5" )
             put("pid", "$pid" )
             put("size", file_size )
@@ -160,14 +157,17 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
     private fun fileTransfer() {//文件传输
         if(FileTransferClient==null){
             FileTransferClient =object :WebSocketClient(
-                URI.create("ws://127.0.0.1:9984/api/v0/ws/up"),
+                URI.create("ws://127.0.0.1:9984/api/v0/ws/${if(load_type_falg==UP_LOAD_FLAG) "up" else "down"}"),
                 Draft_6455()
                 ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
+
                 override fun onOpen(handshakedata: ServerHandshake?) {
                     Log.e("WebSocketClient","onOpen")
-                    send(JSONObject(HashMap<String,String>().apply {
-                        put("Hash",Multihash!!)
-                    }).toString())
+                    if(load_type_falg== DWON_LOAD_FLAG) {
+                        send(JSONObject(HashMap<String, String>().apply {
+                            put("Hash", file_hash!!)
+                        }).toString())
+                    }
                 }
 
                 override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -225,18 +225,59 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
     fun DownLoadSetp(Setp: Int?) {
         when(Setp){
             INIT->{ //初始化状态
-
+                CurrTaskStatus =TaskStatus.RUNING
+                fileTransfer()
             }
             DownLoadTasKSetp.DOWN_LOAD_TRANSFERING->{ // 已经获取完成AESKEY
-
+                    unpack()
             }
 
             DownLoadTasKSetp.UNPACK->{ // 已经获取完成AESKEY
 
+                CurrTaskStatus =COMPLETED
+                if(FileTransferClient!=null&&FileTransferClient!!.isClosed){
+                    FileTransferClient =null
+                    Multihash = null
+                    AES_KEY = null
+                }
             }
 
         }
     }
+    // </editor-fold >
+
+    // <editor-fold desc="解密解压">
+    private fun unpack() {
+        if(ROOT_DIR_PATH.equals("")){
+            ROOT_DIR_PATH = Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+        }
+
+        val root =  File(ROOT_DIR_PATH)
+        if(!root.exists()){
+            root.mkdirs()
+        }
+        Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
+        OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
+            .params("hash","${file_hash}")
+            .isMultipart(true)
+            .execute(object :
+                FileCallback(ROOT_DIR_PATH,file_name){
+                override fun onSuccess(response: Response<File>?) {
+
+                    MyApplication.downLoad_completed.add(CompletedFile(file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                        Date()
+                    )
+                        ,file_size.toString(),
+                        false))
+//                    MyApplication.downLoad_Ing.remove(task)
+                    Log.e("it","文件路径 ${response?.body()?.absolutePath}")
+                    Toastinfo("${file_name} 下载完成")
+                    ChangeCurrSetpAndLoadfile(DownLoadTasKSetp.UNPACK)
+                }
+
+            })
+    }
+
     // </editor-fold >
 
 

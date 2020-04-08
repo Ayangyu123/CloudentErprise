@@ -218,7 +218,10 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
             ) {
                 Log.e("ok",data)
                 if(!JSONObject(data).isNull("data")&&JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
-
+                        if(JSONObject(data).getJSONObject("data").isNull("juris_obj")){
+                            Toastinfo("分享数据为空")
+                            return
+                        }
                     var juris_obj = Gson().fromJson<List<Juris>>(JSONObject(data).getJSONObject("data").getJSONArray("juris_obj").toString(),object :TypeToken<List<Juris>>(){}.type)
 
                     mCanEditList.clear()
