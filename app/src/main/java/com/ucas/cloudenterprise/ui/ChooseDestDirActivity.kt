@@ -85,7 +85,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         fragmentlist.add(mMyFilesDirFragment)
         fragmentlist.add(mOthersShareDirFragment)
         viewpager_content.apply {
-            adapter = object :FragmentPagerAdapter(supportFragmentManager){
+            adapter = object :FragmentPagerAdapter(supportFragmentManager,1){
                 override fun getItem(position: Int): Fragment {
                     return  fragmentlist.get(position)
                 }

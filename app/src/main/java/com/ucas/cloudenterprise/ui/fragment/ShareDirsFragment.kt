@@ -127,12 +127,20 @@ class ShareDirsFragment( var pid:String) : BaseFragment(),BaseActivity.OnNetCall
 
         pid = pid_stack[0]
         Log.e("ok","pid is  ${pid}")
-        GetFileList()
+
 
     }
 
     override fun GetRootViewID()= R.layout.mydirs_fragment
-
+    var hasloaddata=false
+    override fun onResume() {
+        super.onResume()
+        Log.e("ok","sharedir")
+        if(!hasloaddata){
+            GetFileList()
+            hasloaddata = true
+        }
+    }
 
 
 }

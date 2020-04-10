@@ -25,6 +25,7 @@ import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.FileCallback
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.convert.StringConvert
+import com.lzy.okgo.model.Progress
 import com.lzy.okgo.model.Response
 import  com.ucas.cloudenterprise.utils.*
 import com.ucas.cloudenterprise.ui.MainActivity
@@ -89,11 +90,15 @@ class DaemonService : Service() {
                 val restart = pendingService(intent<DaemonService>().action("restart"))
                 addAction(R.drawable.ic_launcher, "restart", restart)
 
-                val stop = pendingService(intent<DaemonService>().action("stop"))
-                addAction(R.drawable.ic_launcher, "stop", stop)
-
-                val add = pendingService(intent<DaemonService>().action("add"))
-                addAction(R.drawable.ic_launcher, "add", add)
+//                val stop = pendingService(intent<DaemonService>().action("repo stat"))
+//                addAction(R.drawable.ic_launcher, "repo stat", stop)
+                val stop = pendingService(intent<DaemonService>().action("repo stat"))
+                addAction(R.drawable.ic_launcher, "repo stat", stop)
+//                val stop = pendingService(intent<DaemonService>().action("stop"))
+//                addAction(R.drawable.ic_launcher, "stop", stop)
+//
+//                val add = pendingService(intent<DaemonService>().action("add"))
+//                addAction(R.drawable.ic_launcher, "add", add)
             }
 
             val exit = pendingService(intent<DaemonService>().action("exit"))
@@ -179,6 +184,8 @@ class DaemonService : Service() {
         /*********key 复制   完成*******/
 
         config {
+
+            obj("Datastore").add("StorageMax",json("1GB"))
             obj("API").obj("HTTPHeaders").apply {
 
                 array("Access-Control-Allow-Origin").also { origins ->
@@ -239,6 +246,8 @@ class DaemonService : Service() {
                                 Log.e("it"," plugindaemon it="+it)
                 logs.add(it) }
         }
+      
+
            getpluginVersion()
 
 
@@ -321,6 +330,7 @@ class DaemonService : Service() {
         when (i?.action) {
             "start" -> start()
             "stop" -> stop()
+            "repo stat" -> getrepostat()
             "restart" -> {
                 stop(); start()
             }
@@ -370,7 +380,9 @@ class DaemonService : Service() {
                         ,HashMap<String,String>().apply {put("Origin", "http://www.bejson.com/") }){
                         override fun onOpen(handshakedata: ServerHandshake?) {
                             Log.e("WebSocketClient","onOpen")
-
+                            send(JSONObject(HashMap<String, String>().apply {
+                                put("Hash", task.file_hash!!)
+                            }).toString())
                         }
 
                         override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -415,6 +427,11 @@ class DaemonService : Service() {
                                         .isMultipart(true)
                                         .execute(object :
                                             FileCallback(ROOT_DIR_PATH,task.file_name){
+
+                                            override fun downloadProgress(progress: Progress?) {
+                                                super.downloadProgress(progress)
+                                                Log.e("ok","文件进度：${progress}")
+                                            }
                                             override fun onSuccess(response: Response<File>?) {
 
                                                 MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
@@ -660,7 +677,22 @@ class DaemonService : Service() {
     }
 
     //</editor-fold>
+    //<editor-fold desc="获取仓库信息">
+    fun getrepostat(){
+        exec("repo stat").apply {
+//        exec("repo gc").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","repo stat="+it)
+                logs.add(it) }
+        }
+    }
+    
+    //</editor-fold>
 
+    
+    
+    
 
     class MyBinder(var mDaemonService:DaemonService) : Binder() {
         val TAG ="DaemonService.MyBinder"
@@ -701,36 +733,6 @@ class DaemonService : Service() {
 }
 
 fun main() {
-
-   val downclient=object :WebSocketClient(URI.create("ws://echo.websocket.org")){
-        override fun onOpen(handshakedata: ServerHandshake?) {
-            println("onOpen")
-
-
-            send("test")
-            println("onOpen")
-        }
-
-        override fun onClose(code: Int, reason: String?, remote: Boolean) {
-            println("onClose")
-            println("reason is ${reason}")
-            println("code is ${code}")
-            println("remote is ${remote}")
-        }
-
-        override fun onMessage(message: String?) {
-            println("onMessage")
-            println("onMessage $message")
-        }
-
-        override fun onError(ex: java.lang.Exception?) {
-            println("onError")
-        }
-
-    }.apply {
-
-   }
-    downclient.connectBlocking()
 
 }
 

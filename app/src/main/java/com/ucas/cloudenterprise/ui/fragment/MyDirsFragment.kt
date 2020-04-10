@@ -136,8 +136,18 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 
         pid = pid_stack[0]
         Log.e("ok","pid is  ${pid}")
-        GetFileList()
 
+
+    }
+
+    var hasloaddata=false
+    override fun onResume() {
+        super.onResume()
+        Log.e("ok","mydir")
+        if(!hasloaddata){
+            GetFileList()
+            hasloaddata = true
+        }
     }
 
     override fun GetRootViewID()= R.layout.mydirs_fragment
