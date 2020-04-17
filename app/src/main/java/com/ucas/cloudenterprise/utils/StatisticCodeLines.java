@@ -1,10 +1,17 @@
 package com.ucas.cloudenterprise.utils;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 /**
  * 统计代码行数demo author:lizhi
@@ -17,7 +24,166 @@ public class StatisticCodeLines {
     public static int commentLines = 0; // 注释行数
     public static String Content ="" ; // 注释行数
 
+
+
+    /**
+     * 获取单个文件的MD5值
+     * @param file 文件
+     * @param radix  位 16 32 64
+     *
+     * @return
+     */
+
+
+    static boolean read_able = true;
+    static boolean  copy_able = false;
+    static boolean   md5_able = true;
+    static boolean    ok =false;
+
+    static int len=0;
+
+    public static void getFileMD5s(File file,int radix) {
+        try {
+            MessageDigest  digest;
+            digest = MessageDigest.getInstance("MD5");
+            FileInputStream in  = new FileInputStream(file);
+            byte buffer[] = new byte[20 * 1024 * 1024];
+            Thread read = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    long  md5_start_time=System.currentTimeMillis();
+                    System.out.println( "md5 开始"+md5_start_time);
+                    Log.e("ok","md5 开始"+md5_start_time);
+                    while (true){
+                        try {
+//
+                            if(read_able){
+                                if ((len = in.read(buffer, 0, 20* 1024 * 1024)) != -1) {
+//                                    Log.e("ok","buffer is "+buffer.toString());
+                                    read_able =false;
+                                    copy_able=true;
+//
+                                }else{
+                                    if(md5_able){
+                                        long   md5_end_time=System.currentTimeMillis();
+                                        Log.e("ok","md5 结束"+md5_end_time);
+//                                        System.out.println("md5 结束"+md5_end_time);
+                                        Log.e("ok","md5 耗时"+(md5_end_time-md5_start_time)/1000.0);
+                                        BigInteger bigInt = new BigInteger(1, digest.digest());
+                                        Log.e("ok","md5 结果"+bigInt.toString(16));
+//                                        System.out.println("md5 结果"+bigInt.toString(radix));
+                                        ok =true;
+                                        break;
+                                    }
+
+                                }
+
+
+
+
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }}
+            );
+
+            Thread md5 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("start md5");
+                    byte copyed_buff[]=null;
+                    while (true){
+
+                        if(copy_able&&md5_able&&!read_able){
+
+                            md5_able=false;
+                            if(copyed_buff==null){
+                                copyed_buff= buffer.clone();
+//                                Log.e("ok"," clone copyed_buff is "+copyed_buff.equals(buffer));
+                                read_able =true;
+                                digest.update(copyed_buff, 0, len);
+//                                Log.e("ok"," read_able =true copyed_buff is "+copyed_buff.equals(buffer));
+//                                Log.e("ok","digest after copyed_buff is "+copyed_buff.toString());
+                                copyed_buff=null;
+                                md5_able = true;
+                            }
+
+                        }
+
+                        if (ok){
+
+                            break;
+                        }
+
+
+                    }
+
+                }
+            }
+            );
+            read.start();
+            md5.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getFileMD5s(File file) {
+        if (!file.isFile()) {
+            return  null;
+        }
+        MessageDigest digest = null;
+        FileInputStream in = null;
+        long md5_start_time;
+        byte buffer[] = new byte[4*1024*1024];
+        int len;
+        try {
+            digest = MessageDigest.getInstance("MD5");
+
+            in = new FileInputStream(file);
+
+            md5_start_time = System.currentTimeMillis();
+            Log.e("ok","md5 开始"+md5_start_time);
+
+            while ((len = in.read(buffer,
+                    0, 4*1024*1024)) != -1) {
+                digest.update(buffer, 0, len);
+            }
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        long   md5_end_time=System.currentTimeMillis();
+        Log.e("ok","md5 结束"+md5_end_time);
+//                                System.out.println("md5 结束"+md5_end_time);
+        Log.e("ok","md5 耗时"+(md5_end_time-md5_start_time)/1000.0);
+        BigInteger bigInt = new BigInteger(1, digest.digest());
+        String md5 =bigInt.toString(16);
+        Log.e("ok","md5 结果"+md5);
+       return md5;
+
+        }
+
+
     public static void main(String[] args) throws IOException {
+
+
+//           getFileMD5s(new File("/Users/simple/Downloads/年兽大作战BD1280高清国语中英双字.MP4"),16);
+            int[] a = new int[]{1,2,3,2};
+        System.out.println(a);
+        int[] b=a.clone();
+        System.out.println(b);
+        a[0]=10;
+        System.out.println(b[0]);
+        System.out.println(a[0]);
+
+
 
 //        String root =System.getProperty("user.dir");
 
@@ -120,6 +286,15 @@ public static void parse(File file) {
         }
         }
         }
+
+
+
+
+
+
+
+
+
         }
 
 //        作者：silencefun

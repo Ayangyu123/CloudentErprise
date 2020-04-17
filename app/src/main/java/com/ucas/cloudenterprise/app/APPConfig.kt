@@ -2,12 +2,16 @@ package com.ucas.cloudenterprise.app
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Environment
+import android.os.StatFs
 import android.util.Log
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.model.HttpHeaders
 import com.ucas.cloudenterprise.model.Company
+import java.io.File
 import java.security.AccessControlContext
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -165,9 +169,45 @@ fun MD5encode(bytearray:ByteArray):String{
 
     return ""
 }
+fun MD5encode(file:File):String{
+    try {
+        //获取md5加密对象
+        val instance: MessageDigest = MessageDigest.getInstance("MD5")
+        if(!file.exists()){
+            Log.e("ok","文件不存在")
+            return ""
+        }
+        var length:Int=-1
+        var bytes = ByteArray(8192)
+
+       while ((file.inputStream().read(bytes).apply { length=this })!=-1){
+           instance.update(bytes, 0, length);
+       }
+        val digest:ByteArray = instance.digest()
+        var sb : StringBuffer = StringBuffer()
+        for (b in digest) {
+            //获取低八位有效值
+            var i :Int = b.toInt() and 0xff
+            //将整数转化为16进制
+            var hexString = Integer.toHexString(i)
+            if (hexString.length < 2) {
+                //如果是一位的话，补0
+                hexString = "0" + hexString
+            }
+            sb.append(hexString)
+        }
+        return sb.toString()
+
+
+    } catch (e: NoSuchAlgorithmException) {
+        e.printStackTrace()
+    }
+
+    return ""
+}
 
 //</editor-fold>
-
+//<editor-fold desc="检查权限">
 fun checkPermission(context: Activity): Boolean? {
     var isGranted = true
     if (android.os.Build.VERSION.SDK_INT >= 23) {
@@ -193,7 +233,53 @@ fun checkPermission(context: Activity): Boolean? {
     }
     return isGranted
 }
+//</editor-fold>
+//<editor-fold desc="检查sd卡剩余可用容量">
+fun  CheckFreeSpace(destScope: Long):Boolean{
+     var freespace = getFreeSpace()
+    if(freespace>=destScope){
+        return true
+    }
+    return false
+}
+//</editor-fold>
+
+//<editor-fold desc="获取sd卡剩余可用容量">
+fun  getFreeSpace():Long{
+    var stat = StatFs(Environment.getExternalStorageDirectory().absolutePath)
+    var blockSize = stat.getBlockSizeLong();
+    var availableBlocks = stat.getAvailableBlocksLong();
+    return availableBlocks * blockSize;
 
 
+}
+//</editor-fold>
+
+//<editor-fold desc="获取app运行内存">
+fun getMemory():Int{
+    var activityManager = MyApplication.context.applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    //最大分配内存
+    var memory = activityManager.getMemoryClass();
+    var memoryinfo =ActivityManager.MemoryInfo()
+    activityManager.getMemoryInfo(memoryinfo)
+
+    Log.e("ok","memory: "+memory);
+    Log.e("ok","系统剩余内存:"+(memoryinfo.availMem )+"m")
+    Log.e("ok","系统是否处于低内存运行："+memoryinfo.lowMemory);
+    Log.e("ok","当系统剩余内存低于"+memoryinfo.threshold+"时就看成低内存运行");
+
+    //最大分配内存获取方法2
+    var maxMemory =  (Runtime.getRuntime().maxMemory() * 1.0/ (1024 * 1024));
+    //当前分配的总内存
+    var totalMemory = (Runtime.getRuntime().totalMemory() * 1.0/ (1024 * 1024));
+    //剩余内存
+    var freeMemory =  (Runtime.getRuntime().freeMemory() * 1.0/ (1024 * 1024));
+    Log.e("ok","maxMemory: "+maxMemory);
+    Log.e("ok","totalMemory: "+totalMemory);
+    Log.e("ok","freeMemory: "+freeMemory);
+
+    return freeMemory.toInt()
+}
+//</editor-fold>
 
 

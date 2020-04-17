@@ -105,6 +105,7 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
             if(this.isEmpty()){
                 tv_temname= LayoutInflater.from(this@MemberInfoEditActivity).inflate(R.layout.item_team,null)
                 tv_temname.tv_team_name.text="无"
+                tv_temname.iv_remove.visibility=View.GONE
                 ll_teams.addView(tv_temname)
 
 
@@ -112,6 +113,7 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
                 for(item: BelongTeam in this){
                     tv_temname= LayoutInflater.from(this@MemberInfoEditActivity).inflate(R.layout.item_team,null)
                     tv_temname.tv_team_name.text= item.team_name
+                    tv_temname.iv_remove.visibility=View.GONE
                     ll_teams.addView(tv_temname)
                 }
             }

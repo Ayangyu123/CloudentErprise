@@ -42,6 +42,7 @@ class LoadingFileAdapter(var context: Context?, var list:ArrayList<LoadingFile>)
         var tv_curr_size =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_curr_size)
         var progress_download =itemView.findViewById<ProgressBar>(com.ucas.cloudenterprise.R.id.progress_download)
         var iv_down_flag =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_down_flag)
+        var iv_show_del =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_show_del)
 
 
 

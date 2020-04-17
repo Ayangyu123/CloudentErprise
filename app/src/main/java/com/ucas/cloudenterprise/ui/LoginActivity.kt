@@ -59,7 +59,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 //        OkGo.getInstance().addCommonHeaders(HttpHeaders("logid",LOGID))
 //        OkGo.getInstance().addCommonHeaders(HttpHeaders("clienttype",CLIENTTYPE))
         Log.e(TAG, "token  is ${OkGo.getInstance().commonHeaders.get("Authorization")}")
-        startActivity<MainActivity>()
+        startActivity<PacaktestActivity>()
+//        startActivity<MainActivity>()
         finish()
     }
 

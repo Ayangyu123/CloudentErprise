@@ -155,13 +155,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/app_color"
-        android:textColor="@android:color/white"
-        android:text="删除成员"
-        android:onClick="DeleteMemberInfo"
-        android:gravity="center"
         android:layout_margin="20dp"
+        android:background="@color/app_color"
+        android:gravity="center"
+        android:onClick="DeleteMemberInfo"
         android:padding="10dp"
-        />
+        android:text="删除成员"
+        android:textColor="@android:color/white"
+        tools:visibility="gone" />
 
 </LinearLayout>

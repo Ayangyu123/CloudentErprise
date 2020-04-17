@@ -1,7 +1,6 @@
 package com.ucas.cloudenterprise.core
 
 import android.annotation.SuppressLint
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_MIN
@@ -9,15 +8,14 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color.parseColor
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
 import android.os.Build.SUPPORTED_ABIS
 import android.os.Environment
 import android.os.IBinder
-import android.provider.OpenableColumns
 import android.text.TextUtils
+import android.text.format.Formatter
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
@@ -27,21 +25,16 @@ import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.convert.StringConvert
 import com.lzy.okgo.model.Progress
 import com.lzy.okgo.model.Response
-import  com.ucas.cloudenterprise.utils.*
-import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
-import com.ucas.cloudenterprise.base.BaseActivity
-import com.ucas.cloudenterprise.loadclient.DownWebSocketClient
-import com.ucas.cloudenterprise.model.*
+import com.ucas.cloudenterprise.model.CompletedFile
+import com.ucas.cloudenterprise.model.File_Bean
+import com.ucas.cloudenterprise.model.LoadIngStatus
+import com.ucas.cloudenterprise.model.LoadingFile
 import com.ucas.cloudenterprise.task.LoadFiileTask
+import com.ucas.cloudenterprise.ui.MainActivity
+import com.ucas.cloudenterprise.utils.*
 import io.ipfs.api.IPFS
-import io.ipfs.multiaddr.MultiAddress
-import io.ipfs.multihash.Multihash
-import okhttp3.Request
-import okhttp3.WebSocketListener
-import okio.ByteString
-import org.java_websocket.WebSocket
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
@@ -167,6 +160,8 @@ class DaemonService : Service() {
         pluginbin.setExecutable(true)
             /*********core bin  复制 完成*******/
         logs.clear()
+//        init --profile=
+//        exec("init --profile=badgerds,lowpower").apply { // 低功耗模式
         exec("init --profile=lowpower").apply { // 低功耗模式
             Log.e(TAG,"init 开始执行")
             read {
@@ -185,7 +180,7 @@ class DaemonService : Service() {
 
         config {
 
-            obj("Datastore").add("StorageMax",json("1GB"))
+            obj("Datastore").add("StorageMax",json("10GB"))
             obj("API").obj("HTTPHeaders").apply {
 
                 array("Access-Control-Allow-Origin").also { origins ->
@@ -242,8 +237,7 @@ class DaemonService : Service() {
 
         ).apply {
             plugindaemon = this
-            read {
-                                Log.e("it"," plugindaemon it="+it)
+            read {   Log.e("it"," plugindaemon it="+it)
                 logs.add(it) }
         }
       
@@ -309,7 +303,7 @@ class DaemonService : Service() {
             when(loadfile.load_type_falg){
                 0->{// 上传
                     MyApplication.upLoad_Ing.remove(loadfile)
-                      AddFile(loadfile.dest_file!!.absolutePath,loadfile.pid!!)
+                      AddFile(loadfile.dest_file!!,loadfile.file_MD5!!,loadfile.pid!!)
 
 
                 }
@@ -356,7 +350,12 @@ class DaemonService : Service() {
     fun GetFile(item:File_Bean) {
 
 
-        daemon?.let {
+
+            if(daemon==null){
+                Toastinfo("daemon 未启动")
+                return
+            }
+
             if(plugindaemon ==null){
                 Toastinfo("pulgDaemon 未启动")
                 return
@@ -383,6 +382,45 @@ class DaemonService : Service() {
                             send(JSONObject(HashMap<String, String>().apply {
                                 put("Hash", task.file_hash!!)
                             }).toString())
+                            if(ROOT_DIR_PATH.equals("")){
+                                ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+                            }
+
+                            val root =  File(ROOT_DIR_PATH)
+                            if(!root.exists()){
+                                root.mkdirs()
+                            }
+                            Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
+                            OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
+                                .params("hash","${task.file_hash}")
+                                .isMultipart(true)
+                                .execute(object :
+                                    FileCallback(ROOT_DIR_PATH,task.file_name){
+
+                                    override fun downloadProgress(progress: Progress?) {
+                                        super.downloadProgress(progress)
+                                        Log.e("ok","文件进度：${progress}")
+                                    }
+
+                                    override fun onError(response: Response<File>?) {
+                                        super.onError(response)
+                                        MyApplication.downLoad_Ing.remove(task)
+                                        Toastinfo("服务器未获取该文件到相关信息")
+                                        Log.e("ok","code="+response?.code())
+                                    }
+                                    override fun onSuccess(response: Response<File>?) {
+
+                                        MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                                            Date()
+                                        )
+                                            ,task.file_size.toString(),
+                                            false))
+                                        MyApplication.downLoad_Ing.remove(task)
+                                        Log.e("it","文件路径 ${response?.body()?.absolutePath}")
+                                        Toastinfo("${task.file_name} 下载完成")
+                                    }
+
+                                })
                         }
 
                         override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -409,42 +447,14 @@ class DaemonService : Service() {
                                 //TODO 速度显示
                                 getString("Speed")?.apply {
                                     if(this.toLong()!=0L)
-                                        task.Speed=(this.toLong()/1024).toString()+"KB/s"
+                                        task.Speed= Formatter.formatFileSize(
+                                            applicationContext,
+                                           this.toLong()
+                                        )+"/s"
                                 }
                                 if(task.progress==100){ //下载完成
-                                    if(ROOT_DIR_PATH.equals("")){
-                                        ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
-                                    }
-
-                                    val root =  File(ROOT_DIR_PATH)
-                                    if(!root.exists()){
-                                        root.mkdirs()
-                                    }
-                                    Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
-                                    task. Ingstatus =LoadIngStatus.UNPACK
-                                    OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
-                                        .params("hash","${task.file_hash}")
-                                        .isMultipart(true)
-                                        .execute(object :
-                                            FileCallback(ROOT_DIR_PATH,task.file_name){
-
-                                            override fun downloadProgress(progress: Progress?) {
-                                                super.downloadProgress(progress)
-                                                Log.e("ok","文件进度：${progress}")
-                                            }
-                                            override fun onSuccess(response: Response<File>?) {
-
-                                                MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                                                    Date()
-                                                )
-                                                    ,task.file_size.toString(),
-                                                    false))
-                                                MyApplication.downLoad_Ing.remove(task)
-                                                Log.e("it","文件路径 ${response?.body()?.absolutePath}")
-                                                Toastinfo("${task.file_name} 下载完成")
-                                            }
-
-                                        })
+                                   //TODO
+                                    Log.e("ok","download 完成")
                                 }
 
                             }
@@ -456,6 +466,7 @@ class DaemonService : Service() {
                         }
 
                     }
+                    downclient.setConnectionLostTimeout(0)
                     downclient.connect()
                 }
 
@@ -465,7 +476,7 @@ class DaemonService : Service() {
             }
 
 
-            }
+
 
 
 
@@ -476,7 +487,8 @@ class DaemonService : Service() {
 
     // <editor-fold desc=" 上传文件  ">
     fun AddFile(
-        filepath: String,
+        destfile:File,
+        filemd5: String,
         pid: String
     ) {
         if (daemon == null ){
@@ -489,9 +501,6 @@ class DaemonService : Service() {
             Log.e("ok","plugindaemon服务未启动")
             return
         }
-        val destfile =File(filepath)
-        val filemd5= MD5encode(destfile.readBytes())
-
 
         val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
 //        val uploadtask =LoadFiileTask(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
@@ -509,6 +518,7 @@ class DaemonService : Service() {
                 Log.e("uptask","开始执行")
                 uptask.Ingstatus = LoadIngStatus.CONFIG
                 try {
+//                    IPFS()
 
                     var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(filemd5).converter(StringConvert()).adapt()
                     val AesKey_response: Response<String> = AesKey_adapt.execute()
@@ -519,10 +529,10 @@ class DaemonService : Service() {
                         .params("flag",JSONObject().apply {
                             put("MetaHash",uptask.file_MD5)
                             put("MetaSize",uptask.file_size)
-                            put("Gzip",true)
+                            put("Gzip",false)
                             put("Aes",true)
                             put("AesKey",AesKey)
-                            put("RS",true)
+                            put("RS",false)
                             put("Feed",true)
                         }.toString())
                         .params("file", uptask.dest_file)
@@ -535,7 +545,9 @@ class DaemonService : Service() {
                     val pack_end_time=java.lang.System.currentTimeMillis()
                     Log.e("WebSocketClient","end pacak $pack_end_time ")
                     Log.e("WebSocketClient"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
-                    uptask.progress = 50
+                    addpinlist(Multihash) //固定切片
+
+
 
                     var downclient:WebSocketClient? =null
 
@@ -572,7 +584,11 @@ class DaemonService : Service() {
                                 //TODO 速度显示
                                 getString("Speed")?.apply {
                                     if(this.toLong()!=0L)
-                                        uptask.Speed=(this.toLong()/1024).toString()+"KB/s"
+                                        uptask.Speed= Formatter.formatFileSize(
+                                            applicationContext,
+                                            this.toLong()
+                                        )+"/s"
+//                                        uptask.Speed=(this.toLong()/1024).toString()+"KB/s"
                                 }
                                 if( uptask.progress==100){
                                     val params = HashMap<String, Any>()
@@ -625,6 +641,28 @@ class DaemonService : Service() {
                     }
 
     //</editor-fold>
+    //<editor-fold desc="上传文件bytask">
+    fun upfilebytask(){
+        if (daemon == null ){
+            Toastinfo("coredaemon服务未启动")
+            Log.e("ok","daemon服务未启动")
+            return
+        }
+        if (plugindaemon == null ){
+            Toastinfo("插件服务未启动")
+            Log.e("ok","plugindaemon服务未启动")
+            return
+        }
+
+//        val uploadtask = LoadFiileTask(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
+//        upexecutor.execute(uploadtask)
+
+
+
+    }
+    //</editor-fold>
+
+
 
 
     //<editor-fold desc="META信息上传 JSON map">
@@ -680,18 +718,79 @@ class DaemonService : Service() {
     //<editor-fold desc="获取仓库信息">
     fun getrepostat(){
         exec("repo stat").apply {
-//        exec("repo gc").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","repo stat="+it)
+                logs.add(it) }
+        }
+
+    }
+    
+    //</editor-fold>
+
+    //<editor-fold desc="清理仓库缓存">
+    fun coregc(){
+        exec("repo gc").apply {
             daemon = this
             read {
                 Log.e("daemonit","repo stat="+it)
                 logs.add(it) }
         }
     }
-    
     //</editor-fold>
 
-    
-    
+    //<editor-fold desc="获取pin缓存"列表>
+    fun getpinlist(){
+        exec("pin ls").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","repo stat="+it)
+                logs.add(it) }
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="添加pin缓存"列表>
+    fun addpinlist(fidhash: String){
+        exec("pin add ${fidhash}").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","pin add="+it)
+                logs.add(it) }
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="添加pin缓存"列表>
+    fun peers(){
+        exec("swarm peers").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","pin add="+it)
+                logs.add(it) }
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="移除pin缓存"列表>
+    fun rmpinlist(fidhash: String){
+        exec("pin rm ${fidhash}").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","pin add="+it)
+                logs.add(it) }
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="移除pin缓存"列表>
+    fun addfile(file_path:String){
+
+        exec("add --pin=false ${file_path}").apply {
+            daemon = this
+            read {
+                Log.e("daemonit","pin add="+it)
+                logs.add(it) }
+        }
+    }
+    //</editor-fold>
     
 
     class MyBinder(var mDaemonService:DaemonService) : Binder() {

@@ -167,6 +167,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
                         send(JSONObject(HashMap<String, String>().apply {
                             put("Hash", file_hash!!)
                         }).toString())
+                        unpack()
                     }
                 }
 
@@ -196,7 +197,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
                                Speed=(this.toLong()/1024).toString()+"KB/s"
                         }
                         if( progress==100){
-                            ChangeCurrSetpAndLoadfile(UPLOAD_TRANSFERING)
+//                            ChangeCurrSetpAndLoadfile(UPLOAD_TRANSFERING)
                             close()
                         }
 
@@ -213,6 +214,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
             }
 
         }
+        FileTransferClient!!.setConnectionLostTimeout(0)
         FileTransferClient!!.connectBlocking()
 
 
@@ -227,10 +229,11 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
             INIT->{ //初始化状态
                 CurrTaskStatus =TaskStatus.RUNING
                 fileTransfer()
+
             }
-            DownLoadTasKSetp.DOWN_LOAD_TRANSFERING->{ // 已经获取完成AESKEY
-                    unpack()
-            }
+//            DownLoadTasKSetp.DOWN_LOAD_TRANSFERING->{ // 已经获取完成AESKEY
+//
+//            }
 
             DownLoadTasKSetp.UNPACK->{ // 已经获取完成AESKEY
 

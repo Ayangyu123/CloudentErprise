@@ -18,6 +18,7 @@ import com.ucas.cloudenterprise.app.MyApplication
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.LoadIngStatus
+import com.ucas.cloudenterprise.model.LoadingFile
 import com.ucas.cloudenterprise.ui.MainActivity
 import kotlinx.android.synthetic.main.fragment_transfer_list_item.*
 import me.rosuh.filepicker.config.FilePickerManager
@@ -106,8 +107,8 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                         var item= mIngAdapter.list[position]
                         tv_file_name.text =item.file_name
 
-                            progress_download.setProgress(item.progress,true)
-
+                         progress_download.setProgress(item.progress,true)
+                        iv_down_flag.setImageResource(if(item.load_type_falg==0) R.drawable.reupload else R.drawable.redownload) ////0  up  1 down
                         iv_down_flag.setOnClickListener { //点击按钮修改文件状态
                             var  mainActivity=activity as MainActivity
                             when(item.Ingstatus){
@@ -120,7 +121,9 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(item)
                                 }
                             }
-
+                        iv_show_del.setOnClickListener {
+                            showDelBootomDialog(item.load_type_falg,position,item.Ingstatus)
+                        }
 
 
                             mIngAdapter.notifyDataSetChanged()
@@ -207,6 +210,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                     ING ->{
 
                                         MyApplication.upLoad_Ing.apply {
+                                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(this[position])
                                             remove(this[position])
                                         }
                                         mIngAdapter.notifyDataSetChanged()

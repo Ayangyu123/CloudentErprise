@@ -1,6 +1,8 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.app.ActivityManager
 import android.app.Dialog
+import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -29,6 +31,7 @@ import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.HttpMethod
 import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
+import com.lzy.okgo.utils.HttpUtils.runOnUiThread
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.app.*
@@ -47,8 +50,11 @@ import kotlinx.android.synthetic.main.top_file_operate.*
 import me.rosuh.filepicker.config.FilePickerManager
 import org.json.JSONObject
 import java.io.File
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -72,7 +78,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     lateinit var pid_name_maps : HashMap<String,String>
     var Is_Checked_Sum =0
 
-
+    val  md5executor = Executors.newFixedThreadPool(3)
 
     override fun initView() {
         //<editor-fold desc=" 设置files RecyclerView  ">
@@ -398,6 +404,11 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                                         Toastinfo("暂不支持下载文件夹")
                                         return@setOnClickListener
                                     }
+
+                                    if(!CheckFreeSpace(item.size*2.5.toLong())){
+                                        Toastinfo("存储空间不足，无法完成下载操作")
+                                        return@setOnClickListener
+                                    }
 //                    context.startService(Intent(context,DaemonService::class.java).apply {
 //                        action ="downFiles"
 //                        putExtra("file",item)
@@ -659,33 +670,75 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         //<editor-fold desc="检查文件是否已存在">
     private fun CheckFileIsExists(file_path: String) {
             val destfile = File(file_path)
-            val file_md5 =MD5encode(destfile.readBytes())
-            OkGo.get<String>("${URL_ADD_File_CHECK}${file_md5}")
-                .execute(object: StringCallback(){
-                    override fun onSuccess(response: Response<String>?) {
-                        var  mainActivity=activity as MainActivity
-                        response?.apply {
-                            if(!VerifyUtils.VerifyRequestData(response!!.body())){ //文件不存在 去添加
-                                Log.e("ok","该文件不存在")
-                                (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(file_path,pid)
-                            }else{//文件已存在 去添加 文件信息 秒传操作
-                                Log.e("ok","该文件已存在")
-                                (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.apply {
-                                    val params =GetUploadFileJsonMap(destfile.name,"${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
-//                                        Log.e("ok","fidhash=${this}")
-                                    }}","${file_md5.apply {
-//                                        Log.e("ok","fidhash=${this}")
-                                    }}",pid,destfile.length())
-                                    UploadFileMetaInfo(params,file_md5,destfile.name,destfile.length().toString(),0)
+
+            val destfile_length = destfile.length()* 1.0/ (1024 * 1024)
+
+
+
+            Log.e("ok","当钱文件大小: "+(destfile_length))
+            if(destfile_length >= (4*1024)){
+                Toastinfo("该文件超过4G，不支持app传输")
+                return
+            }
+            if(!CheckFreeSpace(destfile.length()*1.5.toLong())){
+                Toastinfo("存储空间不足，无法完成上传操作")
+                return
+            }
+
+
+            var Memory =getMemory()
+            Log.e("ok","当前内存: $Memory")
+
+            md5executor.execute{
+                Log.e("ok","start file md5")
+                val  start_time =System.currentTimeMillis()
+                var file_md5=""
+                if(destfile_length>(Memory)){
+
+                    file_md5= StatisticCodeLines.getFileMD5s(destfile)
+                }else{
+                    file_md5  =MD5encode(destfile.readBytes())
+                }
+
+                val  end_time =System.currentTimeMillis()
+                Log.e("ok","file_md5 is ${file_md5}")
+                Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
+                        /1000
+                }")
+                runOnUiThread{
+                    OkGo.get<String>("${URL_ADD_File_CHECK}${file_md5}")
+                        .execute(object: StringCallback(){
+                            override fun onSuccess(response: Response<String>?) {
+                                var  mainActivity=activity as MainActivity
+                                response?.apply {
+                                    if(!VerifyUtils.VerifyRequestData(response!!.body())){ //文件不存在 去添加
+                                        Log.e("ok","该文件不存在")
+                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(destfile,file_md5,pid)
+                                    }else{//文件已存在 去添加 文件信息 秒传操作
+                                        Log.e("ok","该文件已存在")
+                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.apply {
+                                            val params =GetUploadFileJsonMap(destfile.name,"${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
+                                                //                                        Log.e("ok","fidhash=${this}")
+                                            }}","${file_md5.apply {
+                                                //                                        Log.e("ok","fidhash=${this}")
+                                            }}",pid,destfile.length())
+                                            UploadFileMetaInfo(params,file_md5,destfile.name,destfile.length().toString(),0)
+
+                                        }
+
+                                    }
 
                                 }
 
                             }
-
-                        }
-
+                        })
                     }
-                })
+            }
+
+
+
+
+
     }
     //</ediotr-fold>
 
@@ -693,15 +746,11 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 }
 
 fun main() {
-    var testArrayList = ArrayList<String >()
-    testArrayList.add("root")
-    testArrayList.add(0,"test")
-    testArrayList.forEach {
-        println(it)
-    }
-    testArrayList.remove(testArrayList[0])
-    print("romove 0")
-    testArrayList.forEach {
-        println(it)
-    }
+//  2147483647
+//  1142759900
+   var  file = File("/Users/simple/Downloads/加勒比海盗2：聚魂棺BD1280高清中字.rmvb")
+
+   val md5= StatisticCodeLines.getFileMD5s(file,16)
+    println(md5)
 }
+

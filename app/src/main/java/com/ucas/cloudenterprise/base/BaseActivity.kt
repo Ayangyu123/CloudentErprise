@@ -35,7 +35,7 @@ import java.io.File
  */
   abstract class BaseActivity  : AppCompatActivity(){
 
-    var  myBinder : Binder?=  null
+    var  myBinder : DaemonService.MyBinder?=  null
      var onNetCallback: OnNetCallback?= null
      var mrequest: Request<String, out Request<Any, Request<*, *>>>?= null
      var mLastRequest: Request<String, out Request<Any, Request<*, *>>>?= null
