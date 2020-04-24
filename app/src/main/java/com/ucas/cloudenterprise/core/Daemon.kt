@@ -1,6 +1,7 @@
 package com.ucas.cloudenterprise.core
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_MIN
@@ -8,6 +9,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color.parseColor
+import android.icu.lang.UProperty
 import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
@@ -41,6 +43,7 @@ import org.java_websocket.handshake.ServerHandshake
 import org.json.JSONObject
 import java.io.File
 import java.net.URI
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -55,6 +58,12 @@ class DaemonService : Service() {
     var  uptaskmap =HashMap<String,Runnable>()
     var  downtaskmap =HashMap<String,Runnable>()
 
+    val DOWNLOADING =1
+    val UPLOADING=2
+    val DOWNLOADCOMPLETED=3
+    val UPLOADCOMPLETED=4
+
+
     val notificationBuilder = NotificationCompat.Builder(this, "sweetipfs")
 
     val notification
@@ -66,27 +75,33 @@ class DaemonService : Service() {
             color = parseColor("#69c4cd")
             setSmallIcon(R.drawable.ic_launcher)
             setShowWhen(false)
-            setContentTitle("Sweet Core")
-
+            setContentTitle("")
+            //TODO splah页面
             val open = pendingActivity<MainActivity>()
             setContentIntent(open)
-            addAction(R.drawable.ic_launcher, "Open", open)
+//            addAction(R.drawable.ic_launcher, "Open", open)
+
 
             if (daemon == null) {
-                setContentText("CORE is not running")
-
-                val start = pendingService(intent<DaemonService>().action("start"))
-                addAction(R.drawable.ic_launcher, "start", start)
+                setContentText("土星云企业网盘正在运行")
+//
+//                val start = pendingService(intent<DaemonService>().action("start"))
+//                addAction(R.drawable.ic_launcher, "start", start)
             } else {
-                setContentText("CORE is running")
+                setContentText("土星云企业网盘正在运行")
 
-                val restart = pendingService(intent<DaemonService>().action("restart"))
-                addAction(R.drawable.ic_launcher, "restart", restart)
+
+//
+//                val restart = pendingService(intent<DaemonService>().action("restart"))
+//                addAction(R.drawable.ic_launcher, "restart", restart)
 
 //                val stop = pendingService(intent<DaemonService>().action("repo stat"))
 //                addAction(R.drawable.ic_launcher, "repo stat", stop)
-                val stop = pendingService(intent<DaemonService>().action("repo stat"))
-                addAction(R.drawable.ic_launcher, "repo stat", stop)
+//
+//                val stop = pendingService(intent<DaemonService>().action("repo stat"))
+//                addAction(R.drawable.ic_launcher, "repo stat", stop)
+//
+
 //                val stop = pendingService(intent<DaemonService>().action("stop"))
 //                addAction(R.drawable.ic_launcher, "stop", stop)
 //
@@ -94,8 +109,8 @@ class DaemonService : Service() {
 //                addAction(R.drawable.ic_launcher, "add", add)
             }
 
-            val exit = pendingService(intent<DaemonService>().action("exit"))
-            addAction(R.drawable.ic_launcher, "exit", exit)
+//            val exit = pendingService(intent<DaemonService>().action("exit"))
+//            addAction(R.drawable.ic_launcher, "exit", exit)
 
         }
 
@@ -135,7 +150,8 @@ class DaemonService : Service() {
     }
     //<editor-fold desc="安装">
     fun install() {
-
+        Log.e("ok","开始安装")
+        val start_install_time = System.currentTimeMillis()
         val type = CPU_ABI.let {
             Log.e("Daemo","cpu is ${it}")
             when {
@@ -175,7 +191,26 @@ class DaemonService : Service() {
         /*********core init   完成*******/
 
 
-        AssetFileCP(this,CORE_WORK_PRIVATE_KEY)
+        AssetFileCP(this,CORE_WORK_PRIVATE_KEY)//复制私钥
+
+        //<editor-fold desc="pligin 配置文件写入">
+
+        store["plugin.config"].apply {  //写入plugin配置
+
+            if(!exists()){
+                createNewFile()
+                writeBytes(JSONObject().apply {
+                    put("WEB_SERVER", "${HOST}:6015")
+                    put("NODE_SERVER", "${HOST}:6016")
+                    put("MAX_ROUTINE_NUM", 20)
+                    put("MAX_ROUTINE_NUM_2", 10)
+                    put("LOG_ENABLE", true)
+
+                }.toString().toByteArray())
+            }
+
+        }
+        //</editor-fold >
         /*********key 复制   完成*******/
 
         config {
@@ -209,7 +244,11 @@ class DaemonService : Service() {
             }
         }
 
-            /*********core config  复制 完成*******/
+        Log.e("ok","结束安装")
+        val end_install_time = System.currentTimeMillis()
+        Log.e("ok","安装耗时${(end_install_time-start_install_time)/1000.0}秒")
+
+        /*********core config  复制 完成*******/
 
         IS_NOT_INSTALLED = false
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
@@ -229,15 +268,17 @@ class DaemonService : Service() {
         exec("daemon").apply {
             daemon = this
             read {
-                Log.e("daemonit","it="+it)
+
+                Log.e("daemonit",it)
                 logs.add(it) }
         }
         Runtime.getRuntime().exec(
-            "${pluginbin.absolutePath}"
+            "${pluginbin.absolutePath}",
+            arrayOf(String(Base64.getDecoder().decode(CORE_PATH),StandardCharsets.UTF_8 )+"=${store.absolutePath}")
 
         ).apply {
             plugindaemon = this
-            read {   Log.e("it"," plugindaemon it="+it)
+            read {   Log.e("plugindaemon",it)
                 logs.add(it) }
         }
       
@@ -262,6 +303,12 @@ class DaemonService : Service() {
 
     //<editor-fold desc="停止底层服务">
     fun stop() {
+        for(it in MyApplication.downLoad_Ing){
+            it.Ingstatus=LoadIngStatus.WAITING
+        }
+        for(it in MyApplication.upLoad_Ing){
+            it.Ingstatus=LoadIngStatus.WAITING
+        }
         plugindaemon?.destroy()
         daemon?.destroy()
         plugindaemon = null
@@ -328,7 +375,9 @@ class DaemonService : Service() {
             "restart" -> {
                 stop(); start()
             }
-            "exit" -> System.exit(0)
+            "exit" -> {
+                stopSelf()
+                System.exit(0)}
             "downFiles" ->{
                 Log.e(TAG,"收到files")
                 var file = i.getSerializableExtra("file") as File_Bean
@@ -361,14 +410,11 @@ class DaemonService : Service() {
                 return
             }
             val task = LoadingFile(1,item.file_name,null,item.fidhash,item.size,src_file_info = item)
-
-//            val downloadtask =LoadFiileTask(1,item.file_name,null,item.fidhash,item.size,src_file_info = item)
-//
-//            downexecutor.execute(downloadtask)
-//        return
-
             MyApplication.downLoad_Ing.add(task)
             task. Ingstatus =LoadIngStatus.TRANSFERING
+
+           savaspbyfalag(DOWNLOADING)
+
             Log.e("ok","item.fidhash=${task.file_hash}")
             object :Runnable{
                 override fun run() {
@@ -382,15 +428,18 @@ class DaemonService : Service() {
                             send(JSONObject(HashMap<String, String>().apply {
                                 put("Hash", task.file_hash!!)
                             }).toString())
-                            if(ROOT_DIR_PATH.equals("")){
-                                ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
-                            }
 
-                            val root =  File(ROOT_DIR_PATH)
+
+                            val root =  File(getRootPath())
                             if(!root.exists()){
                                 root.mkdirs()
                             }
-                            Log.e("ok","destroot="+ ROOT_DIR_PATH.substring(0, ROOT_DIR_PATH.length-2))
+                            var  destfile =File("${root}/${task.file_name}")
+                            if(destfile.exists()){
+                                destfile.delete()
+                            }
+
+
                             OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
                                 .params("hash","${task.file_hash}")
                                 .isMultipart(true)
@@ -404,9 +453,16 @@ class DaemonService : Service() {
 
                                     override fun onError(response: Response<File>?) {
                                         super.onError(response)
-                                        MyApplication.downLoad_Ing.remove(task)
+
                                         Toastinfo("服务器未获取该文件到相关信息")
                                         Log.e("ok","code="+response?.code())
+                                    }
+
+                                    override fun onFinish() {
+                                        super.onFinish()
+                                        MyApplication.downLoad_Ing.remove(task)
+                                        savaspbyfalag(DOWNLOADING)
+
                                     }
                                     override fun onSuccess(response: Response<File>?) {
 
@@ -415,7 +471,8 @@ class DaemonService : Service() {
                                         )
                                             ,task.file_size.toString(),
                                             false))
-                                        MyApplication.downLoad_Ing.remove(task)
+                                        savaspbyfalag(DOWNLOADCOMPLETED)
+
                                         Log.e("it","文件路径 ${response?.body()?.absolutePath}")
                                         Toastinfo("${task.file_name} 下载完成")
                                     }
@@ -450,7 +507,7 @@ class DaemonService : Service() {
                                         task.Speed= Formatter.formatFileSize(
                                             applicationContext,
                                            this.toLong()
-                                        )+"/s"
+                                        ).toUpperCase()+"/s"
                                 }
                                 if(task.progress==100){ //下载完成
                                    //TODO
@@ -502,13 +559,10 @@ class DaemonService : Service() {
             return
         }
 
-        val uptask = LoadingFile(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
-//        val uploadtask =LoadFiileTask(0,destfile.name,filemd5,null,destfile.length(),destfile,pid)
-//
-//        upexecutor.execute(uploadtask)
-//        return
+        var uptask = LoadingFile(0,destfile.name,null,null,destfile.length(),destfile,pid)
 
          MyApplication.upLoad_Ing.add(uptask)
+        savaspbyfalag(UPLOADING)
         Log.e("ok","准备上传")
 
 
@@ -518,13 +572,33 @@ class DaemonService : Service() {
                 Log.e("uptask","开始执行")
                 uptask.Ingstatus = LoadIngStatus.CONFIG
                 try {
-//                    IPFS()
+                    Log.e("ok","start file md5")
+                    val  start_time =System.currentTimeMillis()
+                    var file_md5=""
+                    val destfile_length =destfile.length()
+                    val Memory = getMemory()
+                    if(destfile_length>(Memory)){
+
+                        file_md5= StatisticCodeLines.getFileMD5s(destfile)
+                    }else{
+                        file_md5  =MD5encode(destfile.readBytes())
+                    }
+                    uptask.file_MD5 =file_md5
+                    savaspbyfalag(UPLOADING)
+                    val  end_time =System.currentTimeMillis()
+                    Log.e("ok","file_md5 is ${file_md5}")
+                    Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
+                            /1000
+                    }")
+
+
 
                     var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(filemd5).converter(StringConvert()).adapt()
                     val AesKey_response: Response<String> = AesKey_adapt.execute()
                     val AesKey =  "${AesKey_response?.body()}"
                     Log.e("ok","aeskay = ${AesKey}")
-
+                    uptask.Aes_key=AesKey
+                    savaspbyfalag(UPLOADING)
                     var Uploadfile_adapt= OkGo.post<String>("http://127.0.0.1:9984/api/v0/pack")
                         .params("flag",JSONObject().apply {
                             put("MetaHash",uptask.file_MD5)
@@ -545,8 +619,9 @@ class DaemonService : Service() {
                     val pack_end_time=java.lang.System.currentTimeMillis()
                     Log.e("WebSocketClient","end pacak $pack_end_time ")
                     Log.e("WebSocketClient"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
-                    addpinlist(Multihash) //固定切片
-
+//                    addpinlist(Multihash) //固定切片
+                    uptask.hasPacked=true
+                    savaspbyfalag(UPLOADING)
 
 
                     var downclient:WebSocketClient? =null
@@ -587,8 +662,8 @@ class DaemonService : Service() {
                                         uptask.Speed= Formatter.formatFileSize(
                                             applicationContext,
                                             this.toLong()
-                                        )+"/s"
-//                                        uptask.Speed=(this.toLong()/1024).toString()+"KB/s"
+                                        ).toUpperCase()+"/s"
+
                                 }
                                 if( uptask.progress==100){
                                     val params = HashMap<String, Any>()
@@ -614,6 +689,7 @@ class DaemonService : Service() {
                     downclient.setConnectionLostTimeout(0)
                     downclient.connect()
                     uptask.Ingstatus =LoadIngStatus.TRANSFERING
+                    savaspbyfalag(UPLOADING)
 
 
 
@@ -802,6 +878,40 @@ class DaemonService : Service() {
     }
 
 
+    //<editor-fold desc="保存数据到sp">
+    fun savaspbyfalag(flag:Int){
+        MyApplication.getInstance().GetSP().edit().apply {
+            when(flag){
+                DOWNLOADING ->{
+                    putString("downLoad_Ing",Gson().toJson(MyApplication.downLoad_Ing))
+                }
+                UPLOADING ->{
+                    putString("upLoad_Ing",Gson().toJson(MyApplication.upLoad_Ing))
+                }
+                UPLOADCOMPLETED ->{
+                    putString("upLoad_completed",Gson().toJson(MyApplication.upLoad_completed))
+                }
+                DOWNLOADCOMPLETED ->{
+                    putString("downLoad_completed",Gson().toJson(MyApplication.downLoad_completed))
+                }
+            }
+
+            apply()
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="保存数据到sp">
+    fun savaspall(){
+        MyApplication.getInstance().GetSP().edit().apply {
+            putString("downLoad_Ing",Gson().toJson(MyApplication.downLoad_Ing))
+            putString("downLoad_completed",Gson().toJson(MyApplication.downLoad_completed))
+            putString("upLoad_Ing",Gson().toJson(MyApplication.upLoad_Ing))
+            putString("upLoad_completed",Gson().toJson(MyApplication.upLoad_completed))
+            apply()
+        }
+    }
+    //</editor-fold>
+
     override fun onDestroy() {
         Log.e("ok"," daemon onDestroy")
         for (loadingFile in MyApplication.downLoad_Ing) {
@@ -810,13 +920,7 @@ class DaemonService : Service() {
         for (loadingFile in MyApplication.upLoad_Ing) {
             loadingFile.Ingstatus = LoadIngStatus.WAITING
         }
-        MyApplication.getInstance().GetSP().edit().apply {
-         putString("downLoad_Ing",Gson().toJson(MyApplication.downLoad_Ing))
-         putString("downLoad_completed",Gson().toJson(MyApplication.downLoad_completed))
-         putString("upLoad_Ing",Gson().toJson(MyApplication.upLoad_Ing))
-         putString("upLoad_completed",Gson().toJson(MyApplication.upLoad_completed))
-            commit()
-        }
+
         Log.e("ok"," daemon onDestroy w sp ok")
         if(downexecutor!=null&&!downexecutor.isShutdown){
             downexecutor.shutdown()

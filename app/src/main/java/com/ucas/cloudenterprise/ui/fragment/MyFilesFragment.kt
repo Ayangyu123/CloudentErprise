@@ -591,6 +591,10 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
             }
             URL_ADD_File->{
+                if(JSONObject(data).isNull("data")||JSONObject(data).getInt("code")!=200){
+                 Toastinfo(JSONObject(data).getString("message"))
+                    return
+                }
 
                 Toastinfo("添加文件列表成功")
                 //刷新列表

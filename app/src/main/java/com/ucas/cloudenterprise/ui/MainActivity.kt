@@ -17,6 +17,7 @@ import com.ucas.cloudenterprise.app.NET_GET
 import com.ucas.cloudenterprise.app.URLS_GET_VERSION_CHECK
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
+import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
 import com.ucas.cloudenterprise.ui.fragment.OthersShareFragment
 import com.ucas.cloudenterprise.ui.fragment.PersonalCenterFragment
@@ -204,8 +205,9 @@ class MainActivity : BaseActivity() {
 
 //                MApplication.getInstance().finishActivity()
 //                    TODO
+                myBinder?.mDaemonService?.stop()
                 finish()
-                System.exit(0)
+//                System.exit(0)
             }
             return false
         }

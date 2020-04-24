@@ -6,6 +6,10 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.reflect.TypeToken
@@ -24,6 +28,7 @@ import com.ucas.cloudenterprise.model.JurisItem
 import com.ucas.cloudenterprise.model.Team
 import com.ucas.cloudenterprise.ui.SelectMembersActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
+import com.ucas.cloudenterprise.utils.VerifyUtils
 import com.ucas.cloudenterprise.utils.intent
 import kotlinx.android.synthetic.main.activtity_member_add.*
 import kotlinx.android.synthetic.main.common_head.*
@@ -42,8 +47,14 @@ class MemberAddActivity: BaseActivity(), BaseActivity.OnNetCallback {
         tv_title.text ="添加成员"
         tv_edit.visibility =View.GONE
         //</editor-fold>
+        rc_teams.layoutManager = FlexboxLayoutManager(this).apply {
+            flexDirection = FlexDirection.ROW
+            flexWrap = FlexWrap.WRAP
+            justifyContent =JustifyContent.FLEX_START
+        }
         mTeamsAdapter = TeamAdapter(this,mTeamlist)
         rc_teams.adapter =mTeamsAdapter
+
         mTeamsAdapter.SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                 (holder as  TeamAdapter.ViewHolder).apply {
@@ -73,7 +84,7 @@ class MemberAddActivity: BaseActivity(), BaseActivity.OnNetCallback {
 
     fun AddTeams(view: View) {
         startActivityForResult(intent<SelectMembersActivity>().apply {
-            putExtra("fromtype",SelectMembersActivity.SELECT_TEAM)
+            putExtra("formtype",SelectMembersActivity.SELECT_TEAM)
         },1)
     }
 
@@ -101,6 +112,10 @@ class MemberAddActivity: BaseActivity(), BaseActivity.OnNetCallback {
         }
         if(TextUtils.isEmpty(et_phone.text.toString())){
             Toastinfo("请输入成员手机号码")
+            return
+        }
+        if(!VerifyUtils.VerifyPhone(et_phone.text.toString())){
+            Toastinfo("请输入正确的手机号码")
             return
         }
 

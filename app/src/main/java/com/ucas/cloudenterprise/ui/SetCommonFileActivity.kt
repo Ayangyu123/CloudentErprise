@@ -309,12 +309,12 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
                         }
                     }
                     ADD_CAN_SEE->{
-                        mCanSeeList.addAll(jurisItems)
                         for(item  in jurisItems){
                             if(!mCanSeeList.contains(item)){
                                 mCanSeeList.add(item)
                             }
                         }
+
                     }
 
                 }
@@ -344,50 +344,6 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
                 data: String
             ) {
                     if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
-//
-//                        var juris_obj = Gson().fromJson<List<Juris>>(JSONObject(data).getJSONObject("data").getJSONArray("juris_obj").toString(),object :TypeToken<List<Juris>>(){}.type)
-//                        for (juris in juris_obj) {
-//                            when(juris.role_id){
-//                                CANEDIT_ID->{//可编辑
-//                                    mCanEditList.addAll(juris.juris_item)
-//                                    if(mCanEditList.isEmpty()){
-//                                        ll_can_edit.visibility = View.GONE
-//                                        tv_add_can_edit.visibility = View.VISIBLE
-//                                        tv_able_edit_count.text ="可编辑成员（共0人）"
-//                                    }else{
-//                                        ll_can_edit.visibility = View.VISIBLE
-//                                        mCanEditAdApter.notifyDataSetChanged()
-//                                        tv_add_can_edit.visibility = View.GONE
-//                                        tv_able_edit_count.text ="可编辑成员（共人）"
-//                                    }
-//                                }
-//                                CANSEE_ID->{ //可查看
-//                                    mCanSeeList.addAll(juris.juris_item)
-//                                    if(mCanSeeList.isEmpty()){
-//                                        ll_can_see.visibility = View.GONE
-//                                        tv_add_can_see.visibility = View.VISIBLE
-//                                    }else{
-//                                        ll_can_see.visibility = View.VISIBLE
-//                                        mCanSeeAdApter.notifyDataSetChanged()
-//                                        tv_add_can_see.visibility = View.GONE
-//                                    }
-//                                }
-//                                CANUPLOAD_ID->{ //可上传
-//                                    mCanUploadList.addAll(juris.juris_item)
-//                                    if(mCanUploadList.isEmpty()){
-//                                        ll_can_upload.visibility = View.GONE
-//                                        tv_add_can_upload.visibility = View.VISIBLE
-//                                    }else{
-//                                        ll_can_upload.visibility = View.VISIBLE
-//                                        mCanUploadAdApter.notifyDataSetChanged()
-//                                        tv_add_can_upload.visibility = View.GONE
-//                                    }
-//                                }
-//
-//
-//                            }
-//                        }
-
                      getFilejuris()
                     }
             }

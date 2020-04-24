@@ -19,7 +19,9 @@ import com.ucas.cloudenterprise.model.Resource
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
 import com.ucas.cloudenterprise.utils.startActivity
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_register.*
+import kotlinx.android.synthetic.main.activity_register.et_user_password
 import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 import kotlin.collections.HashMap
@@ -66,10 +68,25 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
             return
         }
 
-        if(TextUtils.isEmpty(et_user_password.text.toString())){
-            Toastinfo("请输入公司密码")
+
+        //TODO  密码验证 待细化
+
+        var password =  et_user_password.text.toString()
+        if(TextUtils.isEmpty(password)){
+            Toastinfo("请输入密码")
             return
         }
+
+        if(password.length<MIN_PASSWORD_LENGTH){
+            Toastinfo("密码不低于${MIN_PASSWORD_LENGTH}位")
+            return
+        }
+        if(password.length> MAX_PASSWORD_LENGTH){
+            Toastinfo("密码不能超过${MAX_PASSWORD_LENGTH}位")
+            return
+        }
+
+
         if(!check_box_register_able.isChecked){
            Toastinfo("请阅读服务协议后勾选")
             return

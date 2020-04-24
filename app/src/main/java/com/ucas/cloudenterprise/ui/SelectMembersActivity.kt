@@ -299,16 +299,18 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                     tv_members_count.text = "${getJSONObject("data").getInt("people_count")}人"
 //                }
                 if(!getJSONObject("data").isNull("team_list")){
-                    mList.addAll( Gson().fromJson<List<Team>>(getJSONObject("data").getJSONArray("team_list").toString(),object :TypeToken<List<Team>>(){}.type) )
+                     var list =Gson().fromJson<List<Team>>(getJSONObject("data").getJSONArray("team_list").toString(),object :TypeToken<List<Team>>(){}.type)
                     when(fromtype){
                         SELECT_TEAM->{
-                            for (item in mList){
-                                if(item.is_team==false){
-                                    mList.remove(item)
-                                }
-                            }
+                           for (item in  list){
+                               if(item.is_team==true){
+                                   mList.add(item)
+                               }
+
+                           }
                         }
                         UPDATE_SELECT_INFO->{
+                            mList.addAll(list)
                                 check_box_select_all.isChecked =select_list.contains(pid)
 
                             for (item in mList){

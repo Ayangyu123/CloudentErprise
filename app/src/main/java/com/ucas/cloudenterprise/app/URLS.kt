@@ -28,13 +28,16 @@ val REQUEST_SUCCESS_CODE_NODATA = 4004 //请求成功没有数据
 
 //<editor-fold desc=" 网络请求link  ">
 val ACCESS_PORT = 6016
-val Get_Token_Port = 6019
-val LOCAL_HOST = "http://10.0.130.172:"
-
-val BASE_HOST = "http://39.106.216.189:"
+//val Get_Token_Port = 6019 //开发
+val Get_Token_Port = 6018  //测试
+//val HOST = "10.0.130.172"   // 本地
+//val HOST = "39.106.216.189" //开发
+val HOST = "47.95.145.45"   //测试
+val BASE_HOST = "http://${HOST}:"   //测试
 
 //val  BASE_URL="${BASE_HOST+ACCESS_PORT}/api/cloud/v1/"
 val BASE_URL = "${BASE_HOST + ACCESS_PORT}/api/cloud/v1/"
+val Login_URL = "${BASE_HOST + Get_Token_Port}"
 
 val ENCODE = "http://47.95.145.45:6020/api/v0/rs/encode"
 val DECODE = "http://47.95.145.45:6020/api/v0/rs/decode"
@@ -114,7 +117,7 @@ val URL_FILE_COPY = "${BASE_URL}file_copy"
 
 
 //<editor-fold desc="登陆">
-val URL_LOGIN = "http://39.106.216.189:${Get_Token_Port}/api/cloud/v1/login"
+val URL_LOGIN = "${Login_URL}/api/cloud/v1/login"
 val GET_REFRESH_ACCESS_TOKEN =
     "${BASE_HOST + Get_Token_Port}refresh/"// :id id为refresh_token + user_id"
 //</editor-fold>

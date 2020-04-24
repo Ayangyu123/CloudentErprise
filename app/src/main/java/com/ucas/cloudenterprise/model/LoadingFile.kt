@@ -11,11 +11,13 @@ import java.io.Serializable
 data class LoadingFile(
     val load_type_falg:Int,  //0  up  1 down
     val file_name:String,
-    val file_MD5:String?=null,
+    var file_MD5:String?=null,
     val file_hash:String?=null,
     val file_size:Long,
     val dest_file: File?=null,
+    var Aes_key: String?=null,
     val pid :String?=null,
+    var hasPacked:Boolean=false,
     var Ingstatus:Int = LoadIngStatus.WAITING,
     var progress:Int=0,
     var Speed:String="",

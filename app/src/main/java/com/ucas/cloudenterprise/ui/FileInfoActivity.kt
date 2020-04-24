@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui
 
+import android.text.format.Formatter
 import android.view.View
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.base.BaseActivity
@@ -22,7 +23,12 @@ class FileInfoActivity : BaseActivity() {
             tv_file_last_update.text = updated_at
             tv_file_last_update_persional.text = compet_user
             tv_file_owners.text = compet_user
-            tv_file_size.text = size.toString()
+            if(size!=null){
+                tv_file_size.text = Formatter.formatFileSize(this@FileInfoActivity,size).toUpperCase()
+            }
+
+
+
             tv_file_name.text = file_name
 
 

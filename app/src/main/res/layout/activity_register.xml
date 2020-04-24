@@ -27,10 +27,14 @@
             android:layout_width="100dp"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
+
         <EditText
             android:id="@+id/et_comp_name"
-            android:text="@string/test"
-            style="@style/register_edittext_style" />
+            style="@style/register_edittext_style"
+            android:singleLine="true"
+            android:maxLength="30"
+            android:hint="请输入公司名称"
+            tools:text="@string/test" />
 
     </LinearLayout>
 
@@ -45,10 +49,15 @@
             android:text="公司联系邮箱"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
+
         <EditText
             android:id="@+id/et_comp_con_email"
-            android:text="@string/test_email"
-            style="@style/register_edittext_style"/>
+            style="@style/register_edittext_style"
+            android:singleLine="true"
+            android:maxLength="30"
+
+            android:hint="请输入公司联系邮箱"
+            tools:text="@string/test_email" />
 
     </LinearLayout>
     <LinearLayout
@@ -64,7 +73,9 @@
             android:layout_height="match_parent"/>
         <EditText
             android:id="@+id/et_comp_con_tel"
-            android:text="@string/test"
+            tools:text="@string/test"
+            android:hint="请输入公司联系电话"
+            android:maxLength="15"
             style="@style/register_edittext_style"/>
 
     </LinearLayout>
@@ -81,7 +92,10 @@
             android:layout_height="match_parent"/>
         <EditText
             android:id="@+id/et_user_password"
-            android:text="@string/test"
+            android:hint="请输入密码4-16位"
+            tools:text="@string/test"
+            android:maxLength="16"
+            android:inputType="textPassword"
             style="@style/register_edittext_style"/>
 
     </LinearLayout>

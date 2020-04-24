@@ -84,15 +84,17 @@
     <include layout="@layout/common_line"
         android:visibility="gone"
         />
+
     <TextView
         android:id="@+id/tv_setting"
-        android:text="设置"
-        android:visibility="gone"
+        style="@style/personal_center_settings_textview"
         android:drawableLeft="@drawable/settings_setting_icon"
-        style="@style/personal_center_settings_textview" />
-    <include layout="@layout/common_line"
-        android:visibility="gone"
-        />
+        android:text="设置"
+        android:visibility="visible" />
+
+    <include
+        layout="@layout/common_line"
+        android:visibility="visible" />
     <TextView
         android:id="@+id/tv_user_feedback"
         android:text="用户反馈"
@@ -128,8 +130,8 @@
              />
 
     </FrameLayout>
-
     <include layout="@layout/common_line"/>
+
     <TextView
         android:id="@+id/tv_about"
         android:text="关于"

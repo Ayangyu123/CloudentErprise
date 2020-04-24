@@ -38,8 +38,9 @@
 
         <!--  第一个启动的   activity （页面）   -->
 
-        <activity android:name=".ui.PacaktestActivity"/>
-        <activity android:name=".ui.LoginActivity">
+        <activity android:name=".ui.PacaktestActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.LoginActivity"
+            android:screenOrientation="portrait">
 <!--        <activity android:name=".ui.MainActivity">-->
 <!--        <activity android:name=".ui.TeamAcitvity">-->
 <!--        <activity android:name=".ui.ChooseDestDirActivity">-->
@@ -51,79 +52,79 @@
             </intent-filter>
         </activity>
             <!--    Main     -->
-        <activity android:name=".ui.MainActivity" android:launchMode="singleTop"/>
+        <activity android:name=".ui.MainActivity" android:launchMode="singleTop"  android:screenOrientation="portrait"/>
 
         <!--    注册页面     -->
-        <activity android:name=".ui.SplashActivity" android:launchMode="singleTop"/>
+        <activity android:name=".ui.SplashActivity" android:launchMode="singleTop"  android:screenOrientation="portrait"/>
 
         <!-- 欢迎   页面-->
-        <activity android:name=".ui.WelcomeActivity"/>
+        <activity android:name=".ui.WelcomeActivity"  android:screenOrientation="portrait"/>
         <!-- 注册   页面-->
-          <activity android:name=".ui.RegisterActivity"/>
+          <activity android:name=".ui.RegisterActivity"  android:screenOrientation="portrait"/>
         <!-- 文件详情        -->
-        <activity android:name=".ui.FileInfoActivity"/>
+        <activity android:name=".ui.FileInfoActivity"  android:screenOrientation="portrait"/>
         <!-- 文件搜索        -->
-        <activity android:name=".ui.SearchFileActivity" />
+        <activity android:name=".ui.SearchFileActivity"  android:screenOrientation="portrait"/>
         <!-- 选择目标文件夹        -->
-        <activity android:name=".ui.ChooseDestDirActivity"/>
+        <activity android:name=".ui.ChooseDestDirActivity" android:screenOrientation="portrait"/>
         <!-- 设置共享文件        -->
-        <activity android:name=".ui.SetCommonFileActivity"/>
+        <activity android:name=".ui.SetCommonFileActivity" android:screenOrientation="portrait"/>
         <!-- 权限说明        -->
-        <activity android:name=".ui.PermissionToIllustrateActivity"/>
+        <activity android:name=".ui.PermissionToIllustrateActivity" android:screenOrientation="portrait"/>
         <!-- 链接分享      -->
-        <activity android:name=".ui.LinkSharedActivity"/>
+        <activity android:name=".ui.LinkSharedActivity" android:screenOrientation="portrait"/>
 
 
 
         <!-- 成员管理      -->
-        <activity android:name=".ui.member.MembersManageActivity"/>
+        <activity android:name=".ui.member.MembersManageActivity" android:screenOrientation="portrait"/>
 
         <!-- 选择成员        -->
-        <activity android:name=".ui.SelectMembersActivity"/>
+        <activity android:name=".ui.SelectMembersActivity" android:screenOrientation="portrait"/>
         <!-- 成员搜索        -->
-        <activity android:name=".ui.member.MemberSearchActivity"/>
+        <activity android:name=".ui.member.MemberSearchActivity" android:screenOrientation="portrait"/>
         <!-- 邀请成员        -->
-        <activity android:name=".ui.member.MemberInviteActivity"/>
+        <activity android:name=".ui.member.MemberInviteActivity" android:screenOrientation="portrait"/>
         <!-- 修改邀请成员链接        -->
-        <activity android:name=".ui.member.EditMemberInviteLinkActivity"/>
+        <activity android:name=".ui.member.EditMemberInviteLinkActivity" android:screenOrientation="portrait"/>
 
 
         <!-- 成员审核        -->
-        <activity android:name=".ui.member.MemberAuditActivity"/>
+        <activity android:name=".ui.member.MemberAuditActivity" android:screenOrientation="portrait"/>
         <!-- 成员审核 详情       -->
-        <activity android:name=".ui.member.MemberAuditInfoActivity"/>
+        <activity android:name=".ui.member.MemberAuditInfoActivity" android:screenOrientation="portrait"/>
         <!-- 成员 详情 修改      -->
-        <activity android:name=".ui.member.MemberInfoActivity"/>
-        <activity android:name=".ui.member.MemberInfoEditActivity"/>
+        <activity android:name=".ui.member.MemberInfoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.member.MemberInfoEditActivity" android:screenOrientation="portrait"/>
 
         <!-- 成员管理      -->
-        <activity android:name=".ui.member.MemberAddActivity"/>
+        <activity android:name=".ui.member.MemberAddActivity" android:screenOrientation="portrait"/>
 
 
         <!-- 关于        -->
-        <activity android:name=".ui.AboutActivity"/>
+        <activity android:name=".ui.AboutActivity" android:screenOrientation="portrait"/>
         <!-- 设置        -->
-        <activity android:name=".ui.SettingsActivity"/>
+        <activity android:name=".ui.SettingsActivity" android:screenOrientation="portrait"/>
         <!-- 消息通知        -->
-        <activity android:name=".ui.message.MessageNotificationActivity"/>
+        <activity android:name=".ui.message.MessageNotificationActivity" android:screenOrientation="portrait"/>
 
         <!-- 帮助和反馈        -->
-        <activity android:name=".ui.helpandfeedback.HelpAndFeedbackActivity"/>
+        <activity android:name=".ui.helpandfeedback.HelpAndFeedbackActivity" android:screenOrientation="portrait"/>
         <!-- 热门问题        -->
-        <activity android:name=".ui.helpandfeedback.HotIssueActivity"/>
+        <activity android:name=".ui.helpandfeedback.HotIssueActivity" android:screenOrientation="portrait"/>
         <!-- 我的反馈       -->
-        <activity android:name=".ui.helpandfeedback.MyFeedbackActivity"/>
+        <activity android:name=".ui.helpandfeedback.MyFeedbackActivity" android:screenOrientation="portrait"/>
             <!--       意见、 反馈详情    -->
-        <activity android:name=".ui.helpandfeedback.FeedbackInfoActivity"/>
+        <activity android:name=".ui.helpandfeedback.FeedbackInfoActivity" android:screenOrientation="portrait"/>
 
 
 
     <!--       忘记密码 验证手机号    -->
-        <activity android:name=".ui.ForgetPasswordActivity"/>
+        <activity android:name=".ui.ForgetPasswordActivity" android:screenOrientation="portrait"/>
         <!--      重置密码   -->
-        <activity android:name=".ui.EditPersonalInfoActivity"/>
-        <activity android:name=".ui.CommonWebActivity"/>
-        <activity android:name=".ui.SimpleFeedBackAcitivity"/>
+        <activity android:name=".ui.EditPersonalInfoActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.CommonWebActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ui.SimpleFeedBackAcitivity" android:screenOrientation="portrait"/>
 
 
 

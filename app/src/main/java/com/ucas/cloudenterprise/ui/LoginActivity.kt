@@ -3,6 +3,7 @@ package com.ucas.cloudenterprise.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import com.lzy.okgo.OkGo
@@ -12,10 +13,7 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.core.DaemonService
-import com.ucas.cloudenterprise.utils.SetEt_Text
-import com.ucas.cloudenterprise.utils.Toastinfo
-import com.ucas.cloudenterprise.utils.startActivity
-import com.ucas.cloudenterprise.utils.startService
+import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
@@ -27,6 +25,7 @@ import org.json.JSONObject
 class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     val TAG = "LoginActivity"
 
+    var phone :String?=null
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
         Toastinfo("登陆成功")
         //TODO 添加/更新Token
@@ -48,6 +47,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).edit()
             .putString("access_token", ACCESS_TOKEN).putString("refresh_token", REFRESH_TOKEN)
+            .putString("last_login_user_name", phone)
             .commit()
 
         AddToken(ACCESS_TOKEN)
@@ -59,8 +59,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 //        OkGo.getInstance().addCommonHeaders(HttpHeaders("logid",LOGID))
 //        OkGo.getInstance().addCommonHeaders(HttpHeaders("clienttype",CLIENTTYPE))
         Log.e(TAG, "token  is ${OkGo.getInstance().commonHeaders.get("Authorization")}")
-        startActivity<PacaktestActivity>()
-//        startActivity<MainActivity>()
+//        startActivity<PacaktestActivity>()
+        startActivity<MainActivity>()
         finish()
     }
 
@@ -72,9 +72,10 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
             startService<DaemonService>()
         }
 
+         phone = getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).getString("last_login_user_name", "")
 
-        et_user_name.text = SetEt_Text("${user_name_param}")
-        et_user_password.text = SetEt_Text("${password_param}")
+        et_user_name.text = SetEt_Text("${phone}")
+//        et_user_password.text = SetEt_Text("${password_param}")
     }
 
 
@@ -83,9 +84,41 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     override fun GetContentViewId(): Int = R.layout.activity_login
     fun Login(view: View) {
+        phone= "${et_user_name.text.toString()}"
+        if(TextUtils.isEmpty(phone)){
+            Toastinfo("请输入手机号")
+            return
+        }
+        if(!VerifyUtils.VerifyPhone(phone!!)){
+            Toastinfo("请输入正确手机号")
+            return
+        }
+
+        //TODO  密码验证 待细化
+        var password =  et_user_password.text.toString()
+        Log.e("ok","et_user_password.text.length  ="+et_user_password.text.length)
+        Log.e("ok","password.length  ="+password.length)
+
+
+        if(TextUtils.isEmpty(password)){
+            Toastinfo("请输入密码")
+            return
+        }
+
+        if(password.length<MIN_PASSWORD_LENGTH){
+            Toastinfo("密码不低于${MIN_PASSWORD_LENGTH}位")
+            return
+        }
+        if(password.length> MAX_PASSWORD_LENGTH){
+            Toastinfo("密码不能超过${MAX_PASSWORD_LENGTH}位")
+            return
+        }
+
+
         val params = HashMap<String,Any>()
-        params["mobile"] = "${et_user_name.text.toString()}"
-        params["password"] = MD5encode("${et_user_password.text.toString()}",true)
+
+        params["mobile"] = "${phone}"
+        params["password"] = MD5encode("${password}",true)
         NetRequest(URL_LOGIN, NET_POST,params,this,this)
     }
 

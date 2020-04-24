@@ -78,13 +78,14 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
     override fun initView() {
           when(type){
               DOWNLOAD->{
-                  tv_ing_title.text = "正在下载${1}"
+                  tv_ing_title.text = "正在下载"
+//                  +"${1}"
                   tv_completed_title.text ="下载完成"
                   mIngAdapter   = LoadingFileAdapter(context,MyApplication.downLoad_Ing)
                   mCompletedAdapter = CompletedAdapter(context,MyApplication.downLoad_completed)
               }
               UPLOAD->{
-                  tv_ing_title.text = "正在上传${1}"
+                  tv_ing_title.text = "正在上传"
                   tv_completed_title.text ="上传完成"
                   mIngAdapter   = LoadingFileAdapter(context,MyApplication.upLoad_Ing)
                   mCompletedAdapter = CompletedAdapter(context,MyApplication.upLoad_completed)
@@ -197,7 +198,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                         mIngAdapter.notifyDataSetChanged()
                                     }
                                     COMPLETED->{
-                                        MyApplication.upLoad_completed.apply {
+                                        MyApplication.downLoad_completed.apply {
                                             remove(this[position])
                                         }
                                         mCompletedAdapter.notifyDataSetChanged()

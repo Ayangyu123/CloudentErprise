@@ -126,7 +126,11 @@ fun AddToken( token:String){
     OkGo.getInstance().addCommonHeaders(HttpHeaders("Authorization","${token}"))
 }
 //</editor-fold>
+//<editor-fold desc=" 输入框长度限制  ">
+val MIN_PASSWORD_LENGTH=4
+val MAX_PASSWORD_LENGTH=16
 
+//</editor-fold>
 
 //<editor-fold desc=" 网络请求参数  ">
 //val user_name_param="221669671319900160"
@@ -280,6 +284,15 @@ fun getMemory():Int{
 
     return freeMemory.toInt()
 }
+//</editor-fold>
+
+fun getRootPath():String{
+    if(ROOT_DIR_PATH.equals("")){
+        ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+    }
+    return   ROOT_DIR_PATH
+}
+
 //</editor-fold>
 
 
