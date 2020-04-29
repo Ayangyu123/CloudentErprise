@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.os.CountDownTimer
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
@@ -118,9 +119,10 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
         NetRequest(URL_POST_USER_INFO_MODIFY, NET_POST,HashMap<String,Any>().apply {//TODO
             put("user_id","${USER_ID}")
-            put("telephone","${editText_phone.text}")
+            put("telphone","${editText_phone.text}")
             put("email","${editText_eamil.text}")
             put("password","${editTextnewpassword.text}")
+//            put("password","${MD5encode(editTextnewpassword.text.toString(),true)}")
             put("acc_name","${et_acc_name.text}")
             put("verification_code","${editText_verification_code.text}")
         },this,object :BaseActivity.OnNetCallback{
@@ -128,11 +130,11 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
                 request: Request<String, out Request<Any, Request<*, *>>>?,
                 data: String
             ) {
-                if(JSONObject(data).getInt("code") == REQUEST_SUCCESS_CODE){
+                if(JSONObject(data).getInt("code").apply { Log.e("ok","code is "+this) } == REQUEST_SUCCESS_CODE){
                     Toastinfo("修改成功")
                     finish()
                 }else{
-                    Toastinfo(JSONObject(data).getString("message"))
+                    Toastinfo(JSONObject(data).getString("message").apply { Log.e("ok","message is "+this) })
                 }
 
             }
@@ -156,7 +158,8 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
                     data: String
                 ) {
                     if(VerifyUtils.VerifyRequestData(data)){
-                        Toastinfo(JSONObject(data).getJSONObject("data").getString("send_status"))
+//                        Toastinfo(JSONObject(data).getJSONObject("data").getString("verification_code_send"))
+                        Toastinfo("")
                         tv_send_reset_password_message.apply {
                             text ="已发送"
                             isEnabled =false

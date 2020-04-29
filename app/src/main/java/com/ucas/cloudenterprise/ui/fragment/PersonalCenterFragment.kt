@@ -3,12 +3,14 @@ package com.ucas.cloudenterprise.ui.fragment
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import com.google.gson.Gson
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
+import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.ui.helpandfeedback.HelpAndFeedbackActivity
 import com.ucas.cloudenterprise.ui.member.MembersManageActivity
@@ -59,6 +61,20 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
             }
         tv_to_logout.setOnClickListener {
         //TODO
+            MyApplication.upLoad_Ing.clear()
+            MyApplication.upLoad_completed.clear()
+            MyApplication.downLoad_Ing.clear()
+            MyApplication.downLoad_completed.clear()
+            activity as MainActivity
+            (activity as MainActivity).myBinder?.mDaemonService?.savaspall()
+//            MyApplication.getInstance().GetSP().edit().apply {
+//                putString("downLoad_Ing", Gson().toJson(MyApplication.downLoad_Ing))
+//                putString("downLoad_completed", Gson().toJson(MyApplication.downLoad_completed))
+//                putString("upLoad_Ing", Gson().toJson(MyApplication.upLoad_Ing))
+//                putString("upLoad_completed", Gson().toJson(MyApplication.upLoad_completed))
+//                apply()
+//            }
+
             mContext?.startActivity<LoginActivity>()
             activity?.finish()
             }

@@ -20,8 +20,8 @@ val REQUEST_NOT_FOUND_CODE = 404 //服务端找不到相应数据
 val REQUEST_NO_TOKEN_CODE = 401 //没有携带Token
 val REQUEST_GET_TOKEN_FAIL_CODE = 5001 //获取Token失败
 val REQUEST_ACCESS_TOKEN_FAIL_CODE = 5002 //ACCESS_Token失效
-val REQUEST_REFRESH_TOKEN_FAIL_CODE = 5000 //刷新token失效
-val REQUEST_SUCCESS_CODE_NODATA = 4004 //请求成功没有数据
+val REQUEST_REFRESH_TOKEN_FAIL_CODE =  5009 // 5000 //刷新token失效
+val REQUEST_SUCCESS_CODE_NODATA = 5000 //4004 //请求成功没有数据
 //</editor-fold>
 
 
@@ -30,6 +30,7 @@ val REQUEST_SUCCESS_CODE_NODATA = 4004 //请求成功没有数据
 val ACCESS_PORT = 6016
 //val Get_Token_Port = 6019 //开发
 val Get_Token_Port = 6018  //测试
+val VERSION_CHECK_Port = 6012  //测试
 //val HOST = "10.0.130.172"   // 本地
 //val HOST = "39.106.216.189" //开发
 val HOST = "47.95.145.45"   //测试
@@ -46,7 +47,8 @@ val REQUEST_SUCESS_CODE = 200 //请求成功 code
 
 
 //</editor-fold>
-val URLS_GET_VERSION_CHECK = "${BASE_URL}version/code/"//版本检测:code
+//val URLS_GET_VERSION_CHECK = "${BASE_HOST+VERSION_CHECK_Port}version/code/"//版本检测:code
+val URLS_GET_VERSION_CHECK = "${BASE_HOST+VERSION_CHECK_Port}/api/v1/check_version"//版本检测:code
 
 
 //<editor-fold desc="用户">

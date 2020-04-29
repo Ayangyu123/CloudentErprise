@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -40,24 +41,32 @@ class ShareDirsFragment( var pid:String) : BaseFragment(),BaseActivity.OnNetCall
 
 
         var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
+        fileslist.clear()
         if(JSONObject(data).isNull("data")){
             ll_empty.visibility = View.VISIBLE
             swipeRefresh.visibility = View.INVISIBLE
-            return
 
         }else{
             ll_empty.visibility = View.INVISIBLE
             swipeRefresh.visibility = View.VISIBLE
+            //获取我的文件列表
+            Toastinfo("获取文件列表成功")
+
+            fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
+            adapter?.notifyDataSetChanged()
 
         }
 
-        //获取我的文件列表
-        Toastinfo("获取文件列表成功")
-        fileslist.clear()
-        fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
-        adapter?.notifyDataSetChanged()
         if(showtype==1){
-            (activity as ChooseDestDirActivity).tv_dest_dir_commit.isEnabled = fileslist.isEmpty()
+            (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
+                if(fileslist.isEmpty()){
+                    setBackgroundColor(Color.GRAY)
+                    isEnabled = false
+                }else{
+                    setBackgroundColor(resources.getColor(R.color.app_color))
+                    isEnabled = true
+                }
+            }
         }
 
 

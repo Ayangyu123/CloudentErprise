@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.CompletedAdapter
@@ -106,25 +107,27 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                 override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                     (holder as LoadingFileAdapter.ViewHolder).apply {
                         var item= mIngAdapter.list[position]
+                        this.iv_show_del.setOnClickListener {
+                            Log.e("ok","onclik")
+                            showDelBootomDialog(item.load_type_falg,position,ING)
+                        }
                         tv_file_name.text =item.file_name
 
                          progress_download.setProgress(item.progress,true)
-                        iv_down_flag.setImageResource(if(item.load_type_falg==0) R.drawable.reupload else R.drawable.redownload) ////0  up  1 down
+                        iv_down_flag.setImageResource(if(item.load_type_falg!=DOWNLOAD) R.drawable.reupload else R.drawable.redownload) ////0  up  1 down
                         iv_down_flag.setOnClickListener { //点击按钮修改文件状态
                             var  mainActivity=activity as MainActivity
                             when(item.Ingstatus){
                                 LoadIngStatus.WAITING->{
-                                    item.Ingstatus = LoadIngStatus.TRANSFERING
+//                                    item.Ingstatus = LoadIngStatus.TRANSFERING
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.ReLoadFile(item)
                                 }
-                                LoadIngStatus.TRANSFERING->{
+                               else->{
                                     item.Ingstatus = LoadIngStatus.WAITING
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(item)
                                 }
                             }
-                        iv_show_del.setOnClickListener {
-                            showDelBootomDialog(item.load_type_falg,position,item.Ingstatus)
-                        }
+
 
 
                             mIngAdapter.notifyDataSetChanged()
@@ -137,11 +140,12 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                 iv_down_flag.setImageResource(R.drawable.pause)
                             }
                             LoadIngStatus.CONFIG->{
-                                iv_down_flag.setImageResource(R.drawable.redownload)
+                                iv_down_flag.setImageResource(if(item.load_type_falg!=DOWNLOAD) R.drawable.reupload else R.drawable.redownload) ////0  up  1 down
+
                                 tv_curr_size.text="压缩加密中"
                             }
                             LoadIngStatus.TRANSFERING->{
-                                iv_down_flag.setImageResource(R.drawable.redownload)
+                                iv_down_flag.setImageResource(if(item.load_type_falg!=DOWNLOAD) R.drawable.reupload else R.drawable.redownload) ////0  up  1 down
                                 tv_curr_size.text=item.Speed
                             }
                         }
@@ -175,6 +179,42 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
             })
 
         }
+        tv_all_switch.setOnClickListener {
+            if(tv_all_switch.text.equals("全部继续")){
+                if(type== DOWNLOAD){
+                    MyApplication.downLoad_Ing.forEach {
+                        if(it.Ingstatus==LoadIngStatus.WAITING){
+                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.ReLoadFile(it)
+                        }
+                    }
+                }else{
+                    MyApplication.upLoad_Ing.forEach {
+                        if(it.Ingstatus==LoadIngStatus.WAITING){
+                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.ReLoadFile(it)
+                        }
+                    }
+                }
+                tv_all_switch.text="全部暂停"
+            }else{
+
+                if(type== DOWNLOAD){
+                    MyApplication.downLoad_Ing.forEach {
+                        if(it.Ingstatus!=LoadIngStatus.WAITING){
+                            it.Ingstatus=LoadIngStatus.WAITING
+                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(it)
+                        }
+                    }
+                }else{
+                    MyApplication.upLoad_Ing.forEach {
+                        if(it.Ingstatus!=LoadIngStatus.WAITING){
+                            it.Ingstatus=LoadIngStatus.WAITING
+                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(it)
+                        }
+                    }
+                }
+                tv_all_switch.text="全部继续"
+            }
+        }
 
     }
 
@@ -191,16 +231,18 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                             DOWNLOAD->{
                                 when(status){
                                     ING ->{
-
                                         MyApplication.downLoad_Ing.apply {
+                                            get(position).Ingstatus=LoadIngStatus.WAITING
+                                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(this[position])
                                             remove(this[position])
+                                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.DOWNLOADING)
                                         }
                                         mIngAdapter.notifyDataSetChanged()
+
                                     }
                                     COMPLETED->{
-                                        MyApplication.downLoad_completed.apply {
-                                            remove(this[position])
-                                        }
+                                        MyApplication.downLoad_completed.removeAt(position)
+                                        ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.DOWNLOADCOMPLETED)
                                         mCompletedAdapter.notifyDataSetChanged()
                                     }
 
@@ -211,14 +253,17 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                     ING ->{
 
                                         MyApplication.upLoad_Ing.apply {
+                                            get(position).Ingstatus=LoadIngStatus.WAITING
                                             ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(this[position])
                                             remove(this[position])
+                                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.UPLOADING)
                                         }
                                         mIngAdapter.notifyDataSetChanged()
                                     }
                                     COMPLETED->{
                                         MyApplication.upLoad_completed.apply {
                                             remove(this[position])
+                                            ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.UPLOADCOMPLETED)
                                         }
                                         mCompletedAdapter.notifyDataSetChanged()
                                     }

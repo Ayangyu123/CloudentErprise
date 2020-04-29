@@ -190,6 +190,8 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
     override fun InitData() {
         fileitem?.pshare?.apply { //共享过-1 取消0
+            Log.e("ok","文件名称${fileitem.file_name}")
+            Log.e("ok","文件pshare ${fileitem.pshare}")
             when(fileitem.pshare){
                 //<editor-fold desc="收藏过">
                 -1->{
@@ -212,6 +214,7 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
     private fun getFilejuris() {
         NetRequest("${URL_GET_FILE_JURIS}/${fileitem.file_id}", NET_GET,null,this,object:BaseActivity.OnNetCallback{
+//        NetRequest("${URL_GET_FILE_JURIS}/p/${fileitem.file_id}", NET_GET,null,this,object:BaseActivity.OnNetCallback{
             override fun OnNetPostSucces(
                 request: Request<String, out Request<Any, Request<*, *>>>?,
                 data: String
@@ -343,7 +346,9 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
                 request: Request<String, out Request<Any, Request<*, *>>>?,
                 data: String
             ) {
+
                     if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
+                        setResult(Activity.RESULT_OK)
                      getFilejuris()
                     }
             }
@@ -360,6 +365,7 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
                 URL_PUT_FILE_JURIS ->{
                     if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
                         Toastinfo("文件取消共享成功")
+                        setResult(Activity.RESULT_OK)
                         finish()
                     }
                 }

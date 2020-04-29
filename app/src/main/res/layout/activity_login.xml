@@ -53,6 +53,15 @@
             android:hint="请输入登录密码4-16位" />
 
     </LinearLayout>
+    <CheckBox
+        android:id="@+id/check_box_remember_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        android:checked="true"
+        android:text="记住密码" />
+
+
 
     <TextView
         android:onClick="Login"
@@ -65,7 +74,6 @@
         android:background="@color/app_color"
         android:gravity="center"
         android:padding="10dp"
-        android:layout_marginTop="80dp"
         />
 
 
@@ -118,6 +126,6 @@
         android:visibility="gone"
         style="@style/TV_Action"
         />
-    
+
 
 </LinearLayout>

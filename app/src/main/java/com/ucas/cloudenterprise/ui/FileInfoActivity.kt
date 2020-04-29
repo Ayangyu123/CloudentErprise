@@ -3,6 +3,7 @@ package com.ucas.cloudenterprise.ui
 import android.text.format.Formatter
 import android.view.View
 import com.ucas.cloudenterprise.R
+import com.ucas.cloudenterprise.app.IS_DIR
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.File_Bean
 import kotlinx.android.synthetic.main.activity_fileinfo.*
@@ -30,15 +31,17 @@ class FileInfoActivity : BaseActivity() {
 
 
             tv_file_name.text = file_name
+            iv_type.setImageResource(if(item.is_dir==IS_DIR) R.drawable.icon_list_folder else  R.drawable.icon_list_unknown)
+            tv_file_type.text = if(item.is_dir==IS_DIR)  "文件夹" else   "文件"
 
 
-            when(item.file_name.substringAfterLast(".")){
-
-                else->{
-                    iv_type.setImageResource(R.drawable.icon_list_folder)
-                    tv_file_type.text = "文件夹"
-                }
-            }
+//            when(item.file_name.substringAfterLast(".")){
+//
+//                else->{
+//                    iv_type.setImageResource(R.drawable.icon_list_folder)
+//                    tv_file_type.text = "文件夹"
+//                }
+//            }
         }
 
 

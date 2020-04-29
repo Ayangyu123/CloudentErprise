@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+
     android:background="@drawable/bg_create_new_dir_dialog"
     >
     <TextView
@@ -29,7 +29,7 @@
         android:maxLines="1"
         android:gravity="center"
         android:text="确定要删除所选文件/文件夹吗？"
-        android:textSize="20dp"
+        android:textSize="16dp"
         android:layout_marginTop="20dp"
         />
     <TextView
@@ -37,9 +37,9 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:gravity="center"
-        android:padding="10dp"
+        android:layout_marginTop="10dp"
         android:text="已删除文件仍占容量，要彻底删除请登录网页版"
-        android:textSize="16dp"
+        android:textSize="12dp"
 
         android:layout_marginBottom="20dp"
         />

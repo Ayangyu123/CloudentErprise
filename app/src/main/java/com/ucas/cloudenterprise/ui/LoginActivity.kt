@@ -25,7 +25,8 @@ import org.json.JSONObject
 class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     val TAG = "LoginActivity"
 
-    var phone :String?=null
+    var phone :String=""
+    var  passwords :String=""
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
         Toastinfo("登陆成功")
         //TODO 添加/更新Token
@@ -45,9 +46,12 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
         Log.e(TAG, "ACCESS_TOKEN=${ACCESS_TOKEN}")
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
+
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).edit()
             .putString("access_token", ACCESS_TOKEN).putString("refresh_token", REFRESH_TOKEN)
             .putString("last_login_user_name", phone)
+            .putBoolean("remember_password", check_box_remember_password.isChecked)
+            .putString("last_login_user_password", passwords)
             .commit()
 
         AddToken(ACCESS_TOKEN)
@@ -72,10 +76,17 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
             startService<DaemonService>()
         }
 
-         phone = getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).getString("last_login_user_name", "")
-
+        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).apply {
+            phone =getString("last_login_user_name", "")
+            passwords=getString("last_login_user_password","")
+            check_box_remember_password.isChecked = getBoolean("remember_password",true)
+        }
+            //TODO phone password
         et_user_name.text = SetEt_Text("${phone}")
-//        et_user_password.text = SetEt_Text("${password_param}")
+        if(  check_box_remember_password.isChecked){
+            et_user_password.text = SetEt_Text("${passwords}")
+        }
+
     }
 
 
@@ -95,21 +106,21 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         }
 
         //TODO  密码验证 待细化
-        var password =  et_user_password.text.toString()
+        passwords =  et_user_password.text.toString()
         Log.e("ok","et_user_password.text.length  ="+et_user_password.text.length)
-        Log.e("ok","password.length  ="+password.length)
+        Log.e("ok","password.length  ="+passwords.length)
 
 
-        if(TextUtils.isEmpty(password)){
+        if(TextUtils.isEmpty(passwords)){
             Toastinfo("请输入密码")
             return
         }
 
-        if(password.length<MIN_PASSWORD_LENGTH){
+        if(passwords.length<MIN_PASSWORD_LENGTH){
             Toastinfo("密码不低于${MIN_PASSWORD_LENGTH}位")
             return
         }
-        if(password.length> MAX_PASSWORD_LENGTH){
+        if(passwords.length> MAX_PASSWORD_LENGTH){
             Toastinfo("密码不能超过${MAX_PASSWORD_LENGTH}位")
             return
         }
@@ -118,7 +129,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         val params = HashMap<String,Any>()
 
         params["mobile"] = "${phone}"
-        params["password"] = MD5encode("${password}",true)
+        params["password"] = MD5encode("${passwords}",true)
         NetRequest(URL_LOGIN, NET_POST,params,this,this)
     }
 
@@ -131,4 +142,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         startActivity<ForgetPasswordActivity>()
 
     }
+}
+fun main(){
+    println(MD5encode("${12345678}",true))
 }

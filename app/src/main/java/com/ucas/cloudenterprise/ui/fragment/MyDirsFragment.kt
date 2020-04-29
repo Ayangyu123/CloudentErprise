@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -42,27 +43,38 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
              var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
 
 
-
+        fileslist.clear()
 
 
         if(JSONObject(data).isNull("data")){
             ll_empty.visibility = View.VISIBLE
             swipeRefresh.visibility = View.INVISIBLE
-            return
 
         }else{
             ll_empty.visibility = View.INVISIBLE
             swipeRefresh.visibility = View.VISIBLE
+            Toastinfo("获取文件列表成功")
 
+            fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
+            adapter?.notifyDataSetChanged()
         }
 
         //获取我的文件列表
-        Toastinfo("获取文件列表成功")
-        fileslist.clear()
-        fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
-        adapter?.notifyDataSetChanged()
+
         if(showtype==0){
-            (activity as ChooseDestDirActivity).tv_dest_dir_commit.isEnabled = fileslist.isEmpty()
+
+             (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
+                 if(fileslist.isEmpty()){
+                     setBackgroundColor(Color.GRAY)
+                     isEnabled = false
+                 }else{
+                     setBackgroundColor(resources.getColor(R.color.app_color))
+                     isEnabled = true
+                 }
+             }
+
+
+
         }
 
 
@@ -88,6 +100,7 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 
                     holder as FilesAdapter.ViewHolder
                     holder.apply {
+                        iv_icon.setImageResource( if(item.is_dir == IS_DIR) R.drawable.icon_list_folder else R.drawable.icon_list_unknown)
                         tv_file_name.text = item.file_name
                         tv_file_create_time.text = item.created_at
                         rl_file_item_root.setOnClickListener {

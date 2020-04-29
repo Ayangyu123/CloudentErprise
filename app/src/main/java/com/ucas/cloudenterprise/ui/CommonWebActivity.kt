@@ -36,5 +36,6 @@ class CommonWebActivity:BaseActivity(){
             webViewClient = WebViewClient()
 
         }.loadUrl("https://www.baidu.com/")
+//        }.loadUrl("file:///android_asset/服务协议.docx")
     }
 }

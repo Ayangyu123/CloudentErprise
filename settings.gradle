@@ -1,3 +1,4 @@
+include ':filepicker'
 include ':app'
 rootProject.name='CloudentErprise'
 

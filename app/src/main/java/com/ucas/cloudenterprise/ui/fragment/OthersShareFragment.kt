@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.app.Activity.RESULT_CANCELED
 import android.app.Dialog
 import android.content.Intent
 import android.util.Log
@@ -531,7 +532,9 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 
 
         }
-
+        if(resultCode==RESULT_CANCELED){
+            GetFileList()
+        }
 
     }
 

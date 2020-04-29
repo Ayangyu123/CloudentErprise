@@ -38,7 +38,7 @@
                    android:layout_weight="1"
                    android:layout_height="1px"/>
                <TextView
-                   android:id="@+id/tv_ing"
+                   android:id="@+id/tv_all_switch"
                    android:layout_width="80dp"
                    android:gravity="center"
                    android:padding="10dp"

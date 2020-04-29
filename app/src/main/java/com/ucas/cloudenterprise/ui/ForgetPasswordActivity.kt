@@ -97,8 +97,15 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
                     }
                     "${URL_RESERT_PASS_VERIFY}"->{ //验证短信
                         //TODO 短信验证通过
-                        Toastinfo(getJSONObject("data").getString("verify_status"))
-                        finish()
+                        if(getJSONObject("data").getInt("code")== REQUEST_SUCCESS_CODE){
+                            Toastinfo("密码重置成功,请注意查收新密码短信")
+                            finish()
+                        }else{
+//                            Toastinfo(getJSONObject("data").getString("verify_status"))
+                            Toastinfo(getString("message"))
+                        }
+
+
                     }
                 }
 

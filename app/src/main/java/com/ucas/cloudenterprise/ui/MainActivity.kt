@@ -100,12 +100,14 @@ class MainActivity : BaseActivity() {
     }
 
     override fun InitData(){
-
-       CheckNewVersion()
+//TODO 暂时取消版本检查
+//       CheckNewVersion()
     }
 
      fun CheckNewVersion() {
-        NetRequest("${URLS_GET_VERSION_CHECK}${BuildConfig.VERSION_CODE}", NET_GET,null,this,object:BaseActivity.OnNetCallback{
+        NetRequest("${URLS_GET_VERSION_CHECK}"
+//                + "${BuildConfig.VERSION_CODE}"
+            , NET_GET,null,this,object:BaseActivity.OnNetCallback{
             override fun OnNetPostSucces(
                 request: Request<String, out Request<Any, Request<*, *>>>?,
                 data: String
@@ -130,6 +132,8 @@ class MainActivity : BaseActivity() {
                                    AppDialog.INSTANCE.dismissDialog()
                                }
                            AppDialog.INSTANCE.showDialog(this@MainActivity, config)
+                       }else{
+                           Toastinfo("目前已是最新版本,无需更新")
                        }
                     }
                 }

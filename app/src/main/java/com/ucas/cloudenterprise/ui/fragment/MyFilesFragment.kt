@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.app.Activity.RESULT_OK
 import android.app.ActivityManager
 import android.app.Dialog
 import android.content.Context.ACTIVITY_SERVICE
@@ -64,6 +65,7 @@ import kotlin.collections.HashMap
 @create 2020年01月10日  14:31
  */
 class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
+    private val SET_PSHARE_CODE: Int =384
     val TAG ="MyFilesFragment"
     var fileslist = ArrayList<File_Bean>()
     lateinit var adapter:FilesAdapter
@@ -142,7 +144,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
 
                         if(!isfile){
-                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
+                            iv_icon.setImageResource(if(item.pshare==0)R.drawable.icon_list_folder else R.drawable.icon_list_share_folder) //共享过-1 取消0
                         }else{
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
                         }
@@ -215,18 +217,21 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         iv_sort.setOnClickListener{
             if(SortPOPwiond == null){
                 SortPOPwiond = GetSortPOPwiond(mContext!!,RadioGroup.OnCheckedChangeListener { radioGroup, i ->
-                    when(id){
+                    when(i){
                         R.id.rb_sort_by_name->{
                             Toastinfo("名称排序")
                             fileslist.sortBy { it.file_name }
+                            adapter.notifyDataSetChanged()
                         }
                         R.id.rb_sort_by_time->{
 //
                             Toastinfo("时间排序")
-                            fileslist.sortBy { it.created_at }
+                            fileslist.sortBy { it.created_at }.apply {
+                                adapter.notifyDataSetChanged()
+                            }
                         }
                     }
-                    adapter.notifyDataSetChanged()
+
 
                     SortPOPwiond?.dismiss()
                 })
@@ -382,9 +387,9 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                             when(tv.text.toString()){
                                 "设置共享"->{ Toastinfo("设置共享")
                                     //TODO 文件夹分享页面
-                                    mContext?.startActivity(Intent(context, SetCommonFileActivity::class.java).apply {
+                                    startActivityForResult(Intent(context, SetCommonFileActivity::class.java).apply {
                                         putExtra("file",item)
-                                    })
+                                    },SET_PSHARE_CODE)
 
                                 }
                                 "链接分享"->{Toastinfo("链接分享")
@@ -629,8 +634,10 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode ==SET_PSHARE_CODE &&resultCode==RESULT_OK){
+            GetFileList()
+        }
         if ( data !=null) {
-
             when(requestCode){
                 FilePickerManager.REQUEST_CODE ->{ //选择文件上传文件
 
@@ -661,11 +668,9 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                     NetRequest(URL_FILE_MOV, NET_POST,params,this,this)
                 }
 
+
+
             }
-
-
-
-
         }
 
 
@@ -688,56 +693,59 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                 Toastinfo("存储空间不足，无法完成上传操作")
                 return
             }
+            var  mainActivity=activity as MainActivity
+            (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(file_path,pid)
+
 
 
             var Memory =getMemory()
             Log.e("ok","当前内存: $Memory")
 
-            md5executor.execute{
-                Log.e("ok","start file md5")
-                val  start_time =System.currentTimeMillis()
-                var file_md5=""
-                if(destfile_length>(Memory)){
-
-                    file_md5= StatisticCodeLines.getFileMD5s(destfile)
-                }else{
-                    file_md5  =MD5encode(destfile.readBytes())
-                }
-
-                val  end_time =System.currentTimeMillis()
-                Log.e("ok","file_md5 is ${file_md5}")
-                Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
-                        /1000
-                }")
-                runOnUiThread{
-                    OkGo.get<String>("${URL_ADD_File_CHECK}${file_md5}")
-                        .execute(object: StringCallback(){
-                            override fun onSuccess(response: Response<String>?) {
-                                var  mainActivity=activity as MainActivity
-                                response?.apply {
-                                    if(!VerifyUtils.VerifyRequestData(response!!.body())){ //文件不存在 去添加
-                                        Log.e("ok","该文件不存在")
-                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(destfile,file_md5,pid)
-                                    }else{//文件已存在 去添加 文件信息 秒传操作
-                                        Log.e("ok","该文件已存在")
-                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.apply {
-                                            val params =GetUploadFileJsonMap(destfile.name,"${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
-                                                //                                        Log.e("ok","fidhash=${this}")
-                                            }}","${file_md5.apply {
-                                                //                                        Log.e("ok","fidhash=${this}")
-                                            }}",pid,destfile.length())
-                                            UploadFileMetaInfo(params,file_md5,destfile.name,destfile.length().toString(),0)
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-                        })
-                    }
-            }
+//            md5executor.execute{
+//                Log.e("ok","start file md5")
+//                val  start_time =System.currentTimeMillis()
+//                var file_md5=""
+//                if(destfile_length>(Memory)){
+//
+//                    file_md5= StatisticCodeLines.getFileMD5s(destfile)
+//                }else{
+//                    file_md5  =MD5encode(destfile.readBytes())
+//                }
+//
+//                val  end_time =System.currentTimeMillis()
+//                Log.e("ok","file_md5 is ${file_md5}")
+//                Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
+//                        /1000
+//                }")
+//                runOnUiThread{
+//                    OkGo.get<String>("${URL_ADD_File_CHECK}${file_md5}")
+//                        .execute(object: StringCallback(){
+//                            override fun onSuccess(response: Response<String>?) {
+//                                var  mainActivity=activity as MainActivity
+//                                response?.apply {
+//                                    if(!VerifyUtils.VerifyRequestData(response!!.body())){ //文件不存在 去添加
+//                                        Log.e("ok","该文件不存在")
+//                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(destfile,file_md5,pid)
+//                                    }else{//文件已存在 去添加 文件信息 秒传操作
+//                                        Log.e("ok","该文件已存在")
+//                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.apply {
+//                                            val params =GetUploadFileJsonMap(destfile.name,"${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
+//                                                //                                        Log.e("ok","fidhash=${this}")
+//                                            }}","${file_md5.apply {
+//                                                //                                        Log.e("ok","fidhash=${this}")
+//                                            }}",pid,destfile.length())
+//                                            UploadFileMetaInfo(params,file_md5,destfile.name,destfile.length().toString(),0)
+//
+//                                        }
+//
+//                                    }
+//
+//                                }
+//
+//                            }
+//                        })
+//                    }
+//            }
 
 
 
@@ -752,9 +760,14 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 fun main() {
 //  2147483647
 //  1142759900
-   var  file = File("/Users/simple/Downloads/加勒比海盗2：聚魂棺BD1280高清中字.rmvb")
+  var tests = ArrayList<File_Bean>()
+    tests.add(File_Bean("1","test1",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
+    tests.add(File_Bean("1","已修复",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
+    tests.add(File_Bean("1","l_652545705a",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
+    tests.add(File_Bean("1","a_652545705a",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
 
-   val md5= StatisticCodeLines.getFileMD5s(file,16)
-    println(md5)
+    println(tests.toString())
+    tests.sortBy { it.file_name }
+    println(tests.toString())
 }
 

@@ -59,7 +59,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
          intent.apply {
              file_item = getSerializableExtra("file") as File_Bean
              operatortype = getIntExtra("type",0)
-             pid =file_item!!.pid
+//             pid =file_item!!.pid
          }
 
 
@@ -73,7 +73,15 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
         tv_dest_dir_commit.setOnClickListener {
 
             setResult(Activity.RESULT_OK, intent.apply {
-                putExtra("pid","${pid}")
+                when(viewpager_content.currentItem){
+                    0->{ //我的文件
+                        putExtra("pid","${mMyFilesDirFragment.pid}")
+                    }
+                    1->{ //共享文件
+                         putExtra("pid","${mOthersShareDirFragment.pid}")
+                    }
+                }
+
                 putExtra("file_id","${file_item?.file_id}")
             })
             finish()
@@ -112,10 +120,12 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                            tv_myfiles.setTextColor( Color.parseColor("#4F73DF"))
                            tv_othercommom.setTextColor( Color.parseColor("#AAAFC0"))
                            iv_create_dir.isEnabled =true
+                           iv_create_dir.visibility =View.VISIBLE
                           tv_dest_dir_commit.isEnabled = mMyFilesDirFragment.fileslist.isEmpty()
                        }
                        1->{ //共享文件
                            tv_path.text = "已选 ：共享文件"
+                           iv_create_dir.visibility =View.INVISIBLE
                            view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
                            iv_create_dir.isEnabled =false
                            tv_othercommom.setTextColor( Color.parseColor("#4F73DF"))
@@ -209,19 +219,23 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
             when(viewpager_content.currentItem){
                 SHOW_MYFILES->{
                    if( !mMyFilesDirFragment.pid.equals("root")){
+//
                        mMyFilesDirFragment.pid_stack.removeAt(0)
+                       if( !mMyFilesDirFragment.pid_stack.isEmpty()){
                        mMyFilesDirFragment.pid =mMyFilesDirFragment.pid_stack[0]
                        mMyFilesDirFragment.GetFileList()
                        return false
+                       }
                    }
                 }
                 SHOW_OTHERSHARED->{
                     if( !mOthersShareDirFragment.pid.equals("root")){
                         mOthersShareDirFragment.pid_stack.removeAt(0)
+                        if( !mOthersShareDirFragment.pid_stack.isEmpty()){
                         mOthersShareDirFragment.pid =mOthersShareDirFragment.pid_stack[0]
                         mOthersShareDirFragment.GetFileList()
                         return false
-                    }
+                    }}
 
                 }
             }

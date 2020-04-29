@@ -123,7 +123,12 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                         }else{
                           Drawablewhitenull(tv_team_name)
                         }
+                        iv_remove.visibility =View.GONE
                         iv_remove.setOnClickListener {
+                            mList.find { this.juris_user_id.equals(it.is_team)}?.apply{
+                                this.select_status =false
+                                mAdapter.notifyDataSetChanged()
+                            }
                             mSelectList.remove(this)
                             mSelectAdapter.notifyDataSetChanged()
                         }
@@ -309,7 +314,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
                            }
                         }
-                        UPDATE_SELECT_INFO->{
+                        UPDATE_SELECT_INFO,SELECT_TEAM_AND_MEMBER->{
                             mList.addAll(list)
                                 check_box_select_all.isChecked =select_list.contains(pid)
 

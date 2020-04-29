@@ -26,6 +26,7 @@ import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.ui.LoginActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
@@ -92,6 +93,38 @@ import java.io.File
         }
 
 
+        override fun onError(response: Response<String>?) {
+            super.onError(response)
+            response?.let {
+                Log.e("ok","onError")
+                Log.e("ok","response :"+response.toString())
+                if(TextUtils.isEmpty(it.rawResponse.toString())){
+                    Toastinfo(" 返回 body 为空")
+                    return@let
+                }
+                try {
+                    val json = JSONObject(it.rawResponse.toString())
+                    if(!json.isNull("code")){
+                        when(json.getInt("code")){
+                            500->{
+                                Toastinfo("服务器错误")
+                            }
+                            404->{
+                                Toastinfo("网络错误")
+                            }
+                        }
+
+                    }
+                }catch (e: JSONException){
+                    Toastinfo("未找到路由")
+                }
+
+
+
+            }
+
+        }
+
         override fun onSuccess(response: Response<String>?) {
 //            Log.e("BaseActivity",response?.body().toString())
             response?.let {
@@ -103,14 +136,16 @@ import java.io.File
 
                 val code = json.getInt("code")
                 when(code){
-                    REQUEST_SUCCESS_CODE -> //请求成功
+                    REQUEST_SUCCESS_CODE , 4004,  REQUEST_SUCCESS_CODE_NODATA-> //请求成功
                     {
-                        Log.e("BaseActivity","请求数据成功")
-                              onNetCallback?.OnNetPostSucces(mrequest,json.toString())
 
-                          }
-                    REQUEST_SUCCESS_CODE_NODATA->{//请求成功没有数据
-                        onNetCallback?.OnNetPostSucces(mrequest,json.toString())
+                        if(url.equals(URL_POST_SEND_MESSAGE_CODE)){
+                            Toastinfo("${json.getString("message")}")
+                            return
+                        }
+                        Log.e("BaseActivity","请求数据成功")
+                       onNetCallback?.OnNetPostSucces(mrequest,json.toString())
+
                     }
 
                     REQUEST_NO_TOKEN_CODE ->//token为空
@@ -123,6 +158,10 @@ import java.io.File
                     }
                     REQUEST_GET_TOKEN_FAIL_CODE ->//获取token失败
                                         {
+                                            if(url.equals(URL_LOGIN)){
+                                                Toastinfo("${json.getString("message")}")
+                                                return
+                                            }
                                             Toastinfo(" Get Token Fail")
                                             OkGo.getInstance().commonHeaders.clear()
                                             startActivity<LoginActivity>()
@@ -162,6 +201,7 @@ import java.io.File
                         Toastinfo("${REQUEST_REFRESH_TOKEN_FAIL_CODE}${json.getString("message")}  服务端找不到相应数据")
                     }
                     else ->{
+                        Toastinfo("${json.getString("message")}")
                         Log.e("BaseActivity","请求数据异常")
                     }
 

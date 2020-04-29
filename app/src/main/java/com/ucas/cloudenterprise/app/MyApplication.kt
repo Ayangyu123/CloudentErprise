@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 import com.lzy.okgo.OkGo
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.CompletedFile
+import com.ucas.cloudenterprise.model.LoadIngStatus
 import com.ucas.cloudenterprise.model.LoadingFile
 import com.ucas.cloudenterprise.ui.LoginActivity
 import com.ucas.cloudenterprise.utils.startActivity
@@ -70,6 +71,12 @@ class MyApplication:Application() {
 
 
 
+        }
+        downLoad_Ing.forEach {
+            it.Ingstatus =LoadIngStatus.WAITING
+        }
+        upLoad_Ing.forEach {
+            it.Ingstatus =LoadIngStatus.WAITING
         }
         AutoSizeConfig()
         initOKGO()
