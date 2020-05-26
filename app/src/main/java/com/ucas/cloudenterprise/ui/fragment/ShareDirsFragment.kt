@@ -57,17 +57,17 @@ class ShareDirsFragment( var pid:String) : BaseFragment(),BaseActivity.OnNetCall
 
         }
 
-        if(showtype==1){
-            (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
-                if(fileslist.isEmpty()){
-                    setBackgroundColor(Color.GRAY)
-                    isEnabled = false
-                }else{
-                    setBackgroundColor(resources.getColor(R.color.app_color))
-                    isEnabled = true
-                }
-            }
-        }
+//        if(showtype==1){
+//            (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
+//                if(fileslist.isEmpty()){
+//                    setBackgroundColor(Color.GRAY)
+//                    isEnabled = false
+//                }else{
+//                    setBackgroundColor(resources.getColor(R.color.app_color))
+//                    isEnabled = true
+//                }
+//            }
+//        }
 
 
 

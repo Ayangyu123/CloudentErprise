@@ -29,6 +29,7 @@ import com.ucas.cloudenterprise.utils.startActivity
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.net.ConnectException
 
 /**
 @author simpler
@@ -72,7 +73,7 @@ import java.io.File
             mBound = false
         }
     }
-   companion object val netcallback = object :StringCallback(){
+    var netcallback = object :StringCallback(){
        var  url:String=""
         override fun onFinish() {
             super.onFinish()
@@ -98,6 +99,14 @@ import java.io.File
             response?.let {
                 Log.e("ok","onError")
                 Log.e("ok","response :"+response.toString())
+//               TODO网络异常情况   需要添加网络判断
+                if(it.exception!=null&&it.exception is ConnectException){
+                   Toastinfo("网络链接错误，请检查网络")
+                    return
+                }
+                if(it.rawResponse==null){
+                    return
+                }
                 if(TextUtils.isEmpty(it.rawResponse.toString())){
                     Toastinfo(" 返回 body 为空")
                     return@let
@@ -132,7 +141,7 @@ import java.io.File
                     Toastinfo(" 返回 body 为空")
                     return@let
                 }
-                val json = JSONObject(it.body().toString())
+                var json = JSONObject(it.body().toString())
 
                 val code = json.getInt("code")
                 when(code){
@@ -337,8 +346,7 @@ import java.io.File
 
     }
 
-    private fun
-            StatusBarsettings() {
+    private fun StatusBarsettings() {
         if (Build.VERSION.SDK_INT >= 21) {
             val decorView = window.decorView
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -352,4 +360,6 @@ import java.io.File
          fun OnNetPostSucces(request:Request<String, out Request<Any, Request<*, *>>>?, data: String)
     }
 }
+
+
 

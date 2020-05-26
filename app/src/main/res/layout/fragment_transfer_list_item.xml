@@ -42,6 +42,7 @@
                    android:layout_width="80dp"
                    android:gravity="center"
                    android:padding="10dp"
+                   android:visibility="gone"
                    android:textColor="@android:color/white"
                    android:background="@color/app_color"
                    android:layout_height="wrap_content"

@@ -25,10 +25,6 @@ import com.ucas.cloudenterprise.utils.FileCP
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.get
 import com.ucas.cloudenterprise.utils.store
-import io.ipfs.api.IPFS
-import io.ipfs.api.NamedStreamable
-import io.ipfs.multiaddr.MultiAddress
-import io.ipfs.multihash.Multihash
 import org.json.JSONObject
 import java.io.File
 
@@ -111,51 +107,6 @@ class FileActivity : AppCompatActivity(){
 
     }
 
-    fun GetFile(view: View) {
-        if(checkPermission(this) == false){
-//            tv_text.text =  tv_text.text.toString()+"\n"+"没有写sd卡权限"
-            Toastinfo("没有写sd卡权限")
-            return
-        }
-
-        DaemonService.daemon?.let {
-            Thread(object:Runnable{
-                override fun run() {
-                    var ipfs = IPFS( MultiAddress(CORE_CLIENT_ADDRESS))
-
-                    var filePointer = Multihash.fromBase58(TEST_DOWN_FiLE_HASH)
-                    var fileContents = ipfs.cat(filePointer)
-
-
-
-                    val root =  File(ROOT_DIR_PATH)
-                    if(!root.exists()){
-                        root.mkdirs()
-                    }
-                    val dest  = File(ROOT_DIR_PATH+System.currentTimeMillis())
-
-//                if(!dest.exists()){
-//                    dest.createNewFile()
-//                }
-
-//                val dest  = store["lj.png"]
-                    val output_swarm_key = dest.outputStream()
-                    try {
-                        output_swarm_key.write(fileContents)
-                    }finally {
-                        output_swarm_key.close()
-                    }
-
-                    Log.e("ok","文件写入完毕")
-                    runOnUiThread(){
-//                        tv_text.text =  tv_text.text.toString()+"\n 文件名称：${dest.name}"+"\n"+"filesize=${dest.length()}\nfilepath=${dest.absolutePath}"
-                    }
-
-                }
-
-            }).start()
-        }
-    }
 
     fun ChooseFile(view: View) {
             if(checkPermission(this)!! == false){
@@ -193,71 +144,6 @@ class FileActivity : AppCompatActivity(){
 //        }
 
 
-        if (requestCode == FILE_CHOOSER_RESULT_CODE && data !=null) {
-
-            val uri = Uri.parse(data.dataString) // 获取用户选择文件的URI
-            Log.e("uri)","data.getData()="+uri)
-            Log.e("uri)","uri.getScheme()="+uri.getScheme())
-            Log.e("uri)","uri.authority="+uri.authority)
-
-
-
-
-            val cursor= contentResolver.query(uri, null, null, null, null, null)
-            var displayName: String? =null
-            cursor?.use {
-                if(it.moveToFirst()) {
-                    displayName =
-                        it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-//                    tv_text.text  =  tv_text.text.toString()+"\n 文件名称：$displayName"}
-                    val size: Int =
-                        it.getInt(it.getColumnIndex(OpenableColumns.SIZE))
-//                tv_text.text  =  tv_text.text.toString()+"\n 文件大小：$size"}
-
-                    DaemonService.daemon?.let {
-                        Thread(Runnable {
-                            runOnUiThread() {
-                                //                        tv_text.text =  tv_text.text.toString()+"\n"+"开始复制文件"
-                            }
-                            FileCP(
-                                contentResolver.openInputStream(uri)!!,
-                                store[displayName!!].outputStream()
-                            )
-                            runOnUiThread() {
-                                //                        tv_text.text =  tv_text.text.toString()+"\n"+"复制文件完毕，准备上传"
-                            }
-                            val ipfs = IPFS(CORE_CLIENT_ADDRESS)
-                            val src =store[displayName!!]
-                            val srcsize =src.length()
-                            val file = NamedStreamable.FileWrapper(src)
-                            val addResult = ipfs.add(file)[0]
-                            runOnUiThread() {
-                                //                        tv_text.text =  tv_text.text.toString()+"\n"+"上传文件完毕"
-                            }
-                            Log.e("ifileContents", "addResult=" + addResult)
-
-                            runOnUiThread() {
-                                //                        tv_text.text =  tv_text.text.toString()+"\n"+"addResult="+addResult
-                            }
-                            store[displayName!!].delete()
-                            runOnUiThread() {
-                                addResult.apply {
-                                    Log.e(TAG,"${this.hash}")
-//                                    Log.e(TAG,"${this.size.get()}")
-
-
-                                    AddFile("${name.get()}",srcsize,"${hash}")
-                                }
-
-
-                                //                        tv_text.text =  tv_text.text.toString()+"\n"+"临时文件已删除"
-                            }
-                        }).start()
-                    }
-                }}
-
-
-    }
 
 
 }

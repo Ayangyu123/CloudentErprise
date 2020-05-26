@@ -86,6 +86,15 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
             return
         }
 
+        var confirm_password =  et_confirm_user_password.text.toString()
+        if(TextUtils.isEmpty(confirm_password)){
+            Toastinfo("请确认密码")
+            return
+        }
+        if(!confirm_password.equals(password)){
+            Toastinfo("两次密码不一致")
+            return
+        }
 
         if(!check_box_register_able.isChecked){
            Toastinfo("请阅读服务协议后勾选")

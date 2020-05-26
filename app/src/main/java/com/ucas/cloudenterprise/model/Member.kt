@@ -16,7 +16,7 @@ var email:String,//    "email":"ysh@sina.com",(邮件)
 var telphone:String,//    "telphone": "13789012375",(电话)
 var puuid:String,//    "telphone": "13789012375",(电话)
 var pid:String,//    "telphone": "13789012375",(电话)
-var capacity:Int,//    "capacity":10G,(容量)
+var capacity:Long,//    "capacity":10G,(容量)
 var status:Int,//    "capacity":10G,(容量)
 var belong_team:ArrayList<BelongTeam>,//    "belong_team": [
 //    "belong_teamId":"12345678754",(所属团队id)

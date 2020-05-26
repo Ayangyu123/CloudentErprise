@@ -275,7 +275,8 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
         contentview.layoutManager = GridLayoutManager(context,4)
         Log.e(TAG,"isfile is ${isfile}")
-        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight)
+        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,ispshare_file = true)
+//        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,isroot_file=item.pid.equals("root"))
         (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
             override fun onItemClick(
                 holder: RecyclerView.ViewHolder,

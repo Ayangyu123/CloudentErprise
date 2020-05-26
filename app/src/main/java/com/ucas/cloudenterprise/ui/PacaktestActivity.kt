@@ -55,18 +55,18 @@ class PacaktestActivity: BaseActivity() {
     }
     var aes =false
     fun pack(view: View) {
-        pack(!aes)
+//        pack(!aes)
+        pack(true)
     }
 
 
     fun pack( aes:Boolean) {
         com.ucas.cloudenterprise.app.checkPermission(this)
-//        Executors.newFixedThreadPool(3).execute {
             Thread{
             var destfile = File(file_path)
             val pack_start_time=java.lang.System.currentTimeMillis()
-            Log.e("WebSocketClient","${if(aes) "加密" else "不加密"}")
-            Log.e("WebSocketClient","start pacak ${pack_start_time}")
+            Log.e("pack","${if(aes) "加密" else "不加密"}")
+            Log.e("pack","start pacak ${pack_start_time}")
             OkGo.post<String>("http://127.0.0.1:9984/api/v0/pack")
                 .params("flag", JSONObject().apply {
                     put("MetaHash",file_md5)
@@ -88,25 +88,15 @@ class PacaktestActivity: BaseActivity() {
                     override fun onSuccess(response: Response<String>?) {
                         val Multihash=   JSONObject(response?.body().toString()).getJSONObject("Encrypt").getString("Multihash")
                         val pack_end_time=java.lang.System.currentTimeMillis()
-                        Log.e("WebSocketClient","end pacak $pack_end_time ")
-                        Log.e("WebSocketClient"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
-                            if(aes) {
-                                pack(false)
-                            }
+                        Log.e("pack","end pacak $pack_end_time ")
+                        Log.e("pack"," pacak 耗时 ${(pack_end_time-pack_start_time)/1000 }")
+//                            if(aes) {
+//                                pack(false)
+//                            }
                     }
-//
+
                 })
             }.start()
-//        }
-
-
-
-
-
-
-
-
-
 
 
     }

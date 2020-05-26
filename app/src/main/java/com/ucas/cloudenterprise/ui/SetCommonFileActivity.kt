@@ -179,13 +179,17 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
 
         tv_cancel_commom.setOnClickListener {
-            NetRequest(URL_PUT_FILE_JURIS, NET_PUT,HashMap<String,Any>().apply {
-                put("file_id",fileitem.file_id)
-//                put("status", -1)//(状态)
-            },this,this)
+           cancelShare()
 
         }
 
+    }
+
+    private fun cancelShare() {
+        NetRequest(URL_PUT_FILE_JURIS, NET_PUT,HashMap<String,Any>().apply {
+            put("file_id",fileitem.file_id)
+//                put("status", -1)//(状态)
+        },this,this)
     }
 
     override fun InitData() {
@@ -293,36 +297,52 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode== Activity.RESULT_OK&&data!=null){
            var jurisItems= data.getSerializableExtra("select_list") as ArrayList<JurisItem>
+            Log.e("ok"," requestCode  is ${requestCode}")
+            Log.e("ok"," jurisItems  is ${jurisItems.toString()}")
                 when(requestCode){
                     ADD_CAN_EDIT->{
-                       for(item  in jurisItems){
-                           if(!mCanEditList.contains(item)){
-                               mCanEditList.add(item)
-                           }
-                       }
-
+//                       for(item  in jurisItems){
+//                           if(!mCanEditList.contains(item)){
+//                               mCanEditList.add(item)
+//                           }
+//                       }
+                        mCanEditList.clear()
+                        mCanEditList.addAll(jurisItems)
+                        setdata()
                         Log.e("ok","mCanEditList ="+mCanEditList.toString())
                     }
                     ADD_CAN_UPLOAD->{
 
-                        for(item  in jurisItems){
-                            if(!mCanUploadList.contains(item)){
-                                mCanUploadList.add(item)
-                            }
-                        }
+//                        for(item  in jurisItems){
+//                            if(!mCanUploadList.contains(item)){
+//                                mCanUploadList.add(item)
+//                            }
+//                        }
+                        mCanUploadList.clear()
+                        mCanUploadList.addAll(jurisItems)
+                        Log.e("ok","mCanUploadList size is ${mCanUploadList.size}")
+                        setdata()
                     }
                     ADD_CAN_SEE->{
-                        for(item  in jurisItems){
-                            if(!mCanSeeList.contains(item)){
-                                mCanSeeList.add(item)
-                            }
-                        }
-
+//                        for(item  in jurisItems){
+//                            if(!mCanSeeList.contains(item)){
+//                                mCanSeeList.add(item)
+//                            }
+//                        }
+                        mCanSeeList.clear()
+                        mCanSeeList.addAll(jurisItems)
+                        setdata()
                     }
 
                 }
-            SetFileJuris()
 
+        }
+    }
+    fun setdata(){
+        if(mCanSeeList.isEmpty()&&mCanUploadList.isEmpty()&&mCanEditList.isEmpty()){
+            cancelShare()
+        }else {
+            SetFileJuris()
         }
     }
     fun SetFileJuris(){

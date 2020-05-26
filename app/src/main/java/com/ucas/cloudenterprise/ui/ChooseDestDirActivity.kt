@@ -86,12 +86,12 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
             })
             finish()
         }
-        tv_dest_dir_commit.isEnabled =false
+//        tv_dest_dir_commit.isEnabled =false
         fragmentlist.clear()
         mMyFilesDirFragment =MyDirsFragment(pid)
-        mOthersShareDirFragment = ShareDirsFragment(pid)
+//        mOthersShareDirFragment = ShareDirsFragment(pid)
         fragmentlist.add(mMyFilesDirFragment)
-        fragmentlist.add(mOthersShareDirFragment)
+//        fragmentlist.add(mOthersShareDirFragment)
         viewpager_content.apply {
             adapter = object :FragmentPagerAdapter(supportFragmentManager,1){
                 override fun getItem(position: Int): Fragment {
@@ -121,7 +121,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                            tv_othercommom.setTextColor( Color.parseColor("#AAAFC0"))
                            iv_create_dir.isEnabled =true
                            iv_create_dir.visibility =View.VISIBLE
-                          tv_dest_dir_commit.isEnabled = mMyFilesDirFragment.fileslist.isEmpty()
+//                          tv_dest_dir_commit.isEnabled = mMyFilesDirFragment.fileslist.isEmpty()
                        }
                        1->{ //共享文件
                            tv_path.text = "已选 ：共享文件"
@@ -130,7 +130,7 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                            iv_create_dir.isEnabled =false
                            tv_othercommom.setTextColor( Color.parseColor("#4F73DF"))
                            tv_myfiles.setTextColor( Color.parseColor("#AAAFC0"))
-                           tv_dest_dir_commit.isEnabled = mOthersShareDirFragment.fileslist.isEmpty()
+//                           tv_dest_dir_commit.isEnabled = mOthersShareDirFragment.fileslist.isEmpty()
                        }
 
                    }

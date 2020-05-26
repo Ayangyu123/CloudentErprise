@@ -178,7 +178,7 @@ fun MD5encode(file:File):String{
         //获取md5加密对象
         val instance: MessageDigest = MessageDigest.getInstance("MD5")
         if(!file.exists()){
-            Log.e("ok","文件不存在")
+//            Log.e("ok","文件不存在")
             return ""
         }
         var length:Int=-1

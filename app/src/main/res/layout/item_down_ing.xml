@@ -31,7 +31,7 @@
                 android:id="@+id/progress_download"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:progressTint="@color/app_color"
-                android:progressBackgroundTint="@android:color/holo_red_light"
+                android:progressBackgroundTint="@android:color/darker_gray"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:indeterminate="false"

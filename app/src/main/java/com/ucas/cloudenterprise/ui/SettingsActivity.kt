@@ -31,6 +31,7 @@ class SettingsActivity : BaseActivity() {
       tv_title.text ="设置"
         tv_edit.visibility = View.GONE
         iv_back.setOnClickListener { finish() }
+        ll_clear_cahe.isEnabled =false
         ll_clear_cahe.setOnClickListener {
             showClearCaheDialog()
         }
@@ -103,6 +104,7 @@ class SettingsActivity : BaseActivity() {
                     override fun onSuccess(response: Response<String>?) {
                         Log.e("ok",response?.body().toString())
                         tv_repo_size.text =Formatter.formatFileSize(this@SettingsActivity,JSONObject(response?.body()).getLong("RepoSize"))
+                        ll_clear_cahe.isEnabled =true
                     }
                 })
 

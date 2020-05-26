@@ -2,14 +2,20 @@ package com.ucas.cloudenterprise.ui
 
 
 import android.Manifest
+import android.app.Dialog
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioGroup
 import com.king.app.dialog.AppDialog
 import com.king.app.dialog.AppDialogConfig
 import com.king.app.updater.AppUpdater
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
@@ -26,6 +32,7 @@ import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_head.*
+import kotlinx.android.synthetic.main.dialog_updater.view.*
 import org.json.JSONObject
 
 
@@ -101,47 +108,106 @@ class MainActivity : BaseActivity() {
 
     override fun InitData(){
 //TODO 暂时取消版本检查
-//       CheckNewVersion()
+       CheckNewVersion(false)
     }
 
-     fun CheckNewVersion() {
-        NetRequest("${URLS_GET_VERSION_CHECK}"
-//                + "${BuildConfig.VERSION_CODE}"
-            , NET_GET,null,this,object:BaseActivity.OnNetCallback{
-            override fun OnNetPostSucces(
-                request: Request<String, out Request<Any, Request<*, *>>>?,
-                data: String
-            ) {
-                if(VerifyUtils.VerifyRequestData(data)){
-                    JSONObject(data).getJSONObject("data").apply {
-                       if (getBoolean("is_new")){
-                           //需要更新 TODO
+    //<editor-fold desc="检查新版本">
+    fun CheckNewVersion(){
+        CheckNewVersion(true)
+    }
+
+     fun CheckNewVersion(needtoast:Boolean) {
+         OkGo.get<String>("${URLS_GET_VERSION_CHECK}/saturn-edisk-android")
+             .tag(this)
+             .execute(object :StringCallback(){
+                 override fun onSuccess(response: Response<String>?) {
+                     var data = response?.body().toString()
+                     if(VerifyUtils.VerifyRequestData(data)){
+                         JSONObject(data).getJSONObject("data").apply {
+                             if (getInt("code")>(BuildConfig.VERSION_CODE)){
+                                 //需要更新 TODO
 //一句代码，傻瓜式更新
 //                                            new AppUpdater(getContext(),url).start();
 //简单弹框升级
-                           val config = AppDialogConfig()
-                           config.setTitle("发现新版本")
-                               .setOk("升级")
-                               .setContent(getString("description") + "").onClickOk =
-                               View.OnClickListener {
-                                   AppUpdater.Builder()
-                                       .serUrl(getString("url"))
-                                       .setFilename("tuxingyun.apk")
-                                       .build(this@MainActivity)
-                                       .start()
-                                   AppDialog.INSTANCE.dismissDialog()
-                               }
-                           AppDialog.INSTANCE.showDialog(this@MainActivity, config)
-                       }else{
-                           Toastinfo("目前已是最新版本,无需更新")
-                       }
-                    }
-                }
-            }
+                                 if(getInt("force_update")==0){
+                                     val config = AppDialogConfig()
+                                     config.setTitle("发现新版本${getString("version")}")
+                                         .setOk("升级")
+                                         .setContent(getString("description") + "").onClickOk =
+                                         View.OnClickListener {
+                                             AppUpdater.Builder()
+                                                 .serUrl(getString("url"))
+                                                 .setFilename("tuxingyun.apk")
+                                                 .build(this@MainActivity)
+                                                 .start()
+                                             AppDialog.INSTANCE.dismissDialog()
+                                         }
+                                     AppDialog.INSTANCE.showDialog(this@MainActivity, config)
+                                 }else{
+                                     var UpdateDialog= Dialog(this@MainActivity)
+                                     var contentview =LayoutInflater.from(this@MainActivity).inflate(R.layout.dialog_updater,null)
+                                    contentview.apply {
+                                            this.tv_title.text="发现新版本${getString("version")}"
+                                            this.tv_content.text=getString("description") + ""
+                                        this.tv_OK.setOnClickListener {
+                                            AppUpdater.Builder()
+                                                .serUrl(getString("url"))
+                                                .setFilename("tuxingyun.apk")
+                                                .build(this@MainActivity)
+                                                .start()
+                                            UpdateDialog.dismiss()
+                                        }
+                                    }
+                                     UpdateDialog.setContentView(contentview)
+                                     UpdateDialog.show()
+                                 }
 
-        } )
+                             }else{
+                                 if(needtoast)
+                                 Toastinfo("目前已是最新版本,无需更新")
+                             }
+                         }
+                     }
+                 }
+
+             })
+//        NetRequest("${URLS_GET_VERSION_CHECK}/saturn-edisk-android"
+////                + "${BuildConfig.VERSION_CODE}"
+//            , NET_GET,null,this,object:BaseActivity.OnNetCallback{
+//            override fun OnNetPostSucces(
+//                request: Request<String, out Request<Any, Request<*, *>>>?,
+//                data: String
+//            ) {
+//                if(VerifyUtils.VerifyRequestData(data)){
+//                    JSONObject(data).getJSONObject("data").apply {
+//                       if (getBoolean("is_new")){
+//                           //需要更新 TODO
+////一句代码，傻瓜式更新
+////                                            new AppUpdater(getContext(),url).start();
+////简单弹框升级
+//                           val config = AppDialogConfig()
+//                           config.setTitle("发现新版本")
+//                               .setOk("升级")
+//                               .setContent(getString("description") + "").onClickOk =
+//                               View.OnClickListener {
+//                                   AppUpdater.Builder()
+//                                       .serUrl(getString("url"))
+//                                       .setFilename("tuxingyun.apk")
+//                                       .build(this@MainActivity)
+//                                       .start()
+//                                   AppDialog.INSTANCE.dismissDialog()
+//                               }
+//                           AppDialog.INSTANCE.showDialog(this@MainActivity, config)
+//                       }else{
+//                           Toastinfo("目前已是最新版本,无需更新")
+//                       }
+//                    }
+//                }
+//            }
+//
+//        } )
     }
-
+    //</editor-fold>
 
     fun checkPermission(): Boolean? {
         var isGranted = true
@@ -209,7 +275,7 @@ class MainActivity : BaseActivity() {
 
 //                MApplication.getInstance().finishActivity()
 //                    TODO
-                myBinder?.mDaemonService?.stop()
+//                myBinder?.mDaemonService?.stop()
                 finish()
 //                System.exit(0)
             }

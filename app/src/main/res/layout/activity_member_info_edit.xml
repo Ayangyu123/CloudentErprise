@@ -162,6 +162,6 @@
         android:padding="10dp"
         android:text="删除成员"
         android:textColor="@android:color/white"
-        tools:visibility="gone" />
+        android:visibility="gone" />
 
 </LinearLayout>

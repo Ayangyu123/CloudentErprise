@@ -20,8 +20,7 @@ import com.ucas.cloudenterprise.utils.FileCP
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.get
 import com.ucas.cloudenterprise.utils.store
-import io.ipfs.api.IPFS
-import io.ipfs.api.NamedStreamable
+
 
 abstract class BaseFragment : Fragment() {
 

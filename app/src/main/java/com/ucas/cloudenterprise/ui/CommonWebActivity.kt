@@ -35,7 +35,8 @@ class CommonWebActivity:BaseActivity(){
             webChromeClient = WebChromeClient()
             webViewClient = WebViewClient()
 
-        }.loadUrl("https://www.baidu.com/")
+//        }.loadUrl("https://www.baidu.com/")
+        }.loadUrl("http://www.saturncloud.com.cn/#/agreement")
 //        }.loadUrl("file:///android_asset/服务协议.docx")
     }
 }

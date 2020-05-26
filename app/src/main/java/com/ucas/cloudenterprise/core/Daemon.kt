@@ -1,7 +1,6 @@
 package com.ucas.cloudenterprise.core
 
 import android.annotation.SuppressLint
-import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_MIN
@@ -9,12 +8,10 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color.parseColor
-import android.icu.lang.UProperty
 import android.os.Binder
 import android.os.Build
 import android.os.Build.CPU_ABI
 import android.os.Build.SUPPORTED_ABIS
-import android.os.Environment
 import android.os.IBinder
 import android.text.TextUtils
 import android.text.format.Formatter
@@ -30,16 +27,15 @@ import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
+import com.ucas.cloudenterprise.event.MessageEvent
 import com.ucas.cloudenterprise.model.CompletedFile
 import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.model.LoadIngStatus
 import com.ucas.cloudenterprise.model.LoadingFile
-import com.ucas.cloudenterprise.task.LoadFiileTask
 import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.ui.fragment.TransferlistItemFragment
 import com.ucas.cloudenterprise.utils.*
-import io.ipfs.api.IPFS
-import okhttp3.ResponseBody
+import org.greenrobot.eventbus.EventBus
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
@@ -47,6 +43,8 @@ import org.json.JSONObject
 import java.io.File
 import java.net.URI
 import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -61,7 +59,7 @@ class DaemonService : Service() {
     var  uptaskmap =HashMap<String,Runnable>()
     var  downtaskmap =HashMap<String,Runnable>()
 
-    val notificationBuilder = NotificationCompat.Builder(this, "sweetipfs")
+    val notificationBuilder = NotificationCompat.Builder(this, "tuxingyun")
 
     val notification
         @SuppressLint("RestrictedApi")
@@ -131,8 +129,8 @@ class DaemonService : Service() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            NotificationChannel("sweetipfs", "Sweet IPFS", IMPORTANCE_MIN).apply {
-                description = "Sweet IPFS"
+            NotificationChannel("tuxingyun", "tuxingyun", IMPORTANCE_MIN).apply {
+                description = "tuxingyun"
                 getSystemService(NotificationManager::class.java)
                     .createNotificationChannel(this)
             }
@@ -164,7 +162,7 @@ class DaemonService : Service() {
         }
         Log.e("Daemo","type is ${type}")
 
-        if(!assets.list("")!!.contains(type)){
+        if(!assets.list("").contains(type)){
             Toastinfo("不支持该cpu类型")
             stopSelf()
             return
@@ -178,8 +176,8 @@ class DaemonService : Service() {
             /*********core bin  复制 完成*******/
         logs.clear()
 //        init --profile=
-//        exec("init --profile=badgerds,lowpower").apply { // 低功耗模式
-        exec("init --profile=lowpower").apply { // 低功耗模式
+        exec("init --profile=badgerds,lowpower").apply { // 低功耗模式
+//        exec("init --profile=lowpower").apply { // 低功耗模式
             Log.e(TAG,"init 开始执行")
             read {
                 Log.e("it","it="+it)
@@ -201,6 +199,7 @@ class DaemonService : Service() {
             if(!exists()){
                 createNewFile()
                 writeBytes(JSONObject().apply {
+//                    var  HOST = "39.106.216.189"
                     put("WEB_SERVER", "${HOST}:6015")
                     put("NODE_SERVER", "${HOST}:6016")
                     put("MAX_ROUTINE_NUM", 20)
@@ -213,10 +212,13 @@ class DaemonService : Service() {
         }
         //</editor-fold >
         /*********key 复制   完成*******/
+// ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
+//ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
 
         config {
 
             obj("Datastore").add("StorageMax",json("10GB"))
+//            obj("Addresses").add("","")
             obj("API").obj("HTTPHeaders").apply {
 
                 array("Access-Control-Allow-Origin").also { origins ->
@@ -310,10 +312,10 @@ class DaemonService : Service() {
         for(it in MyApplication.upLoad_Ing){
             it.Ingstatus=LoadIngStatus.WAITING
         }
-        plugindaemon?.destroy()
-        daemon?.destroy()
-        plugindaemon = null
-        daemon = null
+//        plugindaemon?.destroy()
+//        daemon?.destroy()
+//        plugindaemon = null
+//        daemon = null
     }
     //</editor-fold>
 
@@ -321,9 +323,13 @@ class DaemonService : Service() {
     fun LoadFileStop(loadfile:LoadingFile) {
         Log.e("ok","LoadFileStop")
         loadfile?.apply{
+            OkGo.getInstance().cancelTag(loadfile.file_MD5)
+            if(loadfile.webSocketClient!=null&&loadfile.webSocketClient!!.isOpen){
+                loadfile.webSocketClient!!.close()
+            }
             when(loadfile.load_type_falg){
                 TransferlistItemFragment.UPLOAD->{// 上传
-                    OkGo.getInstance().cancelTag(loadfile.file_MD5)
+//                    OkGo.getInstance().cancelTag(loadfile.file_MD5)
                     uptaskmap[loadfile.file_MD5]?.apply {
                         (upexecutor as ThreadPoolExecutor).apply {
                             remove(uptaskmap[loadfile.file_MD5])
@@ -334,7 +340,8 @@ class DaemonService : Service() {
                     }
                     }
                 TransferlistItemFragment.DOWNLOAD->{// 下载
-                    OkGo.getInstance().cancelTag(loadfile.file_MD5)
+
+
                     downtaskmap[loadfile.file_MD5]?.apply {
                         (downexecutor as ThreadPoolExecutor).apply {
                         remove(downtaskmap[loadfile.file_MD5])
@@ -397,7 +404,13 @@ class DaemonService : Service() {
 
 
     //<editor-fold desc="下载文件">
-    fun GetFile(item:File_Bean) {
+    fun GetFile(item:File_Bean){
+        var task = LoadingFile(TransferlistItemFragment.DOWNLOAD,item.file_name,null,item.fidhash,item.size,src_file_info = item)
+       GetFile(task)
+
+    }
+
+    fun GetFile(task:LoadingFile) {
 
 
 
@@ -410,8 +423,9 @@ class DaemonService : Service() {
                 Toastinfo("pulgDaemon 未启动")
                 return
             }
-            val task = LoadingFile(TransferlistItemFragment.DOWNLOAD,item.file_name,null,item.fidhash,item.size,src_file_info = item)
+        if( ! MyApplication.downLoad_Ing.contains(task)){
             MyApplication.downLoad_Ing.add(task)
+        }
             task. Ingstatus =LoadIngStatus.TRANSFERING
 
            savaspbyfalag(DOWNLOADING)
@@ -449,7 +463,22 @@ class DaemonService : Service() {
 
                                     override fun downloadProgress(progress: Progress?) {
                                         super.downloadProgress(progress)
-                                        Log.e("ok","文件下载进度：${progress}")
+
+                                        var downloadprogress=((progress!!.currentSize * 1.0f / task.file_size)*100).toInt()
+                                        if(downloadprogress>task.progress){
+//                                            task.progress=downloadprogress
+                                        }
+//                                        Log.e("ok","${ (progress!!.currentSize * 1.0f / task.file_size)*100}")
+                                        //TODO 速度显示
+                                        progress!!.speed.apply {
+                                            if(this!=0L)
+                                                task.Speed= Formatter.formatFileSize(
+                                                    applicationContext,
+                                                    this
+                                                ).toUpperCase()+"/s"
+                                        }
+
+                                        Log.e("ok","文件下载进度：${downloadprogress}")
                                     }
 
                                     override fun onError(response: Response<File>?) {
@@ -461,13 +490,15 @@ class DaemonService : Service() {
 
                                     override fun onFinish() {
                                         super.onFinish()
+                                        task.Ingstatus=LoadIngStatus.WAITING
+                                        LoadFileStop(task)
                                         MyApplication.downLoad_Ing.remove(task)
                                         savaspbyfalag(DOWNLOADING)
 
                                     }
                                     override fun onSuccess(response: Response<File>?) {
 
-                                        MyApplication.downLoad_completed.add(CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                                        MyApplication.downLoad_completed.add(0  ,CompletedFile(task.file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
                                             Date()
                                         )
                                             ,task.file_size.toString(),
@@ -501,19 +532,20 @@ class DaemonService : Service() {
                             }
 
                             JSONObject(message).apply {
-                                task.progress= (getDouble("Percent")*100).toInt()
+                                var downloadprogress=(getDouble("Percent")*100).toInt()
+                                if(downloadprogress>task.progress){
+                                            task.progress=downloadprogress
+                                }
+//                                        Log.e("ok","${ (progress!!.currentSize * 1.0f / task.file_size)*100}")
                                 //TODO 速度显示
-                                getString("Speed")?.apply {
-                                    if(this.toLong()!=0L)
+                                getLong("Speed").apply {
+                                    if(this!=0L)
                                         task.Speed= Formatter.formatFileSize(
                                             applicationContext,
-                                           this.toLong()
+                                            this
                                         ).toUpperCase()+"/s"
                                 }
-                                if(task.progress==100){ //下载完成
-                                   //TODO
-                                    Log.e("ok","download 完成")
-                                }
+
 
                             }
 
@@ -521,6 +553,7 @@ class DaemonService : Service() {
 
                         override fun onError(ex: java.lang.Exception?) {
                             Log.e("WebSocketClient","onError")
+                            Log.e("WebSocketClient","ex is ${ex.toString()}")
                         }
 
                     }
@@ -529,7 +562,7 @@ class DaemonService : Service() {
                 }
 
             }.apply {
-                downtaskmap.put("${item.fidhash}",this)
+                downtaskmap.put("${task.file_hash}",this)
                 downexecutor.execute(this)
             }
 
@@ -723,7 +756,7 @@ class DaemonService : Service() {
 
                                 override fun onMessage(message: String?) {
                                     Log.e("WebSocketClient","onMessage ${message}")
-                                    Log.e("WebSocketClient","uptask.Ingstatus is  ${uptask.Ingstatus}")
+//                                    Log.e("WebSocketClient","uptask.Ingstatus is  ${uptask.Ingstatus}")
                                     if(uptask.Ingstatus!=LoadIngStatus.TRANSFERING){
                                         close()
                                     }
@@ -732,7 +765,10 @@ class DaemonService : Service() {
                                     }
 
                                     JSONObject(message).apply {
-                                        uptask.progress= (getDouble("Percent")*100).toInt()
+                                     var uploadprogress= (getDouble("Percent")*100).toInt()
+                                        if(uploadprogress > uptask.progress){
+                                            uptask.progress=uploadprogress
+                                        }
                                         //TODO 速度显示
                                         getString("Speed")?.apply {
                                             if(this.toLong()!=0L)
@@ -886,6 +922,7 @@ class DaemonService : Service() {
                         }
                     }
 
+                        EventBus.getDefault().post( MessageEvent());
                 }
 
             })
@@ -1038,8 +1075,5 @@ class DaemonService : Service() {
 
 }
 
-fun main() {
-
-}
 
 

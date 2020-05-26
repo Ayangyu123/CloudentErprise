@@ -38,6 +38,7 @@ import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
+import com.ucas.cloudenterprise.event.MessageEvent
 import com.ucas.cloudenterprise.model.CompletedFile
 import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.utils.*
@@ -49,6 +50,9 @@ import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import kotlinx.android.synthetic.main.top_file_operate.*
 import me.rosuh.filepicker.config.FilePickerManager
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 import java.io.File
 import java.security.MessageDigest
@@ -80,7 +84,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     lateinit var pid_name_maps : HashMap<String,String>
     var Is_Checked_Sum =0
 
-    val  md5executor = Executors.newFixedThreadPool(3)
+
 
     override fun initView() {
         //<editor-fold desc=" 设置files RecyclerView  ">
@@ -330,7 +334,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
     //<editor-fold  desc ="新建文件夹 Dialog" >
     fun ShowCreateNewDirDialog() {
-        if(CreateNewDirDialog == null){
+//        if(CreateNewDirDialog == null){
 
             CreateNewDirDialog = GetCreateNewDirDialog(mContext!!,View.OnClickListener{
                 CreateNewDirDialog!!.et_dir_name.text  = SetEt_Text("")
@@ -350,7 +354,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                     )
                     CreateNewDirDialog?.dismiss()
                 })
-        }
+//        }
 
         CreateNewDirDialog?.show()
     }
@@ -365,7 +369,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
             contentview.layoutManager = GridLayoutManager(context,4)
             Log.e(TAG,"isfile is ${isfile}")
-            contentview.adapter = BottomFilesOperateAdapter(context,item,isfile)
+            contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,isroot_file=item.pid.equals("root"))
             (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
                 override fun onItemClick(
                     holder: RecyclerView.ViewHolder,
@@ -701,73 +705,28 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             var Memory =getMemory()
             Log.e("ok","当前内存: $Memory")
 
-//            md5executor.execute{
-//                Log.e("ok","start file md5")
-//                val  start_time =System.currentTimeMillis()
-//                var file_md5=""
-//                if(destfile_length>(Memory)){
-//
-//                    file_md5= StatisticCodeLines.getFileMD5s(destfile)
-//                }else{
-//                    file_md5  =MD5encode(destfile.readBytes())
-//                }
-//
-//                val  end_time =System.currentTimeMillis()
-//                Log.e("ok","file_md5 is ${file_md5}")
-//                Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
-//                        /1000
-//                }")
-//                runOnUiThread{
-//                    OkGo.get<String>("${URL_ADD_File_CHECK}${file_md5}")
-//                        .execute(object: StringCallback(){
-//                            override fun onSuccess(response: Response<String>?) {
-//                                var  mainActivity=activity as MainActivity
-//                                response?.apply {
-//                                    if(!VerifyUtils.VerifyRequestData(response!!.body())){ //文件不存在 去添加
-//                                        Log.e("ok","该文件不存在")
-//                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(destfile,file_md5,pid)
-//                                    }else{//文件已存在 去添加 文件信息 秒传操作
-//                                        Log.e("ok","该文件已存在")
-//                                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.apply {
-//                                            val params =GetUploadFileJsonMap(destfile.name,"${JSONObject(response?.body()?.toString()).getJSONObject("data").getString("fidhash").apply {
-//                                                //                                        Log.e("ok","fidhash=${this}")
-//                                            }}","${file_md5.apply {
-//                                                //                                        Log.e("ok","fidhash=${this}")
-//                                            }}",pid,destfile.length())
-//                                            UploadFileMetaInfo(params,file_md5,destfile.name,destfile.length().toString(),0)
-//
-//                                        }
-//
-//                                    }
-//
-//                                }
-//
-//                            }
-//                        })
-//                    }
-//            }
-
-
-
-
 
     }
     //</ediotr-fold>
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+     fun  onMessageEvent( event: MessageEvent){
+        GetFileList()
+
+        /* Do something */};
+
 
 }
 
-fun main() {
-//  2147483647
-//  1142759900
-  var tests = ArrayList<File_Bean>()
-    tests.add(File_Bean("1","test1",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
-    tests.add(File_Bean("1","已修复",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
-    tests.add(File_Bean("1","l_652545705a",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
-    tests.add(File_Bean("1","a_652545705a",1,"sdfs","","","","","","",1,1,1,2,1,"",""))
 
-    println(tests.toString())
-    tests.sortBy { it.file_name }
-    println(tests.toString())
-}
 

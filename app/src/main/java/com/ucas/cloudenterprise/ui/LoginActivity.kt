@@ -72,7 +72,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
            startForegroundService( Intent(this, DaemonService::class.java))
         } else {
-//            startService( Intent(this, ServedService.class));
+
             startService<DaemonService>()
         }
 

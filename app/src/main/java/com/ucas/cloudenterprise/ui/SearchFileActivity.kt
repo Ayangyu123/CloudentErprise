@@ -33,7 +33,6 @@ import com.ucas.cloudenterprise.utils.GetFileDeleteTipsDialog
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
-import io.ipfs.multibase.Multibase
 import kotlinx.android.synthetic.main.activity_searchfile.*
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*

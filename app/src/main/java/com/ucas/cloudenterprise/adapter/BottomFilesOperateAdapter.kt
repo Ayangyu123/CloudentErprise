@@ -28,7 +28,10 @@ class BottomFilesOperateAdapter(
     val context: Context?,
     val item: File_Bean,
     val isfile: Boolean,
-    val Permisssion:Int =4
+    val Permisssion:Int =4,
+    val isroot_file:Boolean = false,
+    var ispshare_file:Boolean=false
+
 ) :RecyclerView.Adapter<BottomFilesOperateAdapter.ViewHolder>(){
     val TAG ="BottomFilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
@@ -65,8 +68,11 @@ class BottomFilesOperateAdapter(
         when(Permisssion){
             1->{
                 InfoList.remove("移动到")
+
                 InfoList.remove("重命名")
                 InfoList.remove("删除")
+                InfoList.remove(  "设置共享")
+                DrawableList.remove( R.drawable.operate_share_dir_normal)
                 DrawableList.remove( R.drawable.operate_move_to_normal)
                 DrawableList.remove(R.drawable.operate_rename_normal)
                 DrawableList.remove(R.drawable.operate_delete_normal)
@@ -75,14 +81,26 @@ class BottomFilesOperateAdapter(
             2->{
                 InfoList.remove("移动到")
                 InfoList.remove("重命名")
+                InfoList.remove(  "设置共享")
+                DrawableList.remove( R.drawable.operate_share_dir_normal)
                 DrawableList.remove( R.drawable.operate_move_to_normal)
                 DrawableList.remove(R.drawable.operate_rename_normal)
                     //TODO
-//                InfoList.remove("删除")
-//                DrawableList.remove(R.drawable.operate_delete_normal)
+                InfoList.remove("删除")
+                DrawableList.remove(R.drawable.operate_delete_normal)
             }
         }
 
+        if(!isroot_file){
+            InfoList.remove(  "设置共享")
+            DrawableList.remove( R.drawable.operate_share_dir_normal)
+        }
+        if(ispshare_file){
+            InfoList.remove("复制到")
+            DrawableList.remove( R.drawable.operate_copy_to_normal)
+            InfoList.remove("移动到")
+            DrawableList.remove( R.drawable.operate_move_to_normal)
+        }
     }
 
     fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){

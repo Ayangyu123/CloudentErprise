@@ -98,6 +98,28 @@
             android:inputType="textPassword"
             style="@style/register_edittext_style"/>
 
+
+    </LinearLayout>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="100dp"
+            android:text="确认密码"
+            android:gravity="center_vertical|left"
+            android:layout_height="match_parent"/>
+
+        <EditText
+            android:id="@+id/et_confirm_user_password"
+            android:hint="请再次输入密码"
+            tools:text="@string/test"
+            android:maxLength="16"
+            android:inputType="textPassword"
+            style="@style/register_edittext_style"/>
+
     </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"

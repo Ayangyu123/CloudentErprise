@@ -56,26 +56,37 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
             Toastinfo("获取文件列表成功")
 
             fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
-            adapter?.notifyDataSetChanged()
+            if(!fileslist.isEmpty()){
+                if(!pid.equals("root")){
+                    var path =fileslist[0].path
+                    var last= path.indexOfLast {  it.equals('/') }
+
+                    (activity as ChooseDestDirActivity).tv_path.text="已选：${path.substring(0,last)}"
+                }else{
+                    (activity as ChooseDestDirActivity).tv_path.text="已选： 我的文件"
+                }
+                adapter?.notifyDataSetChanged()
+            }
+
         }
 
         //获取我的文件列表
 
-        if(showtype==0){
-
-             (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
-                 if(fileslist.isEmpty()){
-                     setBackgroundColor(Color.GRAY)
-                     isEnabled = false
-                 }else{
-                     setBackgroundColor(resources.getColor(R.color.app_color))
-                     isEnabled = true
-                 }
-             }
-
-
-
-        }
+//        if(showtype==0){
+//
+//             (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
+//                 if(fileslist.isEmpty()){
+//                     setBackgroundColor(Color.GRAY)
+//                     isEnabled = false
+//                 }else{
+//                     setBackgroundColor(resources.getColor(R.color.app_color))
+//                     isEnabled = true
+//                 }
+//             }
+//
+//
+//
+//        }
 
 
     }
@@ -106,6 +117,20 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
                         rl_file_item_root.setOnClickListener {
                             pid_stack.add(0,item.file_id)
                             pid = item.file_id
+                            if(!pid.equals("root")){
+                                (activity as ChooseDestDirActivity).tv_path.apply {
+                                    if(text.equals("已选： 我的文件")){
+                                        text="已选： /${item.file_name}"
+                                    }else{
+                                        text="${text}/${item.file_name}"
+                                    }
+
+                                }
+                            }
+//                            else{
+//                                (activity as ChooseDestDirActivity).tv_path.text="已选： 我的文件"
+//                            }
+
                             GetFileList()
                         }
                     }

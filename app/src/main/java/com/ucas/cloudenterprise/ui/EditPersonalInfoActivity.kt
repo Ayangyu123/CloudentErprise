@@ -56,12 +56,12 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
                     JSONObject(data).getJSONObject("data").apply {
 
                         acc_name = getString("acc_name")
-                        phone = getString("telphone")
+                        phone = getString("telephone")
                         email = getString("email")
                         et_acc_name.text = SetEt_Text(getString("acc_name"))
-                        editText_phone.text = SetEt_Text(getString("telphone"))
+                        editText_phone.text = SetEt_Text(getString("telephone"))
 
-                        phone = getString("telphone")
+                        phone = getString("telephone")
                         editText_eamil.text=SetEt_Text(getString("email"))
                     }
                 }
@@ -101,7 +101,7 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
         }
 
         if(TextUtils.isEmpty(editText_eamil.text)){
-            Toastinfo("请输入新密码")
+            Toastinfo("请输入新邮箱")
             return
         }
 
@@ -119,7 +119,7 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
         NetRequest(URL_POST_USER_INFO_MODIFY, NET_POST,HashMap<String,Any>().apply {//TODO
             put("user_id","${USER_ID}")
-            put("telphone","${editText_phone.text}")
+            put("telephone","${editText_phone.text}")
             put("email","${editText_eamil.text}")
             put("password","${editTextnewpassword.text}")
 //            put("password","${MD5encode(editTextnewpassword.text.toString(),true)}")
@@ -175,6 +175,8 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
                             }.start()
                         }
+                    }else{
+                        Toastinfo("${JSONObject(data).getString("message")}")
                     }
 
                 }

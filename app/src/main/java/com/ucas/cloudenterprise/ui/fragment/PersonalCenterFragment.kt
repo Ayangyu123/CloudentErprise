@@ -2,8 +2,12 @@ package com.ucas.cloudenterprise.ui.fragment
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.format.Formatter
 import android.view.View
 import com.google.gson.Gson
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
@@ -11,6 +15,7 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
+import com.ucas.cloudenterprise.event.MessageEvent
 import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.ui.helpandfeedback.HelpAndFeedbackActivity
 import com.ucas.cloudenterprise.ui.member.MembersManageActivity
@@ -20,6 +25,9 @@ import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_reset_password.*
 import kotlinx.android.synthetic.main.personal_center_fragment.*
 import kotlinx.android.synthetic.main.personal_center_fragment.tv_reset_password
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 
 /**
@@ -95,24 +103,65 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
 
     //<editor-fold desc="获取个人信息">
     private fun GetPersonalInfo() {
-        NetRequest("${URL_GET_USER_INFO}${USER_ID}", NET_GET,null,this,object :BaseActivity.OnNetCallback{
-            override fun OnNetPostSucces(
-                request: Request<String, out Request<Any, Request<*, *>>>?,
-                data: String
-            ) {
-                if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
+//        NetRequest("${URL_GET_USER_INFO}${USER_ID}", NET_GET,null,this,object :BaseActivity.OnNetCallback{
+//            override fun OnNetPostSucces(
+//                request: Request<String, out Request<Any, Request<*, *>>>?,
+//                data: String
+//            ) {
+//                if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
+//
+//                    JSONObject(data).getJSONObject("data").apply {
+//
+//                            var used_cap =getLong("used_cap")
+//                            var total_cap =getLong("total_cap")
+//
+////                        var used_cap_info = String.format("%.2f",used_cap/1024L/1024L/1024L)
+//                        var used_cap_info = Formatter.formatFileSize(mContext,used_cap).toUpperCase()
+//                        var total_cap_info = Formatter.formatFileSize(mContext,total_cap).toUpperCase()
+////                        var total_cap_info = String.format("%.2f",total_cap/1024L/1024L/1024L)
+//
+//                        tv_cap_info.text ="容量：${used_cap_info}/${total_cap_info}"
+//                        progressbar_cap.apply {
+//                            max=100
+//                            progress = ((used_cap.toFloat()/total_cap.toFloat())*100).toInt()
+//                        }
+//
+//                        tv_user_name.text = getString("acc_name")
+////                       var  phone = getString("telphone")
+////                       var  email = getString("email")
+////                        et_acc_name.text = SetEt_Text(getString("acc_name"))
+////                        editText_phone.text = SetEt_Text(getString("telphone"))
+////
+////                        phone = getString("telphone")
+////                        editText_eamil.text= SetEt_Text(getString("email"))
+//                    }
+//                }
+//            }
+//
+//        })
+        OkGo.get<String>("${URL_GET_USER_INFO}${USER_ID}").tag(this).execute(object :StringCallback(){
+            override fun onSuccess(response: Response<String>?) {
+                response?.body()?.apply {
+                    var data =this
+                    if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
 
-                    JSONObject(data).getJSONObject("data").apply {
+                        JSONObject(data).getJSONObject("data").apply {
 
+                            var used_cap =getLong("used_cap")
+                            var total_cap =getLong("total_cap")
 
-                        tv_cap_info.text ="容量：${getInt("used_cap")}GB/${getInt("total_cap")}GB"
-                        progressbar_cap.apply {
-//                            capacity
-                            max=getInt("total_cap")*100
-                            progress = getInt("used_cap")*100
-                        }
+//                        var used_cap_info = String.format("%.2f",used_cap/1024L/1024L/1024L)
+                            var used_cap_info = Formatter.formatFileSize(mContext,used_cap).toUpperCase()
+                            var total_cap_info = Formatter.formatFileSize(mContext,total_cap).toUpperCase()
+//                        var total_cap_info = String.format("%.2f",total_cap/1024L/1024L/1024L)
 
-                        tv_user_name.text = getString("acc_name")
+                            tv_cap_info.text ="容量：${used_cap_info}/${total_cap_info}"
+                            progressbar_cap.apply {
+                                max=100
+                                progress = ((used_cap.toFloat()/total_cap.toFloat())*100).toInt()
+                            }
+
+                            tv_user_name.text = getString("acc_name")
 //                       var  phone = getString("telphone")
 //                       var  email = getString("email")
 //                        et_acc_name.text = SetEt_Text(getString("acc_name"))
@@ -120,11 +169,14 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
 //
 //                        phone = getString("telphone")
 //                        editText_eamil.text= SetEt_Text(getString("email"))
+                        }
                     }
                 }
-            }
 
+            }
         })
+
+
     }
     //</editor-fold>
 
@@ -172,6 +224,23 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
                }
             }
             }
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this);
+    }
 
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this);
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun  onMessageEvent( event: MessageEvent){
+        GetPersonalInfo()
+
+        /* Do something */};
+
+}
+fun  main(){
+    println(349526.toFloat()/1048576.toFloat())
 }

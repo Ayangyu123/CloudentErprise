@@ -24,6 +24,7 @@ data class File_Bean(
     var size :Long,
     var created_at :String,
     var updated_at :String,
+    var path :String,
     var is_show_checked_view:Boolean =false,
     var is_checked:Boolean =false,
     var weight:Int=4
