@@ -340,7 +340,13 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
     }
     fun setdata(){
         if(mCanSeeList.isEmpty()&&mCanUploadList.isEmpty()&&mCanEditList.isEmpty()){
-            cancelShare()
+
+               fileitem?.pshare?.apply {
+                 if(this==-1){
+                     cancelShare()
+                 }
+               }
+
         }else {
             SetFileJuris()
         }

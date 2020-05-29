@@ -12,7 +12,7 @@ data class MemberAuditInfo(
     val acc_name:String,
     val email:String,
     val telphone:String,
-    val capacity:Int,
+    val capacity:Long,
     val belong_team:List<BelongTeam>,
     val create_time:String,
     val status:Int,

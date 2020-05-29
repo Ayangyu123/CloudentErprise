@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="账号"/>
+                android:text="用户名"/>
             <TextView
                 android:id="@+id/tv_acc_name"
                 android:layout_width="80dp"
@@ -38,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:visibility="gone"
             >
             <TextView
                 android:layout_width="80dp"
@@ -71,7 +72,8 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:hint="请填写手机号"
-                android:inputType="phone"
+                android:inputType="number"
+                android:maxLength="5"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"

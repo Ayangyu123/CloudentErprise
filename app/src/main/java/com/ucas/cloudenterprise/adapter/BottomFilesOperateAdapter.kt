@@ -56,6 +56,13 @@ class BottomFilesOperateAdapter(
         "详细信息"
     )
     init {
+        /**
+         *   1.判断是否为共享文件
+         *   2.是否为文件加
+         *   3.是否为根目录
+         * */
+
+
         if(isfile){
             InfoList.remove(  "设置共享")
             DrawableList.remove( R.drawable.operate_share_dir_normal)
@@ -85,7 +92,7 @@ class BottomFilesOperateAdapter(
                 DrawableList.remove( R.drawable.operate_share_dir_normal)
                 DrawableList.remove( R.drawable.operate_move_to_normal)
                 DrawableList.remove(R.drawable.operate_rename_normal)
-                    //TODO
+                //TODO
                 InfoList.remove("删除")
                 DrawableList.remove(R.drawable.operate_delete_normal)
             }
@@ -99,7 +106,15 @@ class BottomFilesOperateAdapter(
             InfoList.remove("复制到")
             DrawableList.remove( R.drawable.operate_copy_to_normal)
             InfoList.remove("移动到")
+            InfoList.remove("删除")
+            DrawableList.add( R.drawable.operate_delete_normal)
             DrawableList.remove( R.drawable.operate_move_to_normal)
+            if(isroot_file&&!isfile){
+                InfoList.clear()
+                DrawableList.clear()
+                InfoList.add("取消共享")
+                DrawableList.add( R.drawable.operate_delete_normal)
+            }
         }
     }
 

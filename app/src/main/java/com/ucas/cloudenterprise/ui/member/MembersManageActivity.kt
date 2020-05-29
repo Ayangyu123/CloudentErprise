@@ -82,6 +82,8 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
         }
     }
     fun getMemberlist(){
+        mMemberlist.clear()
+        adapter.notifyDataSetChanged()
         NetRequest(URL_LIST_MEMBER +"company/${COMP_ID}/status/$PASS_STATE", NET_GET,null,this,this)
     }
 
@@ -96,7 +98,7 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
     ) {
         JSONObject(data).apply {
             if(!isNull("data")&&getInt("code")==200){
-                mMemberlist.clear()
+
                for(item in Gson().fromJson<List<MemberInfo>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<MemberInfo>>(){}.type) as ArrayList<MemberInfo>){
 
                    //TODO

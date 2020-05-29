@@ -22,6 +22,7 @@
             android:id="@+id/check_box_select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             android:button="@drawable/checkbox" />
 
         <ImageView
@@ -67,7 +68,7 @@
 
     <LinearLayout
         android:id="@+id/ll_select_member"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

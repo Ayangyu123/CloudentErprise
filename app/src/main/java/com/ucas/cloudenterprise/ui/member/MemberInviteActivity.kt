@@ -61,7 +61,7 @@ class MemberInviteActivity: BaseActivity(), BaseActivity.OnNetCallback {
                     //TODO 分享链接字段
                     shared_url ="${getString("invite_url")}"
                     iv_qr_code.setImageBitmap(QRCodeUtils.CreateQRCode(shared_url,this@MemberInviteActivity,R.drawable.ic_launcher,(iv_qr_code.width/2)))
-                    tv_cap.text = "${getInt("capacity")}G"
+                    tv_cap.text = "${getLong("capacity")/1024/1024/1024}G"
                     tv_link_share.isEnabled = true
 //                    tv_indate.text = AppUtils.timestamptoString(getLong("timestamp"))
                 }

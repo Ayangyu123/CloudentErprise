@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui.fragment
 
+import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Dialog
 import android.content.Intent
@@ -36,13 +37,18 @@ import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
 import kotlinx.android.synthetic.main.others_share_fragment.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import kotlinx.android.synthetic.main.top_file_operate.*
+import org.json.JSONArray
 import org.json.JSONObject
 
 /**
 @author simpler
 @create 2020年01月10日  14:31
  */
+
 class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
+    lateinit  var mdata:JSONArray
+
+
     override fun OnNetPostSucces(
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
@@ -66,7 +72,8 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                         //获取我的文件列表
                         Toastinfo("获取文件列表成功")
                         fileslist.clear()
-                        fileslist.addAll(Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
+                        mdata = JSONObject(data).getJSONArray("data")
+                        fileslist.addAll(Gson().fromJson<List<File_Bean>>(mdata.toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>)
                         adapter?.notifyDataSetChanged()
 
                     }
@@ -100,6 +107,13 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                 GetFileList()
 
             }
+            URL_PUT_FILE_JURIS ->{
+                if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
+                    Toastinfo("文件取消共享成功")
+                    GetFileList()
+                }
+            }
+
         }
     }
 
@@ -170,6 +184,11 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                             }
 
                             iv_right_icon.setOnClickListener{
+                               mdata.getJSONObject(position)?.apply {
+                                item.size= getLong("file_size")
+                                 item.compet_user=getString("juris_user_name")
+                                }
+
                                 ShowBottomFilesOperateDialog(item,isfile)
                             }
                         }
@@ -178,7 +197,8 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 
 
                         if(!isfile){
-                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
+                            iv_icon.setImageResource(R.drawable.icon_list_share_folder)
+//                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
                         }else{
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
 //                            var filetype = item.file_name.substringAfterLast(".")
@@ -275,8 +295,10 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
         contentview.layoutManager = GridLayoutManager(context,4)
         Log.e(TAG,"isfile is ${isfile}")
-        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,ispshare_file = true)
-//        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,isroot_file=item.pid.equals("root"))
+//        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,ispshare_file = true)
+        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,ispshare_file = true,
+            isroot_file = pid.equals("root")
+        )
         (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
             override fun onItemClick(
                 holder: RecyclerView.ViewHolder,
@@ -350,6 +372,11 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                             "删除"->{
                                 Toastinfo("删除")
                                 ShowFileDeleteTipsDialog(item.file_id)
+                            }
+                            "取消共享"->{
+                                NetRequest(URL_PUT_FILE_JURIS, NET_PUT,HashMap<String,Any>().apply {
+                                    put("file_id",item.file_id)
+                                },this,this@OthersShareFragment)
                             }
                             "详细信息"->{Toastinfo("详细信息")
                                 mContext?.startActivity(Intent(context, FileInfoActivity::class.java).apply {
@@ -452,7 +479,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                     NetRequest("${URL_FILE_RENAME}", NET_POST,HashMap<String,Any>().apply {
                         put("user_id","${USER_ID}")
                         put("file_id","${item.file_id}")
-                        put("file_name","${et_dir_name.text}")
+                        put("file_name","${et_dir_name.text.toString()}")
 
                     },this,this@OthersShareFragment)
                     ReanmeDialog?.dismiss()

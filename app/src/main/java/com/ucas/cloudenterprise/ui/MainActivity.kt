@@ -122,7 +122,7 @@ class MainActivity : BaseActivity() {
              .execute(object :StringCallback(){
                  override fun onSuccess(response: Response<String>?) {
                      var data = response?.body().toString()
-                     if(VerifyUtils.VerifyRequestData(data)){
+                     if(VerifyUtils.VerifyResponseData(data)){
                          JSONObject(data).getJSONObject("data").apply {
                              if (getInt("code")>(BuildConfig.VERSION_CODE)){
                                  //需要更新 TODO

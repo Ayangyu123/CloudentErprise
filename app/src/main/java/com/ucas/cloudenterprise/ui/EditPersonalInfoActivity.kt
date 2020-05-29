@@ -157,7 +157,7 @@ class EditPersonalInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
                     request: Request<String, out Request<Any, Request<*, *>>>?,
                     data: String
                 ) {
-                    if(VerifyUtils.VerifyRequestData(data)){
+                    if(VerifyUtils.VerifyResponseData(data)){
 //                        Toastinfo(JSONObject(data).getJSONObject("data").getString("verification_code_send"))
                         Toastinfo("")
                         tv_send_reset_password_message.apply {

@@ -111,7 +111,7 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 
                     holder as FilesAdapter.ViewHolder
                     holder.apply {
-                        iv_icon.setImageResource( if(item.is_dir == IS_DIR) R.drawable.icon_list_folder else R.drawable.icon_list_unknown)
+                        iv_icon.setImageResource( if(item.is_dir == IS_DIR) (if(item.pshare==0)R.drawable.icon_list_folder else R.drawable.icon_list_share_folder) else R.drawable.icon_list_unknown)
                         tv_file_name.text = item.file_name
                         tv_file_create_time.text = item.created_at
                         rl_file_item_root.setOnClickListener {

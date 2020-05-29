@@ -19,6 +19,7 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.MemberAuditInfo
 import com.ucas.cloudenterprise.model.MemberInfo
+import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.intent
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
@@ -97,6 +98,8 @@ class MemberAuditActivity : BaseActivity(), BaseActivity.OnNetCallback {
         }
 
     fun  getMemberAuditList(){
+        mMemberAuditlist.clear()
+        mAdapter.notifyDataSetChanged()
         NetRequest("${URL_MEMBER_AUDIT_LIST}${COMP_ID}/status/${UNAUDIT_STATE}", NET_GET,null,this,this)
 
     }
@@ -123,6 +126,7 @@ class MemberAuditActivity : BaseActivity(), BaseActivity.OnNetCallback {
                         }
                     }
 
+                }else{ Toastinfo("${getString("message")}")
                 }
 
             }

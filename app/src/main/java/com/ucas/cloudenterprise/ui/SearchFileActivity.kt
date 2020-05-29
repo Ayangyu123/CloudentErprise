@@ -413,7 +413,7 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
                             request: Request<String, out Request<Any, Request<*, *>>>?,
                             data: String
                         ) {
-                            if(VerifyUtils.VerifyRequestData(data)){
+                            if(VerifyUtils.VerifyResponseData(data)){
 
                             }
                         }

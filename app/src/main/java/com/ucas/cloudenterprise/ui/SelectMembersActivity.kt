@@ -81,7 +81,11 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                            }
                        }
                    }
-
+                    if(!mSelectList.isEmpty()){
+                       tv_select_info.text = "已选${getteamcountinfo()}${getmembercountinfo()}"
+                    }else{
+                        tv_select_info.text = ""
+                    }
 
             }
            }
@@ -95,12 +99,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
             setOnClickListener { finish() }
         }
         iv_back.setOnClickListener {
-            if(pid_stack.size>1){
-                pid_stack.remove(pid_stack[0])
-                pid=pid_stack[0]
-            }else{
-                iv_back.visibility=View.GONE
-            }
+           backUpSetp()
 
         }
 
@@ -150,63 +149,123 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                     mList[position]?.apply {
                         tv_team_name.text = team_name
                         if(is_team){
-                        tv_members_count.text = "${people_count}人"
+//                            TODO 团队人数显示
+//                           tv_members_count.text = "${people_count}人"
+//                            tv_members_count.visibility = View.VISIBLE
+                            check_box_select_team_all.visibility = View.INVISIBLE
                             iv_team_falg.visibility = View.VISIBLE
-                            tv_members_count.visibility = View.VISIBLE
-                            if (people_count!=0){
+//                            if (people_count!=0){
                             ll_root.setOnClickListener {
                                 pid_stack.add(0,team_id)
                                 pid =pid_stack[0]
+                                GetTeamMembers()
                                 if(iv_back.visibility==View.GONE){
                                     iv_back.visibility =View.VISIBLE
                                 }
-                                GetTeamMembers()
-                            }}
+
+                            }
                         }else{
 
                             iv_team_falg.visibility = View.INVISIBLE
                             tv_members_count.visibility = View.INVISIBLE
-
-                        }
-                        check_box_select_team_all.isChecked = select_status
-
-                       check_box_select_team_all.setOnCheckedChangeListener { buttonView, isChecked ->
-                            if(isChecked){
-                                if(is_team){
-                                teamcount++
-                                    mSelectList.add(JurisItem(team_id,team_name,1))
-                                }else{
-                                     membercount++
-                                    mSelectList.add(JurisItem(team_id,team_name,0))
-                                    }
+                            check_box_select_team_all.isChecked = select_status
+                            check_box_select_team_all.setOnClickListener {
 
                                 if( ll_select_member.visibility ==View.GONE){
                                     ll_select_member.visibility =View.VISIBLE
                                 }
+                                if(check_box_select_team_all.isChecked){//添加
+                                    if(is_team){
+                                        teamcount++
+                                        mSelectList.add(JurisItem(team_id,team_name,1))
+                                    }else{
+                                        membercount++
+                                        mSelectList.add(JurisItem(team_id,team_name,0))
+                                    }
 
 
 
 
-                            }else{
-                                if(is_team){
-                                    teamcount--
-                                    mSelectList.remove(JurisItem(team_id,team_name,1))
+
+
+                                }else{ //删除
+                                    if(is_team){
+                                        teamcount--
+                                        mSelectList.remove(JurisItem(team_id,team_name,1))
+                                        mSelectAdapter.notifyDataSetChanged()
+                                    }else{
+                                        membercount--
+                                        mSelectList.remove(JurisItem(team_id,team_name,0))
+                                        mSelectAdapter.notifyDataSetChanged()
+                                    }
+
+
+                                }
+
+                                if(mSelectList.isEmpty()){
+                                    rc_select_show.visibility =View.GONE
+//                               ll_select_member.visibility =View.GONE
+                                    tv_select_info.text = ""
                                 }else{
-                                    membercount--
-                                    mSelectList.remove(JurisItem(team_id,team_name,0))
+                                    if(ll_select_member.visibility ==View.GONE){
+                                        ll_select_member.visibility ==View.VISIBLE
+                                    }
+                                    tv_select_info.text = "已选${getteamcountinfo()}${getmembercountinfo()}"
+                                    mSelectAdapter.notifyDataSetChanged()
                                 }
 
 
                             }
-                           if(mSelectList.isEmpty()){
-                               rc_select_show.visibility =View.GONE
-                               ll_select_member.visibility =View.GONE
-                           }else{
-                               mSelectAdapter.notifyDataSetChanged()
-                           }
+//                            check_box_select_team_all.setOnCheckedChangeListener { buttonView, isChecked ->
+//
+//                                if( ll_select_member.visibility ==View.GONE){
+//                                    ll_select_member.visibility =View.VISIBLE
+//                                }
+//                                if(isChecked){//添加
+//                                    if(is_team){
+//                                        teamcount++
+//                                        mSelectList.add(JurisItem(team_id,team_name,1))
+//                                    }else{
+//                                        membercount++
+//                                        mSelectList.add(JurisItem(team_id,team_name,0))
+//                                    }
+//
+//
+//
+//
+//
+//
+//                                }else{ //删除
+//                                    if(is_team){
+//                                        teamcount--
+//                                        mSelectList.remove(JurisItem(team_id,team_name,1))
+//                                        mSelectAdapter.notifyDataSetChanged()
+//                                    }else{
+//                                        membercount--
+//                                        mSelectList.remove(JurisItem(team_id,team_name,0))
+//                                        mSelectAdapter.notifyDataSetChanged()
+//                                    }
+//
+//
+//                                }
+//
+//                                if(mSelectList.isEmpty()){
+//                                    rc_select_show.visibility =View.GONE
+////                               ll_select_member.visibility =View.GONE
+//                                    tv_select_info.text = ""
+//                                }else{
+//                                    if(ll_select_member.visibility ==View.GONE){
+//                                        ll_select_member.visibility ==View.VISIBLE
+//                                    }
+//                                    tv_select_info.text = "已选${getteamcountinfo()}${getmembercountinfo()}"
+//                                    mSelectAdapter.notifyDataSetChanged()
+//                                }
+//
+//
+//                            }
 
-                           tv_select_info.text = "已选${getteamcountinfo()}${getmembercountinfo()}"
-                       }
+                        }
+
 
 
                     }
@@ -260,6 +319,25 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
 
     }
 
+    override fun onBackPressed() {
+        if(pid_stack.size>1){
+            pid_stack.remove(pid_stack[0])
+            pid=pid_stack[0]
+            GetTeamMembers()
+            return
+        }
+        super.onBackPressed()
+    }
+    private fun backUpSetp() {
+        if(pid_stack.size>1){
+            pid_stack.remove(pid_stack[0])
+            pid=pid_stack[0]
+            GetTeamMembers()
+        }else{
+            iv_back.visibility=View.GONE
+        }
+    }
+
     private fun getmembercountinfo(): String {
         var info =""
         if(membercount!=0){
@@ -288,6 +366,8 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
     }
 
     private fun GetTeamMembers() {
+        mList.clear()
+        mAdapter.notifyDataSetChanged()
         NetRequest(URL_GET_TEAM_LIST+"/$COMP_ID/team/${pid}", NET_GET,null,this,this)
 
     }
@@ -298,7 +378,7 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
     ) {
         JSONObject(data)?.apply{
             if(!isNull("data")&&getInt("code")== REQUEST_SUCCESS_CODE){
-                mList.clear()
+
 //                if(pid.equals("root")){
                     tv_team_name.text = getJSONObject("data").getString("comp_name")
                     tv_members_count.text = "${getJSONObject("data").getInt("people_count")}人"
@@ -321,6 +401,9 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                             for (item in mList){
                                 if(select_list.contains(item.team_id)){
                                     item.select_status =true
+                                    if( ll_select_member.visibility ==View.GONE){
+                                        ll_select_member.visibility =View.VISIBLE
+                                    }
                                 }
                             }
                         }

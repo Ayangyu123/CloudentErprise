@@ -150,10 +150,11 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
                             var used_cap =getLong("used_cap")
                             var total_cap =getLong("total_cap")
 
-//                        var used_cap_info = String.format("%.2f",used_cap/1024L/1024L/1024L)
-                            var used_cap_info = Formatter.formatFileSize(mContext,used_cap).toUpperCase()
-                            var total_cap_info = Formatter.formatFileSize(mContext,total_cap).toUpperCase()
-//                        var total_cap_info = String.format("%.2f",total_cap/1024L/1024L/1024L)
+                        var used_cap_info = String.format("%.2fG",used_cap.toDouble()/1024/1024/1024)
+                            var total_cap_info = String.format("%.2fG",total_cap.toDouble()/1024/1024/1024)
+//                            var used_cap_info = Formatter.formatFileSize(mContext,used_cap).toUpperCase()
+//                            var total_cap_info = Formatter.formatFileSize(mContext,total_cap).toUpperCase()
+
 
                             tv_cap_info.text ="容量：${used_cap_info}/${total_cap_info}"
                             progressbar_cap.apply {

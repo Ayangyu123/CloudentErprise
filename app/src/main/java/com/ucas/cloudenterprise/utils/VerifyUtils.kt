@@ -19,7 +19,7 @@ object VerifyUtils {
         return  Pattern.compile(regex).matcher(s).matches()
     }
 
-    fun VerifyRequestData(json_data:String):Boolean{
+    fun VerifyResponseData(json_data:String):Boolean{
         if(JSONObject(json_data).getInt("code")== REQUEST_SUCCESS_CODE){
             return true
         }

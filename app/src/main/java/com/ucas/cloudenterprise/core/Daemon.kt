@@ -904,29 +904,38 @@ class DaemonService : Service() {
                 override fun onSuccess(response: Response<String>?) {
                     Toastinfo("${displayName} 上传完成")
 //
-                    MyApplication.upLoad_completed.add(0,
-                        CompletedFile("${displayName}"
-                            ,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
-                                Date()
-                            )
-                            ,size,
-                            false)
-                    )
+
 
                     for (loadingFile in MyApplication.upLoad_Ing) {
                         if(loadingFile.file_hash.equals(filehash)){
                             MyApplication.upLoad_Ing.remove(loadingFile)
-                            savaspbyfalag(UPLOADCOMPLETED)
+
                             savaspbyfalag(UPLOADING)
                             break
                         }
                     }
+                    response?.body()?.apply {
+                        if (VerifyUtils.VerifyResponseData(this)){
+                            MyApplication.upLoad_completed.add(0,
+                                CompletedFile("${displayName}"
+                                    ,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                                        Date()
+                                    )
+                                    ,size,
+                                    false)
+                            )
+                            savaspbyfalag(UPLOADCOMPLETED)
+                            EventBus.getDefault().post( MessageEvent())
 
-                        EventBus.getDefault().post( MessageEvent());
-                }
+                        }else{
+                        Toastinfo("${JSONObject(this).getString("message")}")
+                    }
+                    }
 
-            })
-    }
+
+
+            }
+    })}
 
     //</editor-fold>
     //<editor-fold desc="获取仓库信息">

@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
     var VerifcationCode="" //验证码
     var phone =""
-
+     var mCountDownTimer :CountDownTimer? =null
     override fun GetContentViewId()= R.layout.activity_forget_password
 
 
@@ -81,7 +81,7 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
                         tv_send_reset_password_message.apply {
                             text ="已发送"
                             isEnabled =false
-                            object :CountDownTimer(60 * 1000, 1000){
+                            mCountDownTimer= object :CountDownTimer(60 * 1000, 1000){
                                 override fun onFinish() {
                                     isEnabled =true
                                     text ="重新获取验证码"
@@ -91,9 +91,10 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
                                     text = "已发送(" + millisUntilFinished / 1000 + ")"
                                 }
 
-                            }.start()
-                        }
+                            }
 
+                        }
+                        mCountDownTimer!!.start()
                     }
                     "${URL_RESERT_PASS_VERIFY}"->{ //验证短信
                         //TODO 短信验证通过
@@ -102,12 +103,15 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
 //                                    + "新密码短信"
                             )
 //                            Toastinfo("密码重置成功,请注意查收新密码短信")
+                        mCountDownTimer?.cancel()
                             finish()
                         }
 
 
                     }
                 }else{
+                mCountDownTimer?.onFinish()
+                mCountDownTimer?.cancel()
                 Toastinfo(getString("message"))
             }
 

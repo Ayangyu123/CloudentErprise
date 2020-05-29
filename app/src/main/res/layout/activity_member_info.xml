@@ -29,15 +29,17 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="百度帐号"
+            android:text="土星云帐号"
+            android:visibility="gone"
             android:padding="5dp"/>
         <TextView
             android:id="@+id/tv_acc_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="用户名"
+            android:visibility="gone"
             android:padding="5dp"/>
-        <include layout="@layout/common_line"/>
+        <include layout="@layout/common_line"  android:visibility="gone"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

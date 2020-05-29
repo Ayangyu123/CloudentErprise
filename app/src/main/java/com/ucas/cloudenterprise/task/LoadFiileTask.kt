@@ -126,7 +126,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
             put("pid", "$pid" )
             put("size", file_size )
         }).tag(Multihash).converter(StringConvert()).adapt().execute()?.body()?.apply {
-            if(VerifyUtils.VerifyRequestData(this)){
+            if(VerifyUtils.VerifyResponseData(this)){
                 Toastinfo("${file_name} 上传完成")
 //
                 MyApplication.upLoad_completed.add(0,

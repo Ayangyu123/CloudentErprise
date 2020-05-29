@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui.member
 
 import android.app.Activity
 import android.text.TextUtils
+import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -25,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_member_info_edit.tv_acc_name
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.item_team.view.*
 import org.json.JSONObject
+import java.text.Format
 
 /**
 @author simpler
@@ -46,7 +48,7 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
 
 
 
-        et_cap.text = SetEt_Text(""+item.capacity)
+        et_cap.text = SetEt_Text(""+item.capacity/1024/1024/1024)
         et_phone.text = SetEt_Text(""+item.telphone)
         et_email.text = SetEt_Text(""+item.email)
 
@@ -68,11 +70,11 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
 
         tv_edit.setOnClickListener {
             //TODO 添加容量验证
-            if(TextUtils.isEmpty(et_cap.text)){
+            if(TextUtils.isEmpty(et_cap.text.toString())){
                 Toastinfo("请输入容量")
                 return@setOnClickListener
             }
-            if(TextUtils.isEmpty(et_phone.text)){
+            if(TextUtils.isEmpty(et_phone.text.toString())){
                 Toastinfo("请输入手机号")
                 return@setOnClickListener
             }
@@ -80,20 +82,18 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
                 Toastinfo("请输正确的手机号")
                 return@setOnClickListener
             }
-            if(TextUtils.isEmpty(et_phone.text)){
-                Toastinfo("请输入手机号")
-                return@setOnClickListener
-            }
-            if(TextUtils.isEmpty(et_email.text)){
-                Toastinfo("请输入邮箱")
-                return@setOnClickListener
-            }
+
+//            if(TextUtils.isEmpty(et_email.text.toString())){
+//                Toastinfo("请输入邮箱")
+//                return@setOnClickListener
+//            }
 
             NetRequest(URL_MEMBER_INFO_UPDATE, NET_POST,HashMap<String,Any>().apply {
                 put("member_id",item.member_id)
-                put("telphone",et_phone.text)
-                put("email",et_email.text)
+                put("telphone",et_phone.text.toString())
+                put("email",et_email.text.toString())
                 put("capacity",et_cap.text.toString().toInt())
+                put("comp_id",item.comp_id)
 
             },this,this)
         }
@@ -149,6 +149,8 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
                 }
 
              return
+            }else{
+                Toastinfo("${getString("message")}")
             }
 
         }

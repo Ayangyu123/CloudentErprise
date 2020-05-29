@@ -65,6 +65,8 @@ class MemberAuditInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
         NetRequest(URL_MEMBER_AUDIT_UPDATE_INFO, NET_PUT,HashMap<String,Any>().apply {
             put("member_id","${item.member_id}")
             put("status", if(passresult) PASS_STATE else NOT_PASS_STATE)
+            put("comp_id", item.comp_id)
+            put("mobile", "${item.telphone}")
         },this,this)
     }
 
@@ -76,8 +78,8 @@ class MemberAuditInfoActivity : BaseActivity(), BaseActivity.OnNetCallback {
         data: String
     ) {
         JSONObject(data)?.apply {
+            Toastinfo("${getString("message")}")
             if (getInt("code")== REQUEST_SUCCESS_CODE){
-                Toastinfo("审核完成")//TODO
                 setResult(Activity.RESULT_OK)
                 finish()
             }
