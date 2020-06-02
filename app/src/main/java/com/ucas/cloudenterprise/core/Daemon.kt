@@ -225,8 +225,8 @@ class DaemonService : Service() {
 
                     origins.removeAll { true }
                     origins.add(json("*"))
-                    origins.add(json("https://sweetipfswebui.netlify.com"))
-                    origins.add(json("http://127.0.0.1:5001"))
+//                    origins.add(json("https://sweetipfswebui.netlify.com"))
+//                    origins.add(json("http://127.0.0.1:5001"))
                 }
 
                 array("Access-Control-Allow-Methods").also { methods ->

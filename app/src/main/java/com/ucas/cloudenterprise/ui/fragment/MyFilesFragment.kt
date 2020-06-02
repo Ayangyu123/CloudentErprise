@@ -230,9 +230,10 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                         R.id.rb_sort_by_time->{
 //
                             Toastinfo("时间排序")
-                            fileslist.sortBy { it.created_at }.apply {
-                                adapter.notifyDataSetChanged()
-                            }
+//                            fileslist.sortBy { it.created_at }
+                            fileslist.sortByDescending { it.created_at }
+                            adapter.notifyDataSetChanged()
+
                         }
                     }
 
@@ -324,7 +325,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
         //</editor-fold >
         //<editor-fold  desc ="搜索按钮 设置" >
         iv_search.setOnClickListener {
-            startActivity(Intent(mContext,SearchFileActivity::class.java).putExtra("form","myfiles"))
+            startActivityForResult(Intent(mContext,SearchFileActivity::class.java).putExtra("form","myfiles"),SEARCH_CODE)
         }  //</editor-fold >
         //<editor-fold  desc ="刷新 设置" >
         tv_refresh.setOnClickListener {  GetFileList() }
@@ -333,6 +334,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     }
 
     //<editor-fold  desc ="新建文件夹 Dialog" >
+    val SEARCH_CODE =10009
     fun ShowCreateNewDirDialog() {
 //        if(CreateNewDirDialog == null){
 
@@ -369,7 +371,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
             val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
             contentview.layoutManager = GridLayoutManager(context,4)
             Log.e(TAG,"isfile is ${isfile}")
-            contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,isroot_file=item.pid.equals("root"))
+            contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,isroot_file=item.pid.equals("root"),ispshare_file = false)
             (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
                 override fun onItemClick(
                     holder: RecyclerView.ViewHolder,
@@ -566,6 +568,12 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
     //<editor-fold desc=" 网络请求回调  ">
     override fun OnNetPostSucces(request: Request<String, out Request<Any, Request<*, *>>>?, data: String) {
 
+        data?.apply {
+            if(JSONObject(data).getInt("code")==5000&&!((URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}").equals(request?.url))){
+                Toastinfo("${(JSONObject(data).getString("message"))}")
+                return
+            }
+        }
 
         when(request?.url){
             URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}"->{
@@ -611,6 +619,7 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                 GetFileList()
             }
             URL_DELETE_FILE ->{
+
                 Toastinfo("删除文件成功")
                 //TODO USER_ID ->PID
                 GetFileList()
@@ -626,10 +635,12 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
 
             }
             URL_FILE_MOV ->{
+
                 Toastinfo("文件移动成功")
                 GetFileList()
 
             }
+
 
         }
 
@@ -672,7 +683,20 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                     NetRequest(URL_FILE_MOV, NET_POST,params,this,this)
                 }
 
+                SEARCH_CODE->{
+                    //TODO
+                    if(resultCode==RESULT_OK&&data!=null){
+                        var item =data.getSerializableExtra("destfold") as File_Bean
+                        iv_back.visibility = View.VISIBLE
+                        tv_title.text = item.file_name
+                        pid_stack.add(0,item.file_id)
+                        pid_name_maps.put( item.file_id, item.file_name)
+                        pid = item.file_id
+                        GetFileList()
+                    }
 
+
+                }
 
             }
         }

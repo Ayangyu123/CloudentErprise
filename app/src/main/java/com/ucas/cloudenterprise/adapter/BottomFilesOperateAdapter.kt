@@ -30,8 +30,7 @@ class BottomFilesOperateAdapter(
     val isfile: Boolean,
     val Permisssion:Int =4,
     val isroot_file:Boolean = false,
-    var ispshare_file:Boolean=false
-
+    var ispshare_file:Boolean
 ) :RecyclerView.Adapter<BottomFilesOperateAdapter.ViewHolder>(){
     val TAG ="BottomFilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
@@ -68,29 +67,31 @@ class BottomFilesOperateAdapter(
             DrawableList.remove( R.drawable.operate_share_dir_normal)
         }else{
             InfoList.remove("链接分享")
-            InfoList.remove("下载")
             DrawableList.remove( R.drawable.operate_link_share_normal)
+            InfoList.remove("下载")
             DrawableList.remove( R.drawable.operate_download_normal)
         }
         when(Permisssion){
             1->{
-                InfoList.remove("移动到")
 
-                InfoList.remove("重命名")
-                InfoList.remove("删除")
                 InfoList.remove(  "设置共享")
                 DrawableList.remove( R.drawable.operate_share_dir_normal)
+                InfoList.remove("移动到")
                 DrawableList.remove( R.drawable.operate_move_to_normal)
+                InfoList.remove("重命名")
                 DrawableList.remove(R.drawable.operate_rename_normal)
+                InfoList.remove("删除")
                 DrawableList.remove(R.drawable.operate_delete_normal)
 
             }
             2->{
-                InfoList.remove("移动到")
-                InfoList.remove("重命名")
+
+
                 InfoList.remove(  "设置共享")
                 DrawableList.remove( R.drawable.operate_share_dir_normal)
+                InfoList.remove("移动到")
                 DrawableList.remove( R.drawable.operate_move_to_normal)
+                InfoList.remove("重命名")
                 DrawableList.remove(R.drawable.operate_rename_normal)
                 //TODO
                 InfoList.remove("删除")
@@ -103,17 +104,34 @@ class BottomFilesOperateAdapter(
             DrawableList.remove( R.drawable.operate_share_dir_normal)
         }
         if(ispshare_file){
-            InfoList.remove("复制到")
-            DrawableList.remove( R.drawable.operate_copy_to_normal)
-            InfoList.remove("移动到")
-            InfoList.remove("删除")
-            DrawableList.add( R.drawable.operate_delete_normal)
-            DrawableList.remove( R.drawable.operate_move_to_normal)
+//            InfoList.remove("复制到")
+//            DrawableList.remove( R.drawable.operate_copy_to_normal)
+//            InfoList.remove("移动到")
+//            DrawableList.remove( R.drawable.operate_move_to_normal)
+//            InfoList.remove("重命名")
+//            DrawableList.remove(R.drawable.operate_rename_normal)
+//            InfoList.remove("删除")
+//            DrawableList.add( R.drawable.operate_delete_normal)
+            InfoList.clear()
+            DrawableList.clear()
+
             if(isroot_file&&!isfile){
-                InfoList.clear()
-                DrawableList.clear()
-                InfoList.add("取消共享")
-                DrawableList.add( R.drawable.operate_delete_normal)
+                if(Permisssion==4){
+                    InfoList.add("取消共享")
+                    DrawableList.add( R.drawable.operate_delete_normal)
+                }
+                InfoList.add("详细信息")
+                DrawableList.add( R.drawable.operate_detail_normal)
+            }else{
+                if(!isfile){
+                    InfoList.add("详细信息")
+                    DrawableList.add( R.drawable.operate_detail_normal)
+                }else{
+                    InfoList.add("下载")
+                    DrawableList.add( R.drawable.operate_download_normal)
+                    InfoList.add("详细信息")
+                    DrawableList.add( R.drawable.operate_detail_normal)
+                }
             }
         }
     }

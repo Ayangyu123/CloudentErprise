@@ -97,19 +97,44 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun getrepostat() {
-        if(DaemonService.daemon!=null){
-            OkGo.post<String>("http://127.0.0.1:5001/api/v0/stats/repo?size-only=true&human=true")
-                .tag(this)
-                .execute(object :StringCallback(){
-                    override fun onSuccess(response: Response<String>?) {
-                        Log.e("ok",response?.body().toString())
-                        tv_repo_size.text =Formatter.formatFileSize(this@SettingsActivity,JSONObject(response?.body()).getLong("RepoSize"))
+        exec("repo stat --encoding=json").apply {
+            DaemonService.daemon = this
+            read {
+                Log.e("daemonit","repo stat="+it)
+                if(it.startsWith("{\"RepoSize\"")){
+                    runOnUiThread {
+                        tv_repo_size.text =Formatter.formatFileSize(this@SettingsActivity,JSONObject(it).getLong("RepoSize"))
                         ll_clear_cahe.isEnabled =true
                     }
-                })
+                     }else{
+                    runOnUiThread {
+                        Toastinfo("获取失败")
+                    }
 
+                }
+                }
+            }
         }
-    }
+//        if(DaemonService.daemon!=null){
+//            OkGo.post<String>("http://127.0.0.1:5001/api/v0/stats/repo?size-only=true&human=true")
+//                .tag(this)
+//                .execute(object :StringCallback(){
+//                    override fun onSuccess(response: Response<String>?) {
+//                        Log.e("ok",response?.body().toString())
+//                        return
+//                        response?.body()?.apply{
+//                            if(this.startsWith("{\"RepoSize\"")){
+//                                tv_repo_size.text =Formatter.formatFileSize(this@SettingsActivity,JSONObject(response?.body()).getLong("RepoSize"))
+//                                ll_clear_cahe.isEnabled =true
+//                            }
+//
+//                        }
+//
+//                    }
+//                })
+//
+//        }
+//    }
 
     fun execmd(view: View) {
         if(et_exec.text.isEmpty()){

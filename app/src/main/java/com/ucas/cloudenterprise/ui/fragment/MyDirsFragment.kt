@@ -32,6 +32,7 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
     lateinit var adapter:FilesAdapter
     lateinit var fileslist:ArrayList<File_Bean>
     var pid_src ="root"
+    var pathname=""
     lateinit var pid_stack : ArrayList<String>
 
     override fun OnNetPostSucces(
@@ -57,12 +58,28 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 
             fileslist.addAll((Gson().fromJson<List<File_Bean>>(JSONObject(data).getJSONArray("data").toString(),object : TypeToken<List<File_Bean>>(){}.type) as ArrayList<File_Bean>).filter { it.is_dir== IS_DIR })
             if(!fileslist.isEmpty()){
+                var destitem:File_Bean?=null
+                for (item in fileslist){
+                    if(item.file_id.equals((activity as ChooseDestDirActivity).file_item!!.file_id)){
+                        destitem=item
+                    }
+                }
+                if(destitem!=null){
+                    fileslist.remove(destitem)
+                }
                 if(!pid.equals("root")){
-                    var path =fileslist[0].path
-                    var last= path.indexOfLast {  it.equals('/') }
+//                    var path =fileslist[0].path
+//                    var last= path.indexOfLast {  it.equals('/') }
+//
+//                       if(last!=-1){
+//                           (activity as ChooseDestDirActivity).tv_path.text="已选：${path.substring(0,last)}"
+//                       }
+//                    (activity as ChooseDestDirActivity).tv_path.apply {
+//                        text =text.toString()+"/"+pathname
+//                    }
 
-                    (activity as ChooseDestDirActivity).tv_path.text="已选：${path.substring(0,last)}"
                 }else{
+
                     (activity as ChooseDestDirActivity).tv_path.text="已选： 我的文件"
                 }
                 adapter?.notifyDataSetChanged()

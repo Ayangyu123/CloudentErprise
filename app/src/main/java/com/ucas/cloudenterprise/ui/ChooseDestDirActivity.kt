@@ -158,6 +158,15 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                       destfargment. pid_stack.remove(destfargment.pid_stack[0])
                       destfargment.pid = destfargment.pid_stack[0]
                       destfargment.GetFileList()
+                      tv_path.apply {
+                          if(destfargment.pid.equals(destfargment.pid_src)){
+                              text="已选： 我的文件"
+                          }else{
+                              text = text.toString().substringBeforeLast("/")
+
+                          }
+
+                      }
 
                   }else{ //相等 返回
                       finish()
@@ -224,6 +233,15 @@ class ChooseDestDirActivity : BaseActivity(),BaseActivity.OnNetCallback {
                        if( !mMyFilesDirFragment.pid_stack.isEmpty()){
                        mMyFilesDirFragment.pid =mMyFilesDirFragment.pid_stack[0]
                        mMyFilesDirFragment.GetFileList()
+                           tv_path.apply {
+                               if(mMyFilesDirFragment.pid.equals(mMyFilesDirFragment.pid_src)){
+                                   text="已选： 我的文件"
+                               }else{
+                                   text = text.toString().substringBeforeLast("/")
+
+                               }
+
+                           }
                        return false
                        }
                    }

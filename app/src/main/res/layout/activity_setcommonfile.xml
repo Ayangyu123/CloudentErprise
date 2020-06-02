@@ -33,13 +33,13 @@
             android:layout_weight="1"/>
             <TextView
                 android:id="@+id/tv_add_editable"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:background="@color/app_color"
                 android:textColor="@android:color/white"
-                android:text="添加"
+                android:text="添加/修改"
                 />
     </LinearLayout>
         <include layout="@layout/common_line"/>
@@ -99,13 +99,13 @@
                 android:layout_weight="1"/>
             <TextView
                 android:id="@+id/tv_see_able"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:background="@color/app_color"
                 android:textColor="@android:color/white"
-                android:text="添加"
+                android:text="添加/修改"
                 />
         </LinearLayout>
         <include layout="@layout/common_line"/>
@@ -165,13 +165,13 @@
                 android:layout_weight="1"/>
             <TextView
                 android:id="@+id/tv_add_upload_able"
-                android:layout_width="50dp"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
                 android:background="@color/app_color"
                 android:textColor="@android:color/white"
-                android:text="添加"
+                android:text="添加/修改"
                 />
         </LinearLayout>
         <include layout="@layout/common_line"/>

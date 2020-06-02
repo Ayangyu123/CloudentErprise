@@ -1,5 +1,6 @@
 package com.ucas.cloudenterprise.ui
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.text.TextUtils
@@ -150,28 +151,15 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
 
                         if(!isfile){
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
+                            rl_file_item_root.setOnClickListener {
+                                var mintent =intent.putExtra("destfold",item)
+                                setResult(Activity.RESULT_OK,mintent)
+                                finish()
+                            }
                         }else{
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
-//                            var filetype = item.file_name.substringAfterLast(".")
-//                            Log.e(TAG,"filetype is ${filetype}")
-//                            if(filetype.equals("text")||filetype.equals("txt")){
-//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_txtfile)
-//                            }
-//                            if(filetype.equals("doc")||filetype.equals("docx")){
-//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_doc)
-//                            }
-//                            if(filetype.equals("pdf")){
-//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_pdf)
-//                            }
-//                            if(filetype.equals("exe")){
-//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_exe)
-//                            }
-//                            if(filetype.equals("apk")){
-//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_apk)
-//                            }
-//                            if(filetype in arrayOf("jpg","png","jpge","psd","svg")){
-//                                iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_image)
-//                            }
+
+
                         }
                     }
 
@@ -193,7 +181,8 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
         val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
         contentview.layoutManager = GridLayoutManager(context,4)
         Log.e(TAG,"isfile is ${isfile}")
-        contentview.adapter = if(searchtype==2) BottomFilesOperateAdapter(context,item,isfile,item.weight) else BottomFilesOperateAdapter(context,item,isfile)
+        contentview.adapter =  BottomFilesOperateAdapter(context,item,isfile,item.weight,isroot_file = item.pid.equals("root"),ispshare_file = searchtype==2)
+//        contentview.adapter = if(searchtype==2) BottomFilesOperateAdapter(context,item,isfile,item.weight,isroot_file = item.pid.equals("root"),ispshare_file = item.pshare==-1) else BottomFilesOperateAdapter(context,item,isfile)
         (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
             override fun onItemClick(
                 holder: RecyclerView.ViewHolder,
