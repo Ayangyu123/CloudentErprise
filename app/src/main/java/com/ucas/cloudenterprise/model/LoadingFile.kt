@@ -24,7 +24,8 @@ data class LoadingFile(
     var progress:Int=0,
     var Speed:String="",
     var src_file_info:File_Bean?=null,
-    var webSocketClient: WebSocketClient?=null
+    var webSocketClient: WebSocketClient?=null,
+    var file_progress:Int=0
     ):Serializable
 object LoadIngStatus{
     val WAITING =0 //等待

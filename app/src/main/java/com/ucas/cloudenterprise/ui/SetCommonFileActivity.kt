@@ -374,6 +374,7 @@ class SetCommonFileActivity:BaseActivity(), BaseActivity.OnNetCallback {
             ) {
 
                     if(JSONObject(data).getInt("code")== REQUEST_SUCCESS_CODE){
+                        fileitem?.pshare =-1
                         setResult(Activity.RESULT_OK)
                      getFilejuris()
                     }

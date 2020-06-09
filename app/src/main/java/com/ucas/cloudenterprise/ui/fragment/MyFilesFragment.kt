@@ -36,6 +36,7 @@ import com.lzy.okgo.utils.HttpUtils.runOnUiThread
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.BottomFilesOperateAdapter
 import com.ucas.cloudenterprise.app.*
+import com.ucas.cloudenterprise.base.BaseActivity.OnNetCallback
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.event.MessageEvent
@@ -68,7 +69,7 @@ import kotlin.collections.HashMap
 @author simpler
 @create 2020年01月10日  14:31
  */
-class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
+class MyFilesFragment: BaseFragment(), OnNetCallback {
     private val SET_PSHARE_CODE: Int =384
     val TAG ="MyFilesFragment"
     var fileslist = ArrayList<File_Bean>()
@@ -721,8 +722,26 @@ class MyFilesFragment: BaseFragment(),BaseActivity.OnNetCallback {
                 Toastinfo("存储空间不足，无法完成上传操作")
                 return
             }
-            var  mainActivity=activity as MainActivity
-            (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(file_path,pid)
+            NetRequest(URL_FILE_UPLOADABLE, NET_POST,HashMap<String,Any>().apply {
+                put("user_id", USER_ID)
+                put("file_size",destfile.length())
+            },this,object: OnNetCallback{
+                override fun OnNetPostSucces(
+                    request: Request<String, out Request<Any, Request<*, *>>>?,
+                    data: String
+                ) {
+                    if(VerifyUtils.VerifyResponseData(data)){
+                        var  mainActivity=activity as MainActivity
+                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.AddFile(file_path,pid)
+                    }else{
+                        Toastinfo(JSONObject(data).getString("message"))
+                    }
+
+                }
+
+            } )
+
+
 
 
 

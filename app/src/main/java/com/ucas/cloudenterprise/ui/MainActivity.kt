@@ -158,6 +158,7 @@ class MainActivity : BaseActivity() {
                                             UpdateDialog.dismiss()
                                         }
                                     }
+                                     UpdateDialog.setCancelable(false)
                                      UpdateDialog.setContentView(contentview)
                                      UpdateDialog.show()
                                  }

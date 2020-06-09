@@ -114,6 +114,7 @@ val URL_FILE_SEARCH = "${BASE_URL}file_search"
 val URL_FILE_RENAME = "${BASE_URL}file_rename"
 val URL_FILE_MOV = "${BASE_URL}file_mov"
 val URL_FILE_COPY = "${BASE_URL}file_copy"
+val URL_FILE_UPLOADABLE = "${BASE_URL}file_upload" //文件可上传查询
 
 //</editor-fold>
 

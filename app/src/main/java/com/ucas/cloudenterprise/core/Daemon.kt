@@ -204,7 +204,8 @@ class DaemonService : Service() {
                     put("NODE_SERVER", "${HOST}:6016")
                     put("MAX_ROUTINE_NUM", 20)
                     put("MAX_ROUTINE_NUM_2", 10)
-                    put("LOG_ENABLE", true)
+                    put("LOG_ENABLE", false)
+//                    put("LOG_ENABLE", true)
 
                 }.toString().toByteArray())
             }
@@ -466,9 +467,9 @@ class DaemonService : Service() {
 
                                         var downloadprogress=((progress!!.currentSize * 1.0f / task.file_size)*100).toInt()
                                         if(downloadprogress>task.progress){
-//                                            task.progress=downloadprogress
+                                            task.file_progress=downloadprogress
                                         }
-//                                        Log.e("ok","${ (progress!!.currentSize * 1.0f / task.file_size)*100}")
+                                        Log.e("ok","${ (progress!!.currentSize * 1.0f / task.file_size)*100}")
                                         //TODO 速度显示
                                         progress!!.speed.apply {
                                             if(this!=0L)
@@ -611,34 +612,12 @@ class DaemonService : Service() {
                 uptask.Ingstatus = LoadIngStatus.CONFIG
                 try {
 
-                    if(TextUtils.isEmpty(uptask.file_MD5)){  //判断MD5 如果为空就进行md5加密
-                        Log.e("ok","start file md5")
-                        val  start_time =System.currentTimeMillis()
-                        var file_md5=""
-                        val destfile_length =uptask.file_size
-                        val Memory = getMemory()
-                        if(destfile_length>(Memory)){
-
-                            file_md5= StatisticCodeLines.getFileMD5s(uptask.dest_file)
-                        }else{
-                            file_md5  =MD5encode(uptask.dest_file!!.readBytes())
-                        }
-                        uptask.file_MD5 =file_md5
-                        savaspbyfalag(UPLOADING)
-                        val  end_time =System.currentTimeMillis()
-                        Log.e("ok","file_md5 is ${file_md5}")
-                        Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
-                                /1000
-                        }")
-                    }
-
-
                     if(TextUtils.isEmpty(uptask.Aes_key)){  //判断AES_KEY 如果为空就获取
-                        if(TextUtils.isEmpty(uptask.file_MD5)){
-
-                            Log.e("ok","上传文件 file_MD5 为空")
-                            return
-                        }
+//                        if(TextUtils.isEmpty(uptask.file_MD5)){
+//
+//                            Log.e("ok","上传文件 file_MD5 为空")
+//                            return
+//                        }
 
                         var AesKey_adapt = OkGo.get<String>("http://127.0.0.1:9984/api/v0/aes/key/random").tag(uptask.file_MD5).converter(StringConvert()).adapt()
                         val AesKey_response: Response<String> = AesKey_adapt.execute()
@@ -647,6 +626,32 @@ class DaemonService : Service() {
                         uptask.Aes_key=AesKey
                         savaspbyfalag(UPLOADING)
                     }
+
+                    if(TextUtils.isEmpty(uptask.file_MD5)){  //判断MD5 如果为空就进行md5加密
+                        uptask.file_MD5= uptask.Aes_key!!.substring(0,32)
+
+//                        Log.e("ok","start file md5")
+//                        val  start_time =System.currentTimeMillis()
+//                        var file_md5=""
+//                        val destfile_length =uptask.file_size
+//                        val Memory = getMemory()
+//                        if(destfile_length>(Memory)){
+//
+//                            file_md5= StatisticCodeLines.getFileMD5s(uptask.dest_file)
+//                        }else{
+//                            file_md5  =MD5encode(uptask.dest_file!!.readBytes())
+//                        }
+//                        uptask.file_MD5 =file_md5
+                        savaspbyfalag(UPLOADING)
+//                        val  end_time =System.currentTimeMillis()
+//                        Log.e("ok","file_md5 is ${file_md5}")
+//                        Log.e("ok","md5 time  is ${(end_time-start_time).toDouble()
+//                                /1000
+//                        }")
+                    }
+
+
+
 
 
                      if(!uptask.hasPacked){

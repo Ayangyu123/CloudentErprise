@@ -295,4 +295,7 @@ fun getRootPath():String{
 
 //</editor-fold>
 
+fun main(){
+    println("z4VRVt6JKDGCuDtB3q5tiaCqJvspgYaMny66xCCHYR81v".substring(0,32))
+}
 

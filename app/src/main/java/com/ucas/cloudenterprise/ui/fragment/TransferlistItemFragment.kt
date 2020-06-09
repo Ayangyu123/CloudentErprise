@@ -113,7 +113,13 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                         }
                         tv_file_name.text =item.file_name
 
-                         progress_download.setProgress(item.progress,true)
+
+                        if(item.load_type_falg==DOWNLOAD){
+                        progress_download.secondaryProgress =item.progress
+                            progress_download.setProgress(item.file_progress,true)
+                        }else{
+                            progress_download.setProgress(item.progress,true)
+                        }
                         iv_down_flag.setImageResource(if(item.load_type_falg!=DOWNLOAD) R.drawable.reupload else R.drawable.redownload) ////0  up  1 down
                         iv_down_flag.setOnClickListener { //点击按钮修改文件状态
                             var  mainActivity=activity as MainActivity

@@ -213,6 +213,15 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                                 }
                             }
 
+                            if(pid.equals("root")){
+                                if(item.weight==4){
+                                    iv_right_icon.visibility =View.VISIBLE
+                                }else{
+                                    iv_right_icon.visibility =View.INVISIBLE
+                                }
+                            }
+
+
                             iv_right_icon.setOnClickListener {
                                 mdata.getJSONObject(position)?.apply {
                                     item.size = getLong("file_size")

@@ -70,48 +70,45 @@ class BottomFilesOperateAdapter(
             DrawableList.remove( R.drawable.operate_link_share_normal)
             InfoList.remove("下载")
             DrawableList.remove( R.drawable.operate_download_normal)
+         InfoList.remove("复制到")
+         InfoList.remove("移动到")
+            DrawableList.remove( R.drawable.operate_copy_to_normal)
+            DrawableList.remove( R.drawable.operate_move_to_normal)
         }
-        when(Permisssion){
-            1->{
-
-                InfoList.remove(  "设置共享")
-                DrawableList.remove( R.drawable.operate_share_dir_normal)
-                InfoList.remove("移动到")
-                DrawableList.remove( R.drawable.operate_move_to_normal)
-                InfoList.remove("重命名")
-                DrawableList.remove(R.drawable.operate_rename_normal)
-                InfoList.remove("删除")
-                DrawableList.remove(R.drawable.operate_delete_normal)
-
-            }
-            2->{
-
-
-                InfoList.remove(  "设置共享")
-                DrawableList.remove( R.drawable.operate_share_dir_normal)
-                InfoList.remove("移动到")
-                DrawableList.remove( R.drawable.operate_move_to_normal)
-                InfoList.remove("重命名")
-                DrawableList.remove(R.drawable.operate_rename_normal)
-                //TODO
-                InfoList.remove("删除")
-                DrawableList.remove(R.drawable.operate_delete_normal)
-            }
-        }
+//        when(Permisssion){
+//            1->{
+//
+//                InfoList.remove(  "设置共享")
+//                DrawableList.remove( R.drawable.operate_share_dir_normal)
+//                InfoList.remove("移动到")
+//                DrawableList.remove( R.drawable.operate_move_to_normal)
+//                InfoList.remove("重命名")
+//                DrawableList.remove(R.drawable.operate_rename_normal)
+//                InfoList.remove("删除")
+//                DrawableList.remove(R.drawable.operate_delete_normal)
+//
+//            }
+//            2->{
+//
+//
+//                InfoList.remove(  "设置共享")
+//                DrawableList.remove( R.drawable.operate_share_dir_normal)
+//                InfoList.remove("移动到")
+//                DrawableList.remove( R.drawable.operate_move_to_normal)
+//                InfoList.remove("重命名")
+//                DrawableList.remove(R.drawable.operate_rename_normal)
+//                //TODO
+//                InfoList.remove("删除")
+//                DrawableList.remove(R.drawable.operate_delete_normal)
+//            }
+//        }
 
         if(!isroot_file){
             InfoList.remove(  "设置共享")
             DrawableList.remove( R.drawable.operate_share_dir_normal)
         }
         if(ispshare_file){
-//            InfoList.remove("复制到")
-//            DrawableList.remove( R.drawable.operate_copy_to_normal)
-//            InfoList.remove("移动到")
-//            DrawableList.remove( R.drawable.operate_move_to_normal)
-//            InfoList.remove("重命名")
-//            DrawableList.remove(R.drawable.operate_rename_normal)
-//            InfoList.remove("删除")
-//            DrawableList.add( R.drawable.operate_delete_normal)
+
             InfoList.clear()
             DrawableList.clear()
 
