@@ -6,6 +6,7 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.IS_DIR
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.File_Bean
+import com.ucas.cloudenterprise.utils.FormatFileSize
 import kotlinx.android.synthetic.main.activity_fileinfo.*
 import kotlinx.android.synthetic.main.common_head.*
 
@@ -25,23 +26,33 @@ class FileInfoActivity : BaseActivity() {
             tv_file_last_update_persional.text = compet_user
             tv_file_owners.text = compet_user
             if(size!=null){
-                tv_file_size.text = Formatter.formatFileSize(this@FileInfoActivity,size).toUpperCase()
+//                tv_file_size.text = Formatter.formatFileSize(this@FileInfoActivity,size).toUpperCase()
+                tv_file_size.text = FormatFileSize(size)
             }
 
 
 
             tv_file_name.text = file_name
-            iv_type.setImageResource(if(item.is_dir==IS_DIR) R.drawable.icon_list_folder else  R.drawable.icon_list_unknown)
-            tv_file_type.text = if(item.is_dir==IS_DIR)  "文件夹" else   "文件"
+            var file_type_text =""
+            var file_type_icon =R.drawable.icon_list_folder
+            if(item.is_dir==IS_DIR){
+                file_type_text =  "文件夹"
+                item.pshare?.apply {
+                    if(this==-1){
+                        file_type_text =  "共享文件夹"
+                        file_type_icon =R.drawable.icon_list_share_folder
+                    }
+                }
 
+            }else{
+                file_type_text =  "文件"
+                file_type_icon =  R.drawable.icon_list_unknown
+            }
+            tv_file_type.text = file_type_text
+            iv_type.setImageResource(file_type_icon)
+            tv_file_size_text.visibility = if(item.is_dir==IS_DIR) View.GONE else View.VISIBLE
+            tv_file_size.visibility = if(item.is_dir==IS_DIR) View.GONE else View.VISIBLE
 
-//            when(item.file_name.substringAfterLast(".")){
-//
-//                else->{
-//                    iv_type.setImageResource(R.drawable.icon_list_folder)
-//                    tv_file_type.text = "文件夹"
-//                }
-//            }
         }
 
 

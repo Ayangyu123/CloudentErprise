@@ -66,7 +66,7 @@
 
         <item name="android:textColor">#596974</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:maxLines">1</item>
         <item name="android:layout_height">wrap_content</item>
     </style>

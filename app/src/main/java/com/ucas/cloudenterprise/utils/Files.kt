@@ -54,3 +54,21 @@ fun FileCP(inputStream: InputStream,outputStream: OutputStream){
     }
 
 }
+fun main(){
+    println(FormatFileSize(10))
+}
+fun FormatFileSize(filesize:Long):String{
+    if(filesize<1024){ //B
+        return  "${String.format("%.2fB",filesize.toFloat())}"
+    }
+
+    if(filesize<(1024*1024)){ //1048576  MB
+        return  "${String.format("%.2fKB",filesize.toFloat()/(1024))}"
+    }
+    if(filesize<(1024*1024*1024)){ //1073 7418 24  G
+        return  "${String.format("%.2fMB",filesize.toFloat()/(1024*1024))}"
+    }else{
+        return  "${String.format("%.2fGB",filesize.toFloat()/(1024*1024*1024))}"
+    }
+    return ""
+}

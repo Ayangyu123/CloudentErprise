@@ -56,6 +56,7 @@
         android:layout_below="@id/tv_file_size_text"
         android:id="@+id/tv_file_owners_text"
         style="@style/file_info_text"
+        android:visibility="gone"
         android:text="所  有   者："
         />
     <TextView
@@ -92,6 +93,7 @@
         android:layout_toRightOf="@id/tv_file_owners_text"
         android:layout_below="@id/tv_file_size_text"
         tools:text="樊志攀"
+        android:visibility="gone"
         android:maxLines="1"
         style="@style/file_info" />
 
