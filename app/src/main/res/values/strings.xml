@@ -23,4 +23,5 @@
     <string name="myfile">我的文件</string>
     <string name="edit">编辑</string>
     <string name="iv_search__des">search_icon</string>
+    <string name="service_agreement">我已阅读<font color="#0077FF">《服务协议》</font></string>
 </resources>

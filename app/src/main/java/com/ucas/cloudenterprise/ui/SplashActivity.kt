@@ -41,7 +41,6 @@ class SplashActivity:BaseActivity() {
             }
 
         }
-
         ).start()
     }
 
@@ -71,37 +70,7 @@ class SplashActivity:BaseActivity() {
         }
         return isGranted
     }
-//    fun checkPermission(): Boolean? {
-//        var isGranted = true
-//        if (android.os.Build.VERSION.SDK_INT >= 23) {
-//            XXPermissions.gotoPermissionSettings(this);
-////        XXPermissions.with(this)
-////                .permission(Permission.Group.STORAGE)
-////                .request(new OnPermission() {
-////
-////                    @Override
-////                    public void hasPermission(List<String> granted, boolean isAll) {
-////                    if (isAll) {
-////                            DialogUtil.showMessage("获取权限成功");
-////                        } else {
-////                            DialogUtil.showMessage("获取权限成功，部分权限未正常授予");
-////                        }
-////                    }
-////
-////                    @Override
-////                    public void noPermission(List<String> denied, boolean quick) {
-////                        if (quick) {
-////                            DialogUtil.showMessage("被永久拒绝授权，请手动授予权限");
-////                            //如果是被永久拒绝就跳转到应用权限系统设置页面
-////                            XXPermissions.gotoPermissionSettings(SplashActivity.this);
-////                        } else {
-////                            DialogUtil.showMessage("获取权限失败");
-////                        }
-////                    }
-////                });
-//        }
-//        return isGranted
-//    }
+
 
 
 }

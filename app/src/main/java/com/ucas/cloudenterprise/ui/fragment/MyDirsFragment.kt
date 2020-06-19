@@ -121,7 +121,7 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
         adapter = FilesAdapter(mContext,fileslist)
         rc_myfiles.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false)
         rc_myfiles.adapter = adapter
-        rc_myfiles.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
+//        rc_myfiles.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                 var item =fileslist[position]

@@ -1,88 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:background="@android:color/white"
+    >
 
 
+    <ImageView
+        android:layout_width="55dp"
+        android:layout_height="30dp"
+        android:scaleType="fitXY"
+        android:layout_marginTop="97dp"
+        android:src="@drawable/login_head_icon"
+        />
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:gravity="center"
-        android:text="@string/app_full_name"
+        android:layout_height="25dp"
+        android:layout_marginTop="18dp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:text="欢迎登录，土星云"
         android:textSize="20dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="30dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="62dp"
+        android:orientation="vertical"
         >
-        <TextView
-            android:layout_width="100dp"
-            android:text="账号"
-            android:gravity="center"
-            android:layout_height="match_parent"/>
 
         <EditText
             android:id="@+id/et_user_name"
-            style="@style/register_edittext_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@null"
+            android:gravity="center_vertical"
+            android:inputType="phone"
+            android:hint="请输入手机号"
             android:maxLength="15"
-            android:hint="请输入手机号" />
+            android:textColor="#333333"
+            android:textColorHint="#C8C8C8"
+            android:textSize="16dp" />
+
+        <View
+            android:id="@+id/et_phone_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            />
 
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         >
-        <TextView
-            android:layout_width="100dp"
-            android:text="密码"
-            android:gravity="center"
-            android:layout_height="match_parent"/>
+
 
         <EditText
             android:id="@+id/et_user_password"
-            style="@style/register_edittext_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:maxLength="16"
             android:inputType="textPassword"
             android:background="@null"
-            android:hint="请输入登录密码4-16位" />
+            android:textSize="16dp"
+            android:textColor="#333333"
+            android:textColorHint="#C8C8C8"
+            android:hint="请输入登录密码" />
+
+        <View
+            android:id="@+id/et_password_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#E0E0E0"
+            />
 
     </LinearLayout>
     <CheckBox
         android:id="@+id/check_box_remember_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
         android:checked="true"
+        android:visibility="gone"
+        android:textColor="#666666"
         android:text="记住密码" />
-
-
-
-    <TextView
-        android:onClick="Login"
-        android:text="登录"
-        android:textColor="@android:color/white"
-       android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@color/app_color"
-        android:gravity="center"
-        android:padding="10dp"
-        />
-
-
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:visibility="visible"
         android:orientation="horizontal">
 
@@ -91,8 +107,7 @@
             android:text="忘记密码"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginLeft= "20dp"
+            android:textColor="#7E7E7E"
             />
         <View
             android:layout_width="0dp"
@@ -100,23 +115,41 @@
             android:layout_weight="1"/>
         <TextView
             android:onClick="ToRegisterActivity"
-            android:text="没有账号，立即注册"
+            android:text="新用户注册"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="20dp"
+            android:textColor="#0077FF"
 
             />
     </LinearLayout>
     <TextView
+        android:onClick="Login"
+        android:text="登录"
+        android:layout_marginTop="27dp"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/login_bg"
+        android:gravity="center"
+        android:padding="10dp"
+        />
+
+
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:padding="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:text="以下情况请联系企业管理员:\n        1.没有登录账号密码\n        2.忘记密码"
+        android:layout_marginTop="34dp"
+        android:textColor="#666666"
+        android:text="子用户遇到以下情况请联系企业管理员:"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="#666666"
+        android:text="1.没有登录账号密码\n2.忘记密码"
         />
 
 

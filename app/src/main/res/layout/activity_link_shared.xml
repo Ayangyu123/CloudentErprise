@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:paddingLeft="16dp"
         android:gravity="center_vertical"
         android:background="@android:color/white"
         >
@@ -32,8 +32,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                android:textSize="16dp"
                 android:text="设置链接密码"
-                android:textColor="@android:color/black"
+                android:textColor="#333"
                 />
             <CheckBox
                 android:id="@+id/checkbox_setting_password"
@@ -47,12 +50,18 @@
                 />
 
         </LinearLayout>
-        <include layout="@layout/common_line"/>
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#F1F1F1"
+            />
         <LinearLayout
             android:id="@+id/ll_random"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:orientation="horizontal"
             android:visibility="visible"
             >
@@ -63,6 +72,9 @@
                 android:layout_weight="1"
                 android:maxLines="1"
                 android:maxLength="6"
+                android:textSize="14dp"
+                android:textColor="#333"
+                android:textColorHint="#999"
                 android:inputType="none"
                 android:hint="请输入4到6位的字母、数字"
                 android:background="@null"
@@ -89,9 +101,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
-        android:padding="10dp"
+        android:layout_marginTop="12dp"
         android:gravity="center_vertical"
+        android:paddingLeft="16dp"
         android:background="@android:color/white"
         >
         <LinearLayout
@@ -103,8 +115,11 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:text="设置链接有效期"
+                android:textSize="16dp"
                 android:textColor="@android:color/black"
                 />
             <CheckBox
@@ -119,16 +134,24 @@
                 />
 
         </LinearLayout>
-        <include layout="@layout/common_line"/>
+        <View android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#F1F1F1"
+            />
         <TextView
             android:id="@+id/textview_setting_indate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="设置链接有效期"
-            android:padding="10dp"
+            tools:hint="设置链接有效期"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+
             android:visibility="visible"
             android:drawableRight="@drawable/pick_date_normal"
-            android:textColor="@android:color/black"
+            android:textColor="#333"
+            android:textColorHint="#999"
             />
 
     </LinearLayout>
@@ -148,7 +171,7 @@
             android:layout_height="wrap_content"
             android:text="分享链接及密码"
             android:textColor="@android:color/white"
-            android:background="@color/app_color"
+            android:background="@drawable/login_bg"
             android:gravity="center"
             android:padding="10dp"
             android:layout_margin="10dp"/>

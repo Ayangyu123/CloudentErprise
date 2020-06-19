@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="75dp"
+    android:layout_height="71dp"
     android:background="@color/app_color"
-    android:padding="10dp">
+    >
 
     <ImageView
-    android:id="@+id/iv_back"
-    android:layout_width="50dp"
-    android:layout_height="50dp"
-    android:layout_centerVertical="true"
-    android:contentDescription="@string/iv_back_des"
-
-    android:scaleType="center"
-    android:src="@drawable/title_back_icon_normal" />
+        android:id="@+id/iv_back"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/iv_back_des"
+        android:paddingTop="26dp"
+        android:scaleType="center"
+        android:src="@drawable/title_back_icon_normal" />
     <ImageView
         android:id="@+id/iv_choose"
         android:layout_width="50dp"
@@ -27,12 +27,11 @@
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_height="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
+        android:layout_marginTop="37dp"
         android:maxLines="1"
+        android:textStyle="bold"
         android:text="@string/myfile"
         android:textColor="#FFF"
         android:textSize="@dimen/tv_titile" />
@@ -40,15 +39,13 @@
     <TextView
         android:id="@+id/tv_edit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:paddingTop="38dp"
         android:paddingRight="16dp"
-        android:paddingBottom="18dp"
-        android:gravity="center"
         android:maxLines="1"
         android:text="@string/edit"
-
         android:textColor="#FFF"
         android:textSize="@dimen/tv_edit" />
 

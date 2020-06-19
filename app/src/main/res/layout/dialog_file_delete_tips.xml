@@ -5,24 +5,22 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
+    android:layout_margin="20dp"
     android:background="@drawable/bg_create_new_dir_dialog"
     >
+
     <TextView
         android:id="@+id/tv_dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="删除文件"
-        android:maxLines="1"
         android:gravity="center"
+        android:maxLines="1"
+        android:text="删除文件"
+        android:textColor="#333"
         android:textSize="20dp"
-        />
-    <include layout="@layout/common_line"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginTop="10dp"
-        />
+        android:textStyle="bold" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,6 +28,7 @@
         android:gravity="center"
         android:text="确定要删除所选文件/文件夹吗？"
         android:textSize="16dp"
+        android:textColor="#333"
         android:layout_marginTop="20dp"
         />
     <TextView
@@ -37,36 +36,55 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:gravity="center"
-        android:layout_marginTop="10dp"
+        android:textColor="#999"
         android:text="已删除文件仍占容量，要彻底删除请登录网页版"
-        android:textSize="12dp"
-
+        android:textSize="14dp"
         android:layout_marginBottom="20dp"
         />
 
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="21dp"
+        android:background="#E9E9E9"
+        />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:orientation="horizontal"
-        android:layout_margin="15dp"
         >
         <TextView
             android:id="@+id/tv_cancle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:text="取消"
+            android:gravity="center"
+            android:textStyle="bold"
             android:maxLines="1"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/bg_dialog_action_tv_canle"
-            style="@style/dialog_action_textview" />
+            android:textColor="#333"
+            />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#E9E9E9"
+            />
         <TextView
             android:id="@+id/tv_commit"
-            android:text="确认删除"
+            android:text="确定"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            android:gravity="center"
+            android:textStyle="bold"
             android:maxLines="1"
-            android:textColor="#fff"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/bg_dialog_action_tv_commit"
-            style="@style/dialog_action_textview" />
+            android:textColor="#2864DE"
+            />
 
     </LinearLayout>
+
+
 
 </LinearLayout>

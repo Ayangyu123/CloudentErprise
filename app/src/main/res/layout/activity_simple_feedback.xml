@@ -11,24 +11,30 @@
         android:id="@+id/et_feedback"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="150dp"
-        android:layout_margin="10dp"
+        android:minHeight="200dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:padding="10dp"
         android:background="@drawable/et_feedback_bg"
         android:gravity="left"
-        android:hint="请入您宝贵的意见"
+        android:textSize="16dp"
+        android:textColorHint="#999"
+        android:textColor="#333"
+        android:hint="请提供您宝贵的意见"
         />
 
     <TextView
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:onClick="commit_feedback"
-        android:background="@color/app_color"
+        android:background="@drawable/login_bg"
         android:textColor="@android:color/white"
         android:gravity="center"
-        android:layout_margin="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:text="提交"
         />
 

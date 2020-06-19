@@ -8,10 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.widget.PopupWindow
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -92,7 +89,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
        adapter = FilesAdapter(mContext,fileslist)
        rc_myfiles.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false)
        rc_myfiles.adapter = adapter
-       rc_myfiles.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
+//       rc_myfiles.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener{
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                 var item =fileslist[position]
@@ -504,6 +501,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
              }
              setContentView(contentview)
+             window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
              setCancelable(true)
          }
 

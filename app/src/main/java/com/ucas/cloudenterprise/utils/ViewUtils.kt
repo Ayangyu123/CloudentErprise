@@ -105,6 +105,7 @@ fun GetFileDeleteTipsDialog(
 
         }
         setContentView(contentview)
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
         setCancelable(true)
     }
 }

@@ -10,11 +10,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         >
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -24,6 +24,7 @@
         >
         <TextView
             android:text="公司名称"
+            android:textColor="#333"
             android:layout_width="100dp"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
@@ -33,11 +34,14 @@
             style="@style/register_edittext_style"
             android:singleLine="true"
             android:maxLength="30"
+            android:layout_marginLeft="15dp"
+            android:textColor="#666"
+            android:textSize="16dp"
+            android:textColorHint="#999"
             android:hint="请输入公司名称"
             tools:text="@string/test" />
 
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -47,6 +51,7 @@
         <TextView
             android:layout_width="100dp"
             android:text="公司联系邮箱"
+            android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
 
@@ -55,7 +60,10 @@
             style="@style/register_edittext_style"
             android:singleLine="true"
             android:maxLength="30"
-
+            android:layout_marginLeft="15dp"
+            android:textColor="#666"
+            android:textSize="16dp"
+            android:textColorHint="#999"
             android:hint="请输入公司联系邮箱"
             tools:text="@string/test_email" />
 
@@ -69,13 +77,18 @@
         <TextView
             android:layout_width="100dp"
             android:text="公司联系电话"
+            android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
         <EditText
             android:id="@+id/et_comp_con_tel"
             tools:text="@string/test"
             android:hint="请输入公司联系电话"
+            android:layout_marginLeft="15dp"
+            android:textColor="#666"
+            android:textColorHint="#999"
             android:maxLength="15"
+            android:textSize="16dp"
             style="@style/register_edittext_style"/>
 
     </LinearLayout>
@@ -88,6 +101,7 @@
         <TextView
             android:layout_width="100dp"
             android:text="密码"
+            android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
         <EditText
@@ -95,12 +109,16 @@
             android:hint="请输入密码4-16位"
             tools:text="@string/test"
             android:maxLength="16"
+            android:layout_marginLeft="15dp"
+            android:textColor="#666"
+            android:textSize="16dp"
+            android:textColorHint="#999"
             android:inputType="textPassword"
             style="@style/register_edittext_style"/>
 
 
     </LinearLayout>
-        <LinearLayout
+     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
@@ -109,6 +127,7 @@
         <TextView
             android:layout_width="100dp"
             android:text="确认密码"
+            android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
 
@@ -117,20 +136,24 @@
             android:hint="请再次输入密码"
             tools:text="@string/test"
             android:maxLength="16"
+            android:layout_marginLeft="15dp"
+            android:textColor="#666"
+            android:textSize="16dp"
+            android:textColorHint="#999"
             android:inputType="textPassword"
             style="@style/register_edittext_style"/>
 
     </LinearLayout>
-        <LinearLayout
+     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="horizontal"
-            android:layout_marginBottom="50dp"
             >
             <CheckBox
                 android:id="@+id/check_box_register_able"
                 android:layout_width="wrap_content"
+                android:layout_marginLeft="-4dp"
                 android:gravity="center_vertical|left"
                 android:layout_height="match_parent"/>
 
@@ -139,43 +162,25 @@
                 android:onClick="GotoWebActivity"
                 style="@style/register_edittext_style"
                 android:gravity="center_vertical"
-                android:text="我已阅读《服务协议》" />
+                android:text="@string/service_agreement" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_register"
-            android:text="注册"
-            android:onClick="register"
-            android:background="@color/app_color"
-           android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp"
-            android:layout_margin="20dp"
-            android:gravity="center"
-            android:textColor="@android:color/white"
 
-            />
-    <TextView
-        android:text="gettoken(登陆)"
-        android:onClick="GetToken"
-        android:visibility="gone"
-        android:background="@color/colorAccent"
-        style="@style/TV_Action" />
-
-    <TextView
-        android:id="@+id/tv_result"
-        style="@style/TV_ShowResult"
-        />
-
-
-    <TextView
-        android:id="@+id/To_TeamActivity"
-        android:visibility="gone"
-        style="@style/TV_To_Activity"
-        android:onClick="ToTeamActivity"
-        android:text="AddTeamActivity" />
 
 
 </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_register"
+        android:text="注册"
+        android:onClick="register"
+        android:background="@drawable/login_bg"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+
+        />
 </LinearLayout>

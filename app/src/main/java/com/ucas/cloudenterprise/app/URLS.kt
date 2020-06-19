@@ -123,11 +123,13 @@ val URL_FILE_UPLOADABLE = "${BASE_URL}file_upload" //文件可上传查询
 val URL_LOGIN = "${Login_URL}/api/cloud/v1/login"
 val GET_REFRESH_ACCESS_TOKEN =
     "${BASE_HOST + Get_Token_Port}refresh/"// :id id为refresh_token + user_id"
+val URL_LOGOUT = "${Login_URL}/api/cloud/v1/logout"
 //</editor-fold>
 
 //<editor-fold desc="链接分享">
 val URL_LINK_SHARE_CREATE = "${BASE_URL}enterprise/share/created"
 val URL_LINK_SHARE_UPDATE = "${BASE_URL}enterprise/share/update"
+
 //</editor-fold>
 
 //<editor-fold desc="企业信息">

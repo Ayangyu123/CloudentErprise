@@ -38,9 +38,14 @@
 
         <!--  第一个启动的   activity （页面）   -->
 
-        <activity android:name=".ui.PacaktestActivity"  android:screenOrientation="portrait"/>
+        <activity android:name=".ui.PacaktestActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"/>
+            <!--    注册页面     -->
+            <activity android:name=".ui.SplashActivity"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait">
 <!--        <activity android:name=".ui.MainActivity">-->
 <!--        <activity android:name=".ui.TeamAcitvity">-->
 <!--        <activity android:name=".ui.ChooseDestDirActivity">-->
@@ -54,8 +59,7 @@
             <!--    Main     -->
         <activity android:name=".ui.MainActivity" android:launchMode="singleTop"  android:screenOrientation="portrait"/>
 
-        <!--    注册页面     -->
-        <activity android:name=".ui.SplashActivity" android:launchMode="singleTop"  android:screenOrientation="portrait"/>
+
 
         <!-- 欢迎   页面-->
         <activity android:name=".ui.WelcomeActivity"  android:screenOrientation="portrait"/>

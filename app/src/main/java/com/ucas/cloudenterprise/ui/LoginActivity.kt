@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
@@ -48,7 +49,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
 
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).edit()
-            .putString("access_token", ACCESS_TOKEN).putString("refresh_token", REFRESH_TOKEN)
+            .putString("access_token", ACCESS_TOKEN)
+            .putString("refresh_token", REFRESH_TOKEN)
             .putString("last_login_user_name", phone)
             .putBoolean("remember_password", check_box_remember_password.isChecked)
             .putString("last_login_user_password", passwords)
@@ -69,6 +71,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     }
 
     override fun InitView() {
+        window.statusBarColor = Color.parseColor(APP_COLOR)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
            startForegroundService( Intent(this, DaemonService::class.java))
         } else {

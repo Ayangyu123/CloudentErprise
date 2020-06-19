@@ -11,7 +11,6 @@ import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.utils.SetEt_Text
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
-import kotlinx.android.synthetic.main.activity_forget_password.*
 import kotlinx.android.synthetic.main.activity_reset_password.*
 import kotlinx.android.synthetic.main.activity_reset_password.editText_verification_code
 import kotlinx.android.synthetic.main.activity_reset_password.tv_send_reset_password_message

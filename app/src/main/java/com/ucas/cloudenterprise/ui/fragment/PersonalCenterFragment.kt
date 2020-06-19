@@ -20,9 +20,7 @@ import com.ucas.cloudenterprise.ui.*
 import com.ucas.cloudenterprise.ui.helpandfeedback.HelpAndFeedbackActivity
 import com.ucas.cloudenterprise.ui.member.MembersManageActivity
 import com.ucas.cloudenterprise.ui.message.MessageNotificationActivity
-import com.ucas.cloudenterprise.utils.FormatFileSize
-import com.ucas.cloudenterprise.utils.SetEt_Text
-import com.ucas.cloudenterprise.utils.startActivity
+import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.activity_reset_password.*
 import kotlinx.android.synthetic.main.personal_center_fragment.*
 import kotlinx.android.synthetic.main.personal_center_fragment.tv_reset_password
@@ -69,16 +67,38 @@ class PersonalCenterFragment: BaseFragment(), BaseActivity.OnNetCallback {
             }
         tv_to_logout.setOnClickListener {
         //TODO
-            MyApplication.upLoad_Ing.clear()
-            MyApplication.upLoad_completed.clear()
-            MyApplication.downLoad_Ing.clear()
-            MyApplication.downLoad_completed.clear()
-            activity as MainActivity
-            (activity as MainActivity).myBinder?.mDaemonService?.savaspall()
+            OkGo.put<String>(URL_LOGOUT).tag(this).execute(
+                object :StringCallback(){
+                    override fun onSuccess(response: Response<String>?) {
+                        response?.body()?.apply {
+                            if(VerifyUtils.VerifyResponseData(this)){
+                                MyApplication.upLoad_Ing.clear()
+                                MyApplication.upLoad_completed.clear()
+                                MyApplication.downLoad_Ing.clear()
+                                MyApplication.downLoad_completed.clear()
+
+                                MyApplication.getInstance().GetSP().edit()
+                                    .remove(ACCESS_TOKEN)
+                                    .remove(REFRESH_TOKEN)
+
+                                OkGo.getInstance().commonHeaders.clear()
+                                activity as MainActivity
+                                (activity as MainActivity).myBinder?.mDaemonService?.savaspall()
 
 
-            mContext?.startActivity<LoginActivity>()
-            activity?.finish()
+                                mContext?.startActivity<LoginActivity>()
+                                activity?.finish()
+                            }else{
+                                Toastinfo("${JSONObject(this).getString("message")}")
+                            }
+
+                        }
+
+                    }
+                }
+            )
+
+
             }
 
 

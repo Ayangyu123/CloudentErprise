@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="tv_titile">19sp</dimen>
+    <dimen name="tv_titile">18dp</dimen>
     <dimen name="tv_edit">15sp</dimen>
 </resources>

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="76dp"
     android:orientation="vertical"
     android:id="@+id/rl_file_item_root"
     tools:context=".adapter.FilesAdapter">
@@ -10,9 +10,10 @@
     <ImageView
         android:id="@+id/iv_icon"
         android:layout_width="36dp"
-        android:layout_height="33dp"
-        android:layout_centerVertical="true"
+        android:layout_height="36dp"
         android:layout_marginLeft="14dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="fitXY"
         android:src="@drawable/icon_list_unknown" />
 
     <TextView
@@ -24,32 +25,32 @@
         android:layout_marginRight="33dp"
         android:layout_toRightOf="@id/iv_icon"
         android:maxLines="1"
-        android:textColor="#000"
-        android:textSize="14sp"
+        android:textColor="#333"
+        android:textSize="16dp"
         tools:text="你猜猜啊" />
 
     <TextView
         android:id="@+id/tv_file_create_time"
         android:layout_width="wrap_content"
-        android:layout_height="10dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/tv_file_name"
         android:layout_marginLeft="18dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginBottom="13dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
         android:layout_toRightOf="@id/iv_icon"
         android:gravity="center"
         android:maxLines="1"
+        android:textStyle="normal"
         android:textColor="#999999"
-        android:textSize="8sp"
+        android:textSize="13dp"
         tools:text="2019-12-24" />
 
     <ImageView
         android:id="@+id/iv_right_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="66dp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="18dp"
+        android:paddingRight="18dp"
         android:scaleType="center"
         android:src="@drawable/icon_more_normal"
         android:visibility="visible" />
@@ -59,16 +60,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
         android:layout_marginRight="14dp"
         android:button="@drawable/checkbox"
         android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_alignParentBottom="true"
-        android:background="#000"
-        android:visibility="gone" />
+        android:layout_height="1dp"
+        android:layout_below="@id/tv_file_create_time"
+        android:background="#F1F1F1"
+        android:layout_marginLeft="54dp"
+        android:visibility="visible" />
 
 </RelativeLayout>

@@ -60,7 +60,7 @@ class WelcomeActivity :BaseActivity (){
                 override fun onPageSelected(position: Int) {
                   if(position== WELCOME_GUIDES.size-1){
                       tv_to_login.visibility =View.VISIBLE
-                  }  else {tv_to_login.visibility =View.INVISIBLE}
+                  }  else {tv_to_login.visibility =View.GONE}
                 }
 
             })

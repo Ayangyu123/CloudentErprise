@@ -64,27 +64,28 @@ class SettingsActivity : BaseActivity() {
     }
     fun  ClearCache(){
         if(DaemonService.daemon!=null){
-            OkGo.post<String>("http://127.0.0.1:5001/api/v0/repo/gc?stream-errors=true&quiet=true")
-                .tag(this)
-                .execute(object :StringCallback(){
-                    override fun onError(response: Response<String>?) {
-                        super.onError(response)
-                        Toastinfo("清理失败")
-                    }
-                    override fun onSuccess(response: Response<String>?) {
-                        Log.e("ok",response?.body().toString())
-                        Toastinfo("清理完成")
-                        getrepostat()
-                    }
-
-                    override fun onFinish() {
-                        mClearCache!!.dismiss()
-                        super.onFinish()
-
-
-
-                    }
-                })
+            myBinder?.mDaemonService?.stop()
+//            OkGo.post<String>("http://127.0.0.1:5001/api/v0/repo/gc?stream-errors=true&quiet=true")
+//                .tag(this)
+//                .execute(object :StringCallback(){
+//                    override fun onError(response: Response<String>?) {
+//                        super.onError(response)
+//                        Toastinfo("清理失败")
+//                    }
+//                    override fun onSuccess(response: Response<String>?) {
+//                        Log.e("ok",response?.body().toString())
+//                        Toastinfo("清理完成")
+//                        getrepostat()
+//                    }
+//
+//                    override fun onFinish() {
+//                        mClearCache!!.dismiss()
+//                        super.onFinish()
+//
+//
+//
+//                    }
+//                })
 
         }
     }
@@ -98,7 +99,7 @@ class SettingsActivity : BaseActivity() {
 
     private fun getrepostat() {
         exec("repo stat --encoding=json").apply {
-            DaemonService.daemon = this
+//            DaemonService.daemon = this
             read {
                 Log.e("daemonit","repo stat="+it)
                 if(it.startsWith("{\"RepoSize\"")){

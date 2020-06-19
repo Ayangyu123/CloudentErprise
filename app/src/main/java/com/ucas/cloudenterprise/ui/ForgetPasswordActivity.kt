@@ -10,9 +10,7 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
-import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_forget_password.*
-import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 import java.util.regex.Pattern
 
@@ -24,9 +22,9 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
 
     override fun InitView(){
-        tv_title.text ="忘记密码"
+//        tv_title.text ="忘记密码"
         iv_back.setOnClickListener { finish() }
-        tv_edit.visibility =View.GONE
+
      }
 
     override fun InitData() {
