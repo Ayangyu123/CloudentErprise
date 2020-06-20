@@ -55,6 +55,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+
+        android:paddingTop="28dp"
         android:contentDescription="@string/iv_search__des"
         android:gravity="center"
         android:scaleType="center"

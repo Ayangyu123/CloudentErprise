@@ -8,6 +8,7 @@ import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.utils.StatusBarUtil
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
 import kotlinx.android.synthetic.main.activity_forget_password.*
@@ -22,6 +23,7 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
 
     override fun InitView(){
+        StatusBarUtil.setStatusDarkColor(window)
 //        tv_title.text ="忘记密码"
         iv_back.setOnClickListener { finish() }
 

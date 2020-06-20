@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.text.TextUtils
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -18,6 +19,7 @@ import me.jessyan.autosize.AutoSize
 import me.jessyan.autosize.AutoSizeConfig
 import me.jessyan.autosize.external.ExternalAdaptManager
 import me.jessyan.autosize.internal.CustomAdapt
+import org.json.JSONObject
 
 /**
 @author simpler
@@ -62,8 +64,13 @@ class MyApplication:Application() {
             IS_FIRSTRUN = getBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,true)
             Log.e(TAG,"IS_FIRSTRUN=${IS_FIRSTRUN}")
             IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
+            APP_LAST_VERSION_CODE = getInt("APP_LAST_VERSION_CODE",0)
+            USER_ID = getString("user_id","")
+            COMP_ID = getString("company_id","")
+            IS_ROOT = USER_ID.equals(COMP_ID)
 
-
+            ACCESS_TOKEN=getString("access_token","" )
+            REFRESH_TOKEN  =getString("refresh_token","" )
             downLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("downLoad_Ing",Gson().toJson(downLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
             downLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("downLoad_completed",Gson().toJson(downLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
             upLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("upLoad_Ing",Gson().toJson(upLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
@@ -92,6 +99,11 @@ class MyApplication:Application() {
 
     private fun initOKGO() {
         OkGo.getInstance().init(this);
+        if(!TextUtils.isEmpty(ACCESS_TOKEN)){
+            Log.e("ok","AddToken")
+            AddToken(ACCESS_TOKEN)
+        }
+
     }
 
      fun GetSP(): SharedPreferences {

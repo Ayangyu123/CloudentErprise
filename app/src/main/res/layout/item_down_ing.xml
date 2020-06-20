@@ -76,6 +76,7 @@
            android:layout_width="48dp"
            android:layout_height="48dp"
            android:gravity="center_vertical"
+           android:paddingLeft="10dp"
            android:scaleType="center"
            android:src="@drawable/redownload" />
    </FrameLayout>
@@ -100,6 +101,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:scaleType="center"
+            android:paddingRight="20dp"
             android:src="@drawable/icon_more_normal" />
 
 

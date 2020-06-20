@@ -40,6 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="人均容量"
+                android:layout_marginLeft="16dp"
                 android:layout_gravity="center_vertical"/>
             <TextView
                 android:id="@+id/tv_cap"
@@ -48,8 +49,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:gravity="right"
-                android:paddingBottom="10dp"
                 android:textColor="#474C5F"
+                android:layout_marginRight="16dp"
                 tools:text="1G"/>
             
         </LinearLayout>
@@ -85,16 +86,16 @@
         <TextView
             android:id="@+id/tv_link_share"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:padding="5dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/app_color"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/login_bg"
             android:layout_marginTop="50dp"
             android:text="分享邀请链接"
             android:gravity="center"
             android:textColor="@android:color/white"
-            android:textSize="20dp"/>
+            android:textSize="16dp"/>
 
     <LinearLayout
         android:id="@+id/ll_update_invite"

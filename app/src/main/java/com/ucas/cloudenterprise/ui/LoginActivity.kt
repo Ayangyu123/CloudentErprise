@@ -51,6 +51,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).edit()
             .putString("access_token", ACCESS_TOKEN)
             .putString("refresh_token", REFRESH_TOKEN)
+            .putString("user_id", USER_ID)
+            .putString("company_id", COMP_ID)
             .putString("last_login_user_name", phone)
             .putBoolean("remember_password", check_box_remember_password.isChecked)
             .putString("last_login_user_password", passwords)
@@ -71,7 +73,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
     }
 
     override fun InitView() {
-        window.statusBarColor = Color.parseColor(APP_COLOR)
+        StatusBarUtil.setStatusDarkColor(window)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
            startForegroundService( Intent(this, DaemonService::class.java))
         } else {

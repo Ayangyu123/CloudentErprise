@@ -98,10 +98,9 @@ fun GetFileDeleteTipsDialog(
 ): Dialog {
     return Dialog(mContext!!).apply {
         var contentview =
-            LayoutInflater.from(mContext).inflate(R.layout.dialog_file_delete_tips, null)
-        contentview.apply {
-            tv_cancle.setOnClickListener(canclecallback)
-            tv_commit.setOnClickListener(commitcallback)
+            LayoutInflater.from(mContext).inflate(R.layout.dialog_file_delete_tips, null).apply {
+            this.tv_cancle.setOnClickListener(canclecallback)
+            this.tv_commit.setOnClickListener(commitcallback)
 
         }
         setContentView(contentview)

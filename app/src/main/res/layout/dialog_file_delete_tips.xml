@@ -70,18 +70,17 @@
             android:layout_height="match_parent"
             android:background="#E9E9E9"
             />
+
         <TextView
             android:id="@+id/tv_commit"
-            android:text="确定"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:enabled="false"
+            android:layout_weight="1"
             android:gravity="center"
-            android:textStyle="bold"
             android:maxLines="1"
+            android:text="确定"
             android:textColor="#2864DE"
-            />
+            android:textStyle="bold" />
 
     </LinearLayout>
 

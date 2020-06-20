@@ -14,6 +14,7 @@ import com.ucas.cloudenterprise.app.IS_FIRSTRUN
 import com.ucas.cloudenterprise.app.PREFERENCE__NAME__FOR_PREFERENCE
 import com.ucas.cloudenterprise.app.WELCOME_GUIDES
 import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.utils.StatusBarUtil
 import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.activity_welcome.*
 import java.lang.reflect.Array.get
@@ -25,6 +26,7 @@ import java.lang.reflect.Array.get
 class WelcomeActivity :BaseActivity (){
     val TAG = "WelcomeActivity"
     override fun InitView() {
+        StatusBarUtil.setStatusDarkColor(window)
         vp_welcome.apply {
             adapter = object :PagerAdapter(){
                 override fun instantiateItem(container: ViewGroup, position: Int): Any {

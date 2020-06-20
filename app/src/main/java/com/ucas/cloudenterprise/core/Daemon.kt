@@ -25,6 +25,7 @@ import com.lzy.okgo.convert.StringConvert
 import com.lzy.okgo.model.Progress
 import com.lzy.okgo.model.Response
 import com.lzy.okgo.request.base.Request
+import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.event.MessageEvent
@@ -128,16 +129,16 @@ class DaemonService : Service() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
             NotificationChannel("tuxingyun", "tuxingyun", IMPORTANCE_MIN).apply {
-                description = "tuxingyun"
-                getSystemService(NotificationManager::class.java)
-                    .createNotificationChannel(this)
+                 description = "tuxingyun"
+                 getSystemService(NotificationManager::class.java)
+                 .createNotificationChannel(this)
             }
             startForeground(1, notification.build())
         }
 
-        if(IS_NOT_INSTALLED){
+
+        if(IS_NOT_INSTALLED||(BuildConfig.VERSION_CODE!= APP_LAST_VERSION_CODE)){
             install()
         }
 
@@ -256,7 +257,10 @@ class DaemonService : Service() {
 
         IS_NOT_INSTALLED = false
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
-            edit().putBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,IS_NOT_INSTALLED).commit()
+                edit()
+                .putBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,IS_NOT_INSTALLED)
+                .putInt("APP_LAST_VERSION_CODE",BuildConfig.VERSION_CODE)
+                .commit()
         }
         /*********core install   完成  写入flag 下次直接执行 star*******/
 

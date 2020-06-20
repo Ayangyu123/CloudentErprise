@@ -47,5 +47,6 @@ class LoadingFileAdapter(var context: Context?, var list:ArrayList<LoadingFile>)
 
 
 
+
     }
 }

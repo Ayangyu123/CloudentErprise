@@ -186,6 +186,7 @@ class FilePickerActivity : AppCompatActivity(), View.OnClickListener,
                 }
 
             }
+            setBackgroundResource(R.drawable.login_bg)
             setOnClickListener(this@FilePickerActivity)
             FilePickerManager.config.confirmText.let {
                 text = it

@@ -167,13 +167,15 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
             adapter =mCompletedAdapter
 
 
-            addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
+//            addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
             mCompletedAdapter.SetOnRecyclerItemClickListener( object :OnRecyclerItemClickListener{
                 override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                     (holder as CompletedAdapter.ViewHolder).apply {
                         var  item = mCompletedAdapter.list[position]
                         tv_file_name.text = item.file_name
+
                         iv_right_icon.visibility = View.VISIBLE
+                        end_line.visibility = View.GONE
 
                         iv_right_icon.setOnClickListener {
                             showDelBootomDialog(type,position, COMPLETED)

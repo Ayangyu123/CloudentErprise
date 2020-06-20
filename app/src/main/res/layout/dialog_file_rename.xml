@@ -30,6 +30,7 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/bg_create_new_dir_dialog_edittext"
         android:ellipsize="start"
+        android:maxLength="20"
         android:hint="新建文件夹"
         android:padding="5dp"
         android:singleLine="true"

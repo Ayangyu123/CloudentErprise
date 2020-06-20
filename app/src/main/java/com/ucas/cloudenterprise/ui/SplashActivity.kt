@@ -2,12 +2,16 @@ package com.ucas.cloudenterprise.ui
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Handler
+import android.text.TextUtils
 import android.util.Log
 import com.hjq.permissions.XXPermissions
 import com.ucas.cloudenterprise.R
+import com.ucas.cloudenterprise.app.ACCESS_TOKEN
 import com.ucas.cloudenterprise.app.IS_FIRSTRUN
 import com.ucas.cloudenterprise.base.BaseActivity
+import com.ucas.cloudenterprise.utils.StatusBarUtil
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
 
@@ -16,24 +20,32 @@ import com.ucas.cloudenterprise.utils.startActivity
 @create 2020年01月08日  13:32
  */
 class SplashActivity:BaseActivity() {
-    override fun InitView() {}
+    override fun InitView() {
+//        window.statusBarColor = Color.WHITE
+//        StatusBarUtil.setStatusColor(window,Color.BLACK,0.1f)
+//        StatusBarUtil.darkMode(this)
+        StatusBarUtil.setStatusDarkColor(window)
+    }
 
     override fun InitData() {
 //      TODO 权限检查 不vcxmjxç  checkPermission()
 
-
-
         Thread(object : Runnable {
             override fun run() {
-//                Thread.sleep(5*1000)
-                Thread.sleep(2*1000)
+                Thread.sleep(5*1000)
+//                Thread.sleep(2*1000)
                 runOnUiThread(){
                     if(IS_FIRSTRUN){
                         //第一次运行app 条状引导页
                         startActivity<WelcomeActivity>() }
                     else{
                         //判断Token是否为空
-                        startActivity<MainActivity>()
+                        if(TextUtils.isEmpty(ACCESS_TOKEN)){
+                            startActivity<LoginActivity>()
+                        }else{
+                            startActivity<MainActivity>()
+                        }
+
                     }
                     finish()
                 }

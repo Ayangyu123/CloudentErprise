@@ -77,6 +77,12 @@ var COMP: Company?=null  //企业ID
 
 
     //</editor-fold>
+//<editor-fold desc=" lib Version Code">
+        var     APP_LAST_VERSION_CODE=0
+        var  CORE_VERSION_CODE=0
+        var  PLUGIN_VERSION_CODE=0
+//</editor-fold>
+
     //<editor-fold desc=" CORE_PATH 环境变量">
       val CORE_PATH = "SVBGU19QQVRI" // 需要base64 解密
     //</editor-fold>

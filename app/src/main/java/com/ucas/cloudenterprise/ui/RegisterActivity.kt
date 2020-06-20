@@ -16,6 +16,7 @@ import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.model.Company
 import com.ucas.cloudenterprise.model.Resource
+import com.ucas.cloudenterprise.utils.StatusBarUtil
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
 import com.ucas.cloudenterprise.utils.startActivity
@@ -37,6 +38,7 @@ class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
     override fun GetContentViewId()=R.layout.activity_register
 
     override fun InitView() {
+//        StatusBarUtil.setStatusDarkColor(window)
         iv_back.setOnClickListener {
             finish()
         }

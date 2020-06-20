@@ -59,8 +59,6 @@
             <!--    Main     -->
         <activity android:name=".ui.MainActivity" android:launchMode="singleTop"  android:screenOrientation="portrait"/>
 
-
-
         <!-- 欢迎   页面-->
         <activity android:name=".ui.WelcomeActivity"  android:screenOrientation="portrait"/>
         <!-- 注册   页面-->

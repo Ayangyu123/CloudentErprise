@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment.MyFilesFragment"
-    android:id="@+id/rg_sort"
-    android:orientation="vertical"
     android:background="#fff"
+    android:elevation="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rg_sort"
+        android:orientation="vertical"
+        >
     <RadioButton
         android:id="@+id/rb_sort_by_name"
         android:text="按名称排序"
@@ -24,6 +30,6 @@
         android:checked="true"
         android:text="按时间排序" />
 
+    </RadioGroup>
 
-
-</RadioGroup>
+</androidx.cardview.widget.CardView>

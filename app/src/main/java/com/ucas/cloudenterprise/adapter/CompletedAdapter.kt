@@ -43,6 +43,7 @@ class CompletedAdapter(var context: Context?, var list:ArrayList<CompletedFile>)
         var checkbox_is_checked =itemView.findViewById<CheckBox>(com.ucas.cloudenterprise.R.id.checkbox_is_checked)
         var tv_file_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
         var tv_file_create_time =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_create_time)
+        var end_line =itemView.findViewById<View>(com.ucas.cloudenterprise.R.id.end_line)
 
 
 

@@ -5,6 +5,7 @@ import android.app.ActivityManager
 import android.app.Dialog
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -43,8 +44,9 @@ import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.common_head.tv_title
 import kotlinx.android.synthetic.main.dialog_create_new_dir.*
-import kotlinx.android.synthetic.main.dialog_create_new_dir.et_dir_name
 import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
+import kotlinx.android.synthetic.main.dialog_create_new_dir.view.checkbox_is_common
+import kotlinx.android.synthetic.main.dialog_create_new_dir.view.et_dir_name
 import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import kotlinx.android.synthetic.main.top_file_operate.*
 import me.rosuh.filepicker.config.FilePickerManager
@@ -337,8 +339,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 //        if(CreateNewDirDialog == null){
 
             CreateNewDirDialog = GetCreateNewDirDialog(mContext!!,View.OnClickListener{
-                CreateNewDirDialog!!.et_dir_name.text  = SetEt_Text("")
-                CreateNewDirDialog!!.checkbox_is_common.isChecked = false
+                CreateNewDirDialog?.et_dir_name?.text  = SetEt_Text("")
+                CreateNewDirDialog?.checkbox_is_common?.isChecked = false
                 CreateNewDirDialog?.dismiss()
             }
                 ,View.OnClickListener{
@@ -471,18 +473,29 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
         BottomFilesOperateDialog?.show()
     }
     //</editor-fold >
+
     //<editor-fold  desc ="重命名 Dialog" >
     private fun ShowRenameDialog(item: File_Bean) {
          ReanmeDialog =Dialog(mContext!!).apply {
              var contentview =
                  LayoutInflater.from(mContext).inflate(R.layout.dialog_file_rename,null)
              contentview.apply {
+
                  et_dir_name.text = SetEt_Text("${item.file_name}")
+                 if(et_dir_name.text.toString().equals(item.file_name)){
+                     tv_commit.isEnabled = false
+                     tv_commit.setTextColor(Color.parseColor("#999999"))
+                 }else{
+                     tv_commit.isEnabled = true
+                     tv_commit.setTextColor(Color.parseColor("#2864DE"))
+                 }
                  et_dir_name.addTextChangedListener {
-                         if(et_dir_name.text.equals(item.file_name)){
+                         if(et_dir_name.text.toString().equals(item.file_name)){
                              tv_commit.isEnabled = false
+                             tv_commit.setTextColor(Color.parseColor("#999999"))
                          }else{
                              tv_commit.isEnabled = true
+                             tv_commit.setTextColor(Color.parseColor("#2864DE"))
                          }
 
                  }
