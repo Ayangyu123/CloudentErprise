@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorAccent">#0077FF</color>
 <!--    <color name="app_color">#4F73DF</color>-->
     <color name="app_color">#0077FF</color>
     <color name="root_linealayout_bg_color">#E8EBF2</color>

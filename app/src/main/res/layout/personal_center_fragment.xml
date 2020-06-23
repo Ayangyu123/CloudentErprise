@@ -6,37 +6,42 @@
     android:background="#E8EBF2"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/app_color"
-        >
+        android:background="@color/app_color">
+
         <TextView
             android:id="@+id/tv_user_name"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:textSize="25dp"
-            tools:text="樊志攀"
-            android:layout_margin="20dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="bottom"
             android:textColor="@android:color/white"
-            />
+            android:textSize="25dp"
+            tools:text="樊志攀" />
+
         <TextView
             android:id="@+id/tv_company_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            tools:text="国科环宇"
-            android:visibility="gone"
+            android:layout_gravity="bottom|right"
             android:layout_margin="20dp"
             android:textColor="@android:color/white"
-            android:layout_gravity="bottom|right"
-            />
+            android:textSize="20dp"
+            android:visibility="gone"
+            tools:text="国科环宇" />
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:orientation="vertical"
         android:background="@android:color/white"
         android:layout_marginTop="10dp"
@@ -106,6 +111,7 @@
         android:id="@+id/fl_check_new_version"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+
         android:background="@android:color/white"
         >
         <TextView
@@ -113,8 +119,9 @@
             tools:text="V 2.2.1 "
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
-            android:drawablePadding="15dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:drawablePadding="16dp"
             android:textColor="@android:color/black"
             android:gravity="center_vertical|right"
             />
@@ -123,7 +130,6 @@
             android:text="检查新版本"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
             style="@style/personal_center_settings_textview"
             android:drawablePadding="15dp"
             android:textColor="@android:color/black"
@@ -132,8 +138,8 @@
              />
 
     </FrameLayout>
-    <include layout="@layout/common_line"/>
 
+    <include layout="@layout/common_line"/>
     <TextView
         android:id="@+id/tv_about"
         style="@style/personal_center_settings_textview"

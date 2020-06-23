@@ -52,16 +52,15 @@ class TransferListFragment: BaseFragment() {
                 override fun onPageSelected(position: Int) {
                     when(position){
                         0->{ //下载
-
+                            tv_download.setTextColor(Color.parseColor("#FFFFFF"))
+                            tv_upload.setTextColor(Color.argb(204,255,255,255))
                             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
-//                            tv_download.setTextColor( Color.parseColor("#4F73DF"))
-//                            tv_upload.setTextColor( Color.parseColor("#AAAFC0"))
 
                         }
                         1->{ //上传
+                            tv_upload.setTextColor(Color.parseColor("#FFFFFF"))
+                            tv_download.setTextColor(Color.argb(204,255,255,255))
                             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*2f)
-//                            tv_upload.setTextColor( Color.parseColor("#4F73DF"))
-//                            tv_download.setTextColor( Color.parseColor("#AAAFC0"))
                             }
 
                     }
@@ -72,6 +71,7 @@ class TransferListFragment: BaseFragment() {
         }
 
         tv_download.setOnClickListener {
+
             viewpager_content.currentItem=0
             view_select_bar.animate().translationX(view_select_bar.width.toFloat()*0f)
         }

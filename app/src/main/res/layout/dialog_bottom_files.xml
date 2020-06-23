@@ -5,7 +5,11 @@
     tools:context=".adapter.BottomFilesOperateAdapter"
     android:orientation="vertical"
     android:gravity="bottom"
+    android:paddingLeft="16dp"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_dialog_bg"
+    tools:listitem="@layout/item_bottom_myfiles"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    android:paddingBottom="0dp"
     />

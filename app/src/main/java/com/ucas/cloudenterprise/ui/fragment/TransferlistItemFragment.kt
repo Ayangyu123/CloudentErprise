@@ -3,8 +3,10 @@ package com.ucas.cloudenterprise.ui.fragment
 import android.content.Context
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +23,7 @@ import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.LoadIngStatus
 import com.ucas.cloudenterprise.model.LoadingFile
 import com.ucas.cloudenterprise.ui.MainActivity
+import com.ucas.cloudenterprise.utils.Toastinfo
 import kotlinx.android.synthetic.main.fragment_transfer_list_item.*
 import me.rosuh.filepicker.config.FilePickerManager
 
@@ -230,9 +233,11 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
         val topdrawable = mContext!!.resources.getDrawable( R.drawable.operate_delete_normal)
         topdrawable.setBounds(0, 0, topdrawable.minimumWidth, topdrawable.minimumHeight)
         BottomSheetDialog(mContext!!).apply {
-           setContentView(LayoutInflater.from(mContext).inflate(R.layout.item_bottom_myfiles, null).apply {
+
+           setContentView(LayoutInflater.from(mContext).inflate(R.layout.item_bottom_del, null).apply {
                (this as TextView).apply {
                    text="删除"
+                   gravity =Gravity.CENTER
                   setCompoundDrawablesWithIntrinsicBounds(null,topdrawable,null,null)
                    setOnClickListener {
                         when(type){
@@ -274,6 +279,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                             ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.UPLOADCOMPLETED)
                                         }
                                         mCompletedAdapter.notifyDataSetChanged()
+                                        Toastinfo("该记录已删除")
                                     }
 
                                 }
@@ -284,6 +290,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                    }
                }
            })
+            window?.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.setBackgroundResource(R.drawable.bottom_dialog_bg)
         }.show()
     }
 

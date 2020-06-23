@@ -20,6 +20,7 @@ import me.jessyan.autosize.AutoSizeConfig
 import me.jessyan.autosize.external.ExternalAdaptManager
 import me.jessyan.autosize.internal.CustomAdapt
 import org.json.JSONObject
+import kotlin.concurrent.thread
 
 /**
 @author simpler
@@ -56,35 +57,38 @@ class MyApplication:Application() {
         super.onCreate()
 //        startService<DaemonService>()
         context = this
-        downLoad_Ing =ArrayList()
-        upLoad_Ing =ArrayList()
-        downLoad_completed =ArrayList()
-        upLoad_completed =ArrayList()
-        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
-            IS_FIRSTRUN = getBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,true)
-            Log.e(TAG,"IS_FIRSTRUN=${IS_FIRSTRUN}")
-            IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
-            APP_LAST_VERSION_CODE = getInt("APP_LAST_VERSION_CODE",0)
-            USER_ID = getString("user_id","")
-            COMP_ID = getString("company_id","")
-            IS_ROOT = USER_ID.equals(COMP_ID)
+        thread {
+            downLoad_Ing =ArrayList()
+            upLoad_Ing =ArrayList()
+            downLoad_completed =ArrayList()
+            upLoad_completed =ArrayList()
+            getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
+                IS_FIRSTRUN = getBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,true)
+                Log.e(TAG,"IS_FIRSTRUN=${IS_FIRSTRUN}")
+                IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
+                APP_LAST_VERSION_CODE = getInt("APP_LAST_VERSION_CODE",0)
+                USER_ID = getString("user_id","")
+                COMP_ID = getString("company_id","")
+                IS_ROOT = USER_ID.equals(COMP_ID)
 
-            ACCESS_TOKEN=getString("access_token","" )
-            REFRESH_TOKEN  =getString("refresh_token","" )
-            downLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("downLoad_Ing",Gson().toJson(downLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
-            downLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("downLoad_completed",Gson().toJson(downLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
-            upLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("upLoad_Ing",Gson().toJson(upLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
-            upLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("upLoad_completed",Gson().toJson(upLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
+                ACCESS_TOKEN=getString("access_token","" )
+                REFRESH_TOKEN  =getString("refresh_token","" )
+                downLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("downLoad_Ing",Gson().toJson(downLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
+                downLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("downLoad_completed",Gson().toJson(downLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
+                upLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("upLoad_Ing",Gson().toJson(upLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
+                upLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("upLoad_completed",Gson().toJson(upLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
 
 
 
+            }
+            downLoad_Ing.forEach {
+                it.Ingstatus =LoadIngStatus.WAITING
+            }
+            upLoad_Ing.forEach {
+                it.Ingstatus =LoadIngStatus.WAITING
+            }
         }
-        downLoad_Ing.forEach {
-            it.Ingstatus =LoadIngStatus.WAITING
-        }
-        upLoad_Ing.forEach {
-            it.Ingstatus =LoadIngStatus.WAITING
-        }
+
         AutoSizeConfig()
         initOKGO()
 

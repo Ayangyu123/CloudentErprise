@@ -6,7 +6,8 @@
     android:id="@+id/fl_root"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="5dp"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
     >
 
     <TextView android:id="@+id/tv_team_name"

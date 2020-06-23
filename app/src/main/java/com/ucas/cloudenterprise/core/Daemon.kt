@@ -17,6 +17,7 @@ import android.text.TextUtils
 import android.text.format.Formatter
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import com.google.gson.Gson
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.FileCallback
@@ -52,6 +53,13 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 import kotlin.collections.HashMap
 
+fun stratDaemonService(context:Context){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        context.startForegroundService( Intent(context, DaemonService::class.java))
+    } else {
+        context.startService<DaemonService>()
+    }
+}
 class DaemonService : Service() {
         val TAG="DaemonService"
     var mMyBinder :  MyBinder ? =null
@@ -59,6 +67,8 @@ class DaemonService : Service() {
     val  upexecutor = Executors.newFixedThreadPool(3)
     var  uptaskmap =HashMap<String,Runnable>()
     var  downtaskmap =HashMap<String,Runnable>()
+    var DaemonClosed =false
+    var DaemonStartsed =false
 
     val notificationBuilder = NotificationCompat.Builder(this, "tuxingyun")
 
@@ -278,6 +288,10 @@ class DaemonService : Service() {
             read {
 
                 Log.e("daemonit",it)
+                if(it.equals("Daemon is ready")){
+                  DaemonStartsed = true
+                    DaemonClosed =false
+                }
                 logs.add(it) }
         }
         Runtime.getRuntime().exec(
@@ -310,6 +324,7 @@ class DaemonService : Service() {
 
 
     //<editor-fold desc="停止底层服务">
+
     fun stop() {
         for(it in MyApplication.downLoad_Ing){
             it.Ingstatus=LoadIngStatus.WAITING
@@ -317,10 +332,12 @@ class DaemonService : Service() {
         for(it in MyApplication.upLoad_Ing){
             it.Ingstatus=LoadIngStatus.WAITING
         }
-//        plugindaemon?.destroy()
-//        daemon?.destroy()
-//        plugindaemon = null
-//        daemon = null
+        plugindaemon?.destroy()
+        daemon?.destroy()
+        plugindaemon = null
+        daemon = null
+        DaemonStartsed = false
+        DaemonClosed =true
     }
     //</editor-fold>
 
@@ -377,6 +394,13 @@ class DaemonService : Service() {
 
 
 
+    fun clearcache(){
+       stop()
+        store.get("badgerds")
+
+        start()
+    }
+
 
     override fun onStartCommand(i: Intent?, f: Int, id: Int) = START_STICKY.also {
         super.onStartCommand(i, f, id)
@@ -386,7 +410,8 @@ class DaemonService : Service() {
             "stop" -> stop()
             "repo stat" -> getrepostat()
             "restart" -> {
-                stop(); start()
+                stop()
+                start()
             }
             "exit" -> {
                 stopSelf()

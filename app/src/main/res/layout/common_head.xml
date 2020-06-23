@@ -17,11 +17,12 @@
     <ImageView
         android:id="@+id/iv_choose"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/iv_back"
         android:visibility="gone"
         android:scaleType="center"
+        android:paddingTop="26dp"
         android:src="@drawable/title_close_icon_normal" />
 
     <TextView

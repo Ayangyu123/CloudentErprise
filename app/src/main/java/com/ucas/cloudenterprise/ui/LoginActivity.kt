@@ -14,6 +14,7 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.*
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.core.DaemonService
+import com.ucas.cloudenterprise.core.stratDaemonService
 import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.common_head.*
@@ -74,12 +75,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     override fun InitView() {
         StatusBarUtil.setStatusDarkColor(window)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-           startForegroundService( Intent(this, DaemonService::class.java))
-        } else {
+//        stratDaemonService(this)
 
-            startService<DaemonService>()
-        }
 
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).apply {
             phone =getString("last_login_user_name", "")

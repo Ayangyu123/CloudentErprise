@@ -37,7 +37,9 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:background="@color/app_color"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/login_bg"
                 android:textColor="@android:color/white"
                 android:text="添加/修改"
                 />
@@ -47,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp"
+
             >
             <LinearLayout
                 android:layout_width="0dp"
@@ -60,6 +62,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    tools:listitem="@layout/item_team"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="14dp"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     />
             </LinearLayout>
@@ -67,6 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:visibility="gone"
                 android:src="@drawable/personalcenter_guide_arrow"
                 />
 
@@ -103,7 +109,9 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:background="@color/app_color"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/login_bg"
                 android:textColor="@android:color/white"
                 android:text="添加/修改"
                 />
@@ -113,7 +121,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp"
             >
             <LinearLayout
                 android:layout_width="0dp"
@@ -126,6 +133,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    tools:listitem="@layout/item_team"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="14dp"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     />
             </LinearLayout>
@@ -133,6 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:visibility="gone"
                 android:src="@drawable/personalcenter_guide_arrow"
                 />
 
@@ -169,7 +180,9 @@
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:layout_gravity="center_vertical"
-                android:background="@color/app_color"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/login_bg"
                 android:textColor="@android:color/white"
                 android:text="添加/修改"
                 />
@@ -179,7 +192,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="10dp"
             >
             <LinearLayout
                 android:layout_width="0dp"
@@ -192,6 +204,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    tools:listitem="@layout/item_team"
+                    android:paddingLeft="10dp"
+                    android:paddingBottom="14dp"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
                     />
             </LinearLayout>
@@ -199,6 +214,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:visibility="gone"
                 android:src="@drawable/personalcenter_guide_arrow"
                 />
 
@@ -258,7 +274,7 @@
 <TextView
     android:id="@+id/tv_cancel_commom"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="60dp"
     android:text="取消共享"
     android:visibility="gone"
     android:gravity="center"

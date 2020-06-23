@@ -6,13 +6,17 @@ import android.app.Dialog
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
+import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatDrawableManager
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
@@ -369,10 +373,14 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
             BottomFilesOperateDialog = BottomSheetDialog(context!!)
             val contentview = LayoutInflater.from(context!!).inflate(R.layout.dialog_bottom_files,null) as RecyclerView
-            contentview.layoutManager = GridLayoutManager(context,4)
+//            contentview.layoutManager = LinearLayoutManager(context)
+//            contentview.layoutManager = GridLayoutManager(context,4)
             Log.e(TAG,"isfile is ${isfile}")
             contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,isroot_file=item.pid.equals("root"),ispshare_file = false)
-            (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
+        contentview.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL).apply {
+            setDrawable(mContext!!.getDrawable(R.drawable.bottom_dialog_line_bg))
+        })
+        (contentview.adapter as BottomFilesOperateAdapter).SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
                 override fun onItemClick(
                     holder: RecyclerView.ViewHolder,
                     position: Int
@@ -386,7 +394,11 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
                     holder.apply {
                         var tv_text =holder.itemView as TextView
                         tv_text.text=iteminfo
-                        tv_text.setCompoundDrawablesWithIntrinsicBounds(null,topdrawable,null,null)
+//                        if(position==0){
+//                            tv_text.background=context!!.getDrawable(R.drawable.bottom_dialog_bg)
+//                        }else{
+//                        }
+                        tv_text.setCompoundDrawablesWithIntrinsicBounds(topdrawable,null,null,null)
 
                         tv_text.setOnClickListener{
                             var tv=it as TextView
@@ -465,7 +477,9 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
                 }
 
             })
-            BottomFilesOperateDialog?.setContentView(contentview)
+            BottomFilesOperateDialog?.setContentView(contentview).apply {
+                BottomFilesOperateDialog?.window?.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.setBackgroundResource(android.R.color.transparent)
+            }
 
 
 

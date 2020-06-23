@@ -3,11 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".adapter.BottomFilesOperateAdapter"
     tools:text="123"
-    android:textColor="#495675"
+    android:textColor="#333"
     android:textSize="16dp"
-    android:padding="10dp"
-    android:gravity="center"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:gravity="center_vertical"
+    tools:drawableLeft="@drawable/login_head_icon"
+    android:drawablePadding="10dp"
     android:layout_gravity="center"
-    android:layout_width="80dp"
-    android:layout_height="80dp"/>
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
 

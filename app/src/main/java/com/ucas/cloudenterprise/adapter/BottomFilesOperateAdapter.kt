@@ -137,7 +137,7 @@ class BottomFilesOperateAdapter(
         this.mOnRecyclerItemClickListener =OnRecyclerItemClickListener
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(context).inflate(com.ucas.cloudenterprise.R.layout.item_bottom_myfiles, null)
+        var view = LayoutInflater.from(context).inflate(com.ucas.cloudenterprise.R.layout.item_bottom_myfiles, parent,false)
         return ViewHolder(view)
     }
 
