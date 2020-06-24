@@ -1,6 +1,7 @@
 package com.ucas.cloudenterprise.ui
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,9 @@ class WelcomeActivity :BaseActivity (){
                 override fun instantiateItem(container: ViewGroup, position: Int): Any {
                     return ImageView(this@WelcomeActivity).apply {
                         layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT)
-                        setBackgroundResource(WELCOME_GUIDES[position])
+//                        setBackgroundResource()
+                        setBackgroundColor(Color.WHITE)
+                        setImageResource(WELCOME_GUIDES[position])
                         scaleType = ImageView.ScaleType.CENTER
                         container.addView(this)
 

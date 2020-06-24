@@ -57,7 +57,7 @@ class MyApplication:Application() {
         super.onCreate()
 //        startService<DaemonService>()
         context = this
-        thread {
+//        thread {
             downLoad_Ing =ArrayList()
             upLoad_Ing =ArrayList()
             downLoad_completed =ArrayList()
@@ -87,7 +87,7 @@ class MyApplication:Application() {
             upLoad_Ing.forEach {
                 it.Ingstatus =LoadIngStatus.WAITING
             }
-        }
+//        }
 
         AutoSizeConfig()
         initOKGO()

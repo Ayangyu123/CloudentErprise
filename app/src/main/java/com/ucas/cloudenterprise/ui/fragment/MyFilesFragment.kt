@@ -393,6 +393,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
                     holder as BottomFilesOperateAdapter.ViewHolder
                     holder.apply {
                         var tv_text =holder.itemView as TextView
+
+
                         tv_text.text=iteminfo
 //                        if(position==0){
 //                            tv_text.background=context!!.getDrawable(R.drawable.bottom_dialog_bg)

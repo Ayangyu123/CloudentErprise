@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
 import android.widget.PopupWindow
 import android.widget.RadioGroup
@@ -81,9 +82,14 @@ fun GetSortPOPwiond(
         var contentview =
             LayoutInflater.from(mContext).inflate(R.layout.popwiond_sort, null)
         contentview.rg_sort.setOnCheckedChangeListener(OnCheckedChangeListener)
+        contentview.view_bottom.setOnClickListener {
+            dismiss()
+        }
         width = WindowManager.LayoutParams.MATCH_PARENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
-        this.setBackgroundDrawable(ColorDrawable(Color.parseColor("#FFFFFF")))
+        this.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//        this.setBackgroundDrawable(mContext.getDrawable(R.drawable.login_bg))
+//        Window
         contentView = contentview
         isOutsideTouchable = true
     }

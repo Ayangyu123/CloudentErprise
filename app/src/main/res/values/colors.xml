@@ -5,5 +5,5 @@
     <color name="colorAccent">#0077FF</color>
 <!--    <color name="app_color">#4F73DF</color>-->
     <color name="app_color">#0077FF</color>
-    <color name="root_linealayout_bg_color">#E8EBF2</color>
+    <color name="root_linealayout_bg_color">#F5F5F5</color>
 </resources>

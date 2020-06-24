@@ -54,6 +54,17 @@ abstract class BaseFragment : Fragment() {
 
     }
 
+    override fun onPause() {
+        Log.e("ok","onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.e("ok","onStop")
+        super.onStop()
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         NetTag?.let {

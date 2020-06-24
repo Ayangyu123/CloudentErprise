@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
+
         android:background="@android:color/white"
         >
 
@@ -71,7 +72,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:padding="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="0dp"
@@ -94,9 +98,10 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            tools:text=""
-
+            android:paddingBottom="10dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            tools:text="就撒放很多卡两极分化"
             />
 
         <RelativeLayout

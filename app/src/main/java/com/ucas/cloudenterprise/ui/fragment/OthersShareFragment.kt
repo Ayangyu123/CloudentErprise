@@ -5,8 +5,10 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Dialog
 import android.content.Intent
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
@@ -165,12 +167,12 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
         rc_myfiles.layoutManager =
             LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         rc_myfiles.adapter = adapter
-        rc_myfiles.addItemDecoration(
-            DividerItemDecoration(
-                mContext,
-                DividerItemDecoration.VERTICAL
-            )
-        )
+    //        rc_myfiles.addItemDecoration(
+    //            DividerItemDecoration(
+    //                mContext,
+    //                DividerItemDecoration.VERTICAL
+    //            )
+    //        )
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                 var item = fileslist[position]
@@ -339,9 +341,12 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
             R.layout.dialog_bottom_files,
             null
         ) as RecyclerView
-        contentview.layoutManager = GridLayoutManager(context, 4)
+//        contentview.layoutManager = GridLayoutManager(context, 4)
         Log.e(TAG, "isfile is ${isfile}")
 //        contentview.adapter = BottomFilesOperateAdapter(context,item,isfile,item.weight,ispshare_file = true)
+        contentview.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL).apply {
+            setDrawable(mContext!!.getDrawable(R.drawable.bottom_dialog_line_bg))
+        })
         contentview.adapter = BottomFilesOperateAdapter(
             context, item, isfile, item.weight, ispshare_file = true,
             isroot_file = pid.equals("root")
@@ -362,7 +367,16 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                 holder.apply {
                     var tv_text = holder.itemView as TextView
                     tv_text.text = iteminfo
-                    tv_text.setCompoundDrawablesWithIntrinsicBounds(null, topdrawable, null, null)
+                    if(isfile){
+                        tv_text.setCompoundDrawablesWithIntrinsicBounds(topdrawable,null, null, null)
+                        tv_text.gravity=Gravity.LEFT
+
+
+                    }else{
+                        tv_text.setCompoundDrawablesWithIntrinsicBounds(null,topdrawable,null, null)
+                        tv_text.gravity=Gravity.CENTER_HORIZONTAL
+                    }
+
                     tv_text.setOnClickListener {
                         var tv = it as TextView
                         when (tv.text.toString()) {
@@ -535,7 +549,9 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
             }
 
         })
-        BottomFilesOperateDialog?.setContentView(contentview)
+        BottomFilesOperateDialog?.setContentView(contentview).apply {
+            BottomFilesOperateDialog?.window?.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.setBackgroundResource(android.R.color.transparent)
+        }
 
 
 

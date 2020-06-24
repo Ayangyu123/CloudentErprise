@@ -49,7 +49,7 @@ class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
 
         adapter=MemberInfoAdapter(this,mMemberlist)
         rc_members.adapter =adapter
-        rc_members.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+//        rc_members.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                    var holder_item = holder as MemberInfoAdapter.ViewHolder

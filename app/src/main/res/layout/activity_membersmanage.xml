@@ -13,6 +13,8 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:layout_marginTop="20dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/tv_invite_member"
@@ -20,7 +22,9 @@
             android:layout_height="wrap_content"
             android:text="邀请成员"
             android:textSize="16dp"
-            android:padding="10dp"
+             android:textColor="#333"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             android:gravity="center_vertical"
             android:drawablePadding="10dp"
             android:drawableLeft="@drawable/invite_member_icon"
@@ -34,7 +38,9 @@
             android:text="审核成员"
             android:textSize="16dp"
             android:gravity="center_vertical"
-            android:padding="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="#333"
             android:drawablePadding="10dp"
             android:drawableLeft="@drawable/invite_list_icon"
             android:drawableRight="@drawable/personalcenter_guide_arrow"
@@ -60,18 +66,26 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:text="企业成员"
+        android:textSize="16dp"
+        android:textColor="#333"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:layout_marginTop="20dp"
         android:background="@android:color/white"/>
     <include  layout="@layout/common_line"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:background="@android:color/white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         >
         <TextView
             android:id="@+id/tv_member_manager"

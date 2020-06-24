@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.Space
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.permissionx.guolindev.PermissionX
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.app.ACCESS_TOKEN
@@ -25,10 +26,7 @@ import com.ucas.cloudenterprise.utils.StatusBarUtil
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.startActivity
 import com.ucas.cloudenterprise.utils.startService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import me.rosuh.filepicker.FilePickerActivity
 import kotlin.concurrent.thread
 
@@ -49,14 +47,13 @@ class SplashActivity:AppCompatActivity() {
     }
 
     private fun startnextstep() {
+        lifecycleScope.launchWhenResumed {
 
-        GlobalScope.launch(Dispatchers.Main) {
-
-                Thread.sleep(1*1000)
+            delay(1*1000)
                 Log.e("ok","1")
-                Thread.sleep(1*1000)
+            delay(1*1000)
                 Log.e("ok","2")
-                Thread.sleep(1*1000)
+            delay(1*1000)
                 Log.e("ok","3")
                 if(IS_FIRSTRUN){
                     //第一次运行app 条状引导页

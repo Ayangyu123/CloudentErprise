@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.fragment.PersonalCenterFragment"
     android:orientation="vertical"
-    android:background="#E8EBF2"
+    android:background="@color/root_linealayout_bg_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 

@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     tools:text="删除"
     android:gravity="center"
     android:textColor="#333"

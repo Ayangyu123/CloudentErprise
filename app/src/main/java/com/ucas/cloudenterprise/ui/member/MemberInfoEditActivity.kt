@@ -83,10 +83,7 @@ class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
                 return@setOnClickListener
             }
 
-//            if(TextUtils.isEmpty(et_email.text.toString())){
-//                Toastinfo("请输入邮箱")
-//                return@setOnClickListener
-//            }
+
 
             NetRequest(URL_MEMBER_INFO_UPDATE, NET_POST,HashMap<String,Any>().apply {
                 put("member_id",item.member_id)
