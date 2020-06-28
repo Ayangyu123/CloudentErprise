@@ -22,12 +22,13 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="18dp"
         android:layout_marginTop="14dp"
-        android:layout_marginRight="33dp"
+        android:layout_marginRight="54dp"
         android:layout_toRightOf="@id/iv_icon"
         android:maxLines="1"
+        android:singleLine="true"
         android:textColor="#333"
         android:textSize="16dp"
-        tools:text="你猜猜啊" />
+        tools:text="你猜猜啊sakfhsadkljghkjdsfbnm,xzbnc,mv,mzsbgvfmx,b" />
 
     <TextView
         android:id="@+id/tv_file_create_time"

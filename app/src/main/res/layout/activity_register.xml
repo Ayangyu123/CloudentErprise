@@ -50,7 +50,7 @@
         >
         <TextView
             android:layout_width="100dp"
-            android:text="公司联系邮箱"
+            android:text="邮        箱"
             android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
@@ -76,7 +76,7 @@
         >
         <TextView
             android:layout_width="100dp"
-            android:text="公司联系电话"
+            android:text="联系电话"
             android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
@@ -100,7 +100,7 @@
         >
         <TextView
             android:layout_width="100dp"
-            android:text="密码"
+            android:text="密        码"
             android:textColor="#333"
             android:gravity="center_vertical|left"
             android:layout_height="match_parent"/>
