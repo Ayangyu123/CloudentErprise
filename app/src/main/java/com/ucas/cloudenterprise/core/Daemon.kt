@@ -216,7 +216,8 @@ class DaemonService : Service() {
                     put("MAX_ROUTINE_NUM", 20)
                     put("MAX_ROUTINE_NUM_2", 10)
                     put("LOG_ENABLE", false)
-//                    put("LOG_ENABLE", true)
+                    put("MAGIC_PLANT", true) //加速模式
+                    put("MAGIC_PLANT_PRE", false) //预下载
 
                 }.toString().toByteArray())
             }

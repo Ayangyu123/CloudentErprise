@@ -186,6 +186,7 @@ class FilePickerActivity : AppCompatActivity(), View.OnClickListener,
                 }
 
             }
+            visibility =View.INVISIBLE
             setBackgroundResource(R.drawable.login_bg)
             setOnClickListener(this@FilePickerActivity)
             FilePickerManager.config.confirmText.let {
@@ -484,9 +485,12 @@ class FilePickerActivity : AppCompatActivity(), View.OnClickListener,
     override fun updateItemUI(isCheck: Boolean) {
         if (isCheck) {
             selectedCount++
+
         } else {
             selectedCount--
         }
+         btn_confirm_file_picker.visibility = if(selectedCount>0) View.VISIBLE else View.INVISIBLE
+
         if (pickerConfig.singleChoice) {
             return
         }
@@ -494,6 +498,7 @@ class FilePickerActivity : AppCompatActivity(), View.OnClickListener,
         if (selectedCount == 0) {
             btn_selected_all_file_picker.text = pickerConfig.selectAllText
             tv_toolbar_title_file_picker.text = ""
+            btn_confirm_file_picker.visibility = View.INVISIBLE
             return
         }
         btn_selected_all_file_picker.text = pickerConfig.deSelectAllText

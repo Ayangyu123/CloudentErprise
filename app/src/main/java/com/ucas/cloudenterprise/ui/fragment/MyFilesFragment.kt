@@ -683,7 +683,10 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
         if ( data !=null) {
             when(requestCode){
                 FilePickerManager.REQUEST_CODE ->{ //选择文件上传文件
-
+                    if(FilePickerManager.obtainData().isEmpty()){
+                        Toastinfo("没有选择任务文件")
+                        return
+                    }
                    Log.e("ok","file  path"+FilePickerManager.obtainData()[0])
                     CheckFileIsExists(FilePickerManager.obtainData()[0]) //检查文件是否存在
 

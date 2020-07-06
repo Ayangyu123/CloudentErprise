@@ -161,7 +161,8 @@ import java.net.ConnectException
                     {
 
 
-                        Toastinfo("Token  is null")
+                        Toastinfo("登陆超时")
+                        MyApplication.getInstance().GetSP().edit().putString("access_token","")
                         startActivity<LoginActivity>()
                         finish()
                     }

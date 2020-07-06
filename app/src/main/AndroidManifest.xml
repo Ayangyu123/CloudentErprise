@@ -45,7 +45,9 @@
             <!--    注册页面     -->
             <activity android:name=".ui.SplashActivity"
                 android:launchMode="singleTop"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:theme="@style/splash_style"
+                >
 <!--        <activity android:name=".ui.MainActivity">-->
 <!--        <activity android:name=".ui.TeamAcitvity">-->
 <!--        <activity android:name=".ui.ChooseDestDirActivity">-->

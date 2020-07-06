@@ -2,6 +2,7 @@ package com.ucas.cloudenterprise.ui
 
 import android.Manifest
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +12,8 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.ContextMenu
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Space
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +40,17 @@ import kotlin.concurrent.thread
 class SplashActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        try {
+//            //设置坚屏 一定要放到try catch里面，否则会崩溃
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//        } catch ( e:Exception) {
+//        }
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//
+//        getWindow().setFlags(
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_splash)
         StatusBarUtil.setStatusDarkColor(window)
         if( checkPermission()){
@@ -48,13 +62,11 @@ class SplashActivity:AppCompatActivity() {
 
     private fun startnextstep() {
         lifecycleScope.launchWhenResumed {
-
+            Log.e("ok","1")
             delay(1*1000)
-                Log.e("ok","1")
+            Log.e("ok","2")
             delay(1*1000)
-                Log.e("ok","2")
-            delay(1*1000)
-                Log.e("ok","3")
+            Log.e("ok","3")
                 if(IS_FIRSTRUN){
                     //第一次运行app 条状引导页
                     startActivity<WelcomeActivity>() }
