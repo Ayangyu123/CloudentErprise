@@ -74,6 +74,8 @@
                 android:maxLength="6"
                 android:textSize="14dp"
                 android:textColor="#333"
+                android:editable="false"
+                android:enabled="false"
                 android:textColorHint="#999"
                 android:inputType="none"
                 android:hint="请输入4到6位的字母、数字"
@@ -147,7 +149,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-
+            android:enabled="false"
             android:visibility="visible"
             android:drawableRight="@drawable/pick_date_normal"
             android:textColor="#333"

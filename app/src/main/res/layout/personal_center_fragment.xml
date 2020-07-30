@@ -114,17 +114,7 @@
 
         android:background="@android:color/white"
         >
-        <TextView
-            android:id="@+id/tv_version"
-            tools:text="V 2.2.1 "
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:drawablePadding="16dp"
-            android:textColor="@android:color/black"
-            android:gravity="center_vertical|right"
-            />
+
 
         <TextView
             android:text="检查新版本"
@@ -136,6 +126,18 @@
             android:gravity="center_vertical"
             android:drawableLeft="@drawable/check_new_version_setting_icon"
              />
+        <TextView
+            android:id="@+id/tv_version"
+            tools:text="V 2.2.1 "
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:drawablePadding="16dp"
+            android:layout_marginRight="16dp"
+            android:textColor="@android:color/black"
+            android:gravity="center_vertical|right"
+            />
 
     </FrameLayout>
 

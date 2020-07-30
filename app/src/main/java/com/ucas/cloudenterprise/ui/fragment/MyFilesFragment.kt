@@ -91,6 +91,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
 
     override fun initView() {
+
         //<editor-fold desc=" 设置files RecyclerView  ">
        adapter = FilesAdapter(mContext,fileslist)
        rc_myfiles.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL,false)
@@ -165,11 +166,15 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
             }
         })
         //</editor-fold >
+
+
         //<editor-fold  desc ="显示新建文件夹Dialog">
         iv_create_dir.setOnClickListener{
            ShowCreateNewDirDialog()
         }
         //</editor-fold >
+
+
         //<editor-fold  desc ="显示上传文件Dialog">
         iv_show_up_file_type_dilaog.setOnClickListener{
 //            if(UpFileTypeDialog == null){
@@ -221,6 +226,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
         }
         //</editor-fold >
+
+
         //<editor-fold desc ="显示排序popwinod">
         iv_sort.setOnClickListener{
             if(SortPOPwiond == null){
@@ -254,6 +261,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
         }
         //</editor-fold >
+
+
         //<editor-fold desc ="swipeRefresh settings">
         swipeRefresh.setColorSchemeResources(R.color.app_color)
         swipeRefresh.setOnRefreshListener {
@@ -262,6 +271,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
             swipeRefresh.isRefreshing = false
         }
         //</editor-fold >
+
+
         //<editor-fold desc ="编辑按钮 设置">
         tv_edit.setOnClickListener {
             var text =(it as android.widget.TextView).text.toString()
@@ -327,18 +338,24 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
         }
         //</editor-fold >
+
+
         //<editor-fold  desc ="搜索按钮 设置" >
         iv_search.setOnClickListener {
             startActivityForResult(Intent(mContext,SearchFileActivity::class.java).putExtra("form","myfiles"),SEARCH_CODE)
         }  //</editor-fold >
+
         //<editor-fold  desc ="刷新 设置" >
         tv_refresh.setOnClickListener {  GetFileList() }
         //</editor-fold >
+
         tv_edit.visibility = View.INVISIBLE
     }
 
     //<editor-fold  desc ="新建文件夹 Dialog" >
     val SEARCH_CODE =10009
+
+
     fun ShowCreateNewDirDialog() {
 //        if(CreateNewDirDialog == null){
 
@@ -365,6 +382,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
         CreateNewDirDialog?.show()
     }
     //</editor-fold >
+
+
 //<editor-fold  desc ="底部操作 Dialog" >
     private fun ShowBottomFilesOperateDialog(
         item: File_Bean,
@@ -490,6 +509,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
     }
     //</editor-fold >
 
+
     //<editor-fold  desc ="重命名 Dialog" >
     private fun ShowRenameDialog(item: File_Bean) {
          ReanmeDialog =Dialog(mContext!!).apply {
@@ -538,6 +558,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
         ReanmeDialog?.show()
     }
     //</editor-fold >
+
     //<editor-fold  desc ="删除提示 Dialog" >
     fun ShowFileDeleteTipsDialog(file_id:String) {
 
@@ -562,8 +583,9 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
         GetFileList()
     }
+
     //<editor-fold  desc =" 获取文件列表" >
-    public fun GetFileList() {
+     fun GetFileList() {
         GetFilesListForNet(URL_LIST_FILES +"${USER_ID}/status/${IS_UNCOMMON_DIR}/p/${pid}/dir/${ALL_FILE}",this,this)
     }
     //</editor-fold >
@@ -684,7 +706,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
             when(requestCode){
                 FilePickerManager.REQUEST_CODE ->{ //选择文件上传文件
                     if(FilePickerManager.obtainData().isEmpty()){
-                        Toastinfo("没有选择任务文件")
+                        Toastinfo("没有选择文件")
                         return
                     }
                    Log.e("ok","file  path"+FilePickerManager.obtainData()[0])
@@ -735,7 +757,7 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
     }
 
-        //<editor-fold desc="检查文件是否已存在">
+     //<editor-fold desc="检查文件是否已存在">
     private fun CheckFileIsExists(file_path: String) {
             val destfile = File(file_path)
 
@@ -780,7 +802,8 @@ class MyFilesFragment: BaseFragment(), OnNetCallback {
 
 
     }
-    //</ediotr-fold>
+    //</editor-fold>
+
 
     override fun onStart() {
         super.onStart()

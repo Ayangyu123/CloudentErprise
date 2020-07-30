@@ -80,7 +80,8 @@ val URL_ADD_MEMBER = "${BASE_URL}member" //post 添加成员 put 删除
 val URL_MEMBER_INFO_UPDATE = "${BASE_URL}member_info/update" //成员信息修改
 //http://10.0.130.172:20000/api/cloud/v1/member_list/company/220874840104505344/mem/1578371132474935000-7696043959137995161
 val URL_LIST_MEMBER = "${BASE_URL}member_list/" //添加成员
-val URL_SEARCH_MEMBER = "${BASE_URL}member_search/" //成员搜索
+val URL_SEARCH_MEMBER = "${BASE_URL}member_search" //成员搜索
+//val URL_SEARCH_MEMBER = "${BASE_URL}member_search/" //成员搜索
 //<editor-fold desc="审核成员">
 //<editor-fol desc="成员审核状态"> -1:未审核 1:拒绝 0:已通过 2所有
 val All_STATE = 2

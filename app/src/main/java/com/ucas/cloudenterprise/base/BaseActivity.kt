@@ -7,8 +7,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.graphics.Color
-import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -16,6 +14,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
@@ -74,7 +73,7 @@ import java.net.ConnectException
         }
     }
     var netcallback = object :StringCallback(){
-       var  url:String=""
+        var  url:String=""
         override fun onFinish() {
             super.onFinish()
                      if (dialog != null && dialog!!.isShowing()) {
@@ -271,7 +270,7 @@ import java.net.ConnectException
 
 
 
-    public fun NetRequest(
+     fun NetRequest(
         url: String,
         RequestMethod:Int,
         paramsjson: HashMap<String, Any>?,
@@ -343,16 +342,13 @@ import java.net.ConnectException
     override fun onDestroy() {
         super.onDestroy()
         NetTag?.let { OkGo.getInstance().cancelTag(NetTag) }
-
-
     }
 
     private fun StatusBarsettings() {
         if (Build.VERSION.SDK_INT >= 21) {
             val decorView = window.decorView
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//            window.statusBarColor = Color.TRANSPARENT
-            window.statusBarColor = Color.parseColor(APP_COLOR)
+            window.statusBarColor = ContextCompat.getColor(this,R.color.app_color)
         }
     }
 

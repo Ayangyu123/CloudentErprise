@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.*
 import android.os.Environment.MEDIA_MOUNTED
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -342,6 +343,7 @@ class FilePickerActivity : AppCompatActivity(), View.OnClickListener,
                     // 如果是文件夹，则进入
                     enterDirAndUpdateUI(item)
                 } else {
+                    Log.e("filepickactivity","  FilePickerManager.config.fileItemOnClickListener is ${FilePickerManager.config.fileItemOnClickListener}")
                     FilePickerManager.config.fileItemOnClickListener?.onItemClick(
                         adapter as FileListAdapter,
                         view,

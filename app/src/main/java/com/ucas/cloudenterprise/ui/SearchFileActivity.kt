@@ -119,7 +119,7 @@ class SearchFileActivity : BaseActivity(),BaseActivity.OnNetCallback{
         adapter = FilesAdapter(this,fileslist)
         rc_myfiles.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false)
         rc_myfiles.adapter = adapter
-        rc_myfiles.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+//        rc_myfiles.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                 var item =fileslist[position]

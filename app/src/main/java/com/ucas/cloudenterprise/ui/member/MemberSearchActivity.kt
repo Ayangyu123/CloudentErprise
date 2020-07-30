@@ -126,11 +126,13 @@ class MemberSearchActivity : BaseActivity(), BaseActivity.OnNetCallback {
         if (imm.isActive()){
             imm.hideSoftInputFromWindow(et_search_key_word.getWindowToken(), 0); //隐藏软键盘
         }
-//        HashMap<String,Any>().apply{
-//            put("user_id","$USER_ID")
-//            put("file_name","${et_search_key_word.text}")
-//        }
-        NetRequest("$URL_SEARCH_MEMBER${et_search_key_word.text}/comp/${COMP_ID}", NET_GET,null,this,this)
+        var paramsjson=HashMap<String,Any>().apply{
+//            ${et_search_key_word.text}/comp/${COMP_ID}
+            put("acc_name",et_search_key_word.text.toString())
+            put("comp_id","$COMP_ID")
+            put("telephone","")
+        }
+        NetRequest("$URL_SEARCH_MEMBER", NET_POST,paramsjson,this,this)
     }
 
     override fun InitData() {

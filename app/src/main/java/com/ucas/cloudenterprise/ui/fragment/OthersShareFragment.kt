@@ -164,8 +164,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 
         //<editor-fold desc=" 设置files RecyclerView  ">
         adapter = FilesAdapter(mContext, fileslist)
-        rc_myfiles.layoutManager =
-            LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
+        rc_myfiles.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
         rc_myfiles.adapter = adapter
     //        rc_myfiles.addItemDecoration(
     //            DividerItemDecoration(

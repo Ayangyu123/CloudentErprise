@@ -21,9 +21,8 @@ import java.security.NoSuchAlgorithmException
 @author simpler
 @create 2019年12月27日  14:51
  */
-
+var  USER_PHONE="" //登陆手机号
 var COMP_ID ="" //企业ID
-val  team_id = "1578371132474935000-7696043959137995161"
 var  USER_ID = ""
 var IS_ROOT =false
 var COMP: Company?=null  //企业ID
@@ -63,7 +62,6 @@ var COMP: Company?=null  //企业ID
        "/ip4/47.95.145.45/tcp/14004/ipfs/QmT8oqQp2bwey8d7xMqxY3CFW3Thk6yCjmZkBCokaKvR84",
        "/ip4/47.95.145.45/tcp/14005/ipfs/QmdMBWAkbBJTvUJpgvDtJczUKKGTfuZFWrA4jozgEPw8AJ",
        "/ip4/47.95.145.45/tcp/14006/ipfs/Qmf82za9i7wd33wgq28q6cCbj1hdVhZHoU61AWg58ZhK92"
-
    )
     //</editor-fold>
 
@@ -291,14 +289,16 @@ fun getMemory():Int{
     return freeMemory.toInt()
 }
 //</editor-fold>
-
+//<editor-fold desc="下载目录">
 fun getRootPath():String{
     if(ROOT_DIR_PATH.equals("")){
-        ROOT_DIR_PATH= Environment.getExternalStorageDirectory().absolutePath+"/ucas.cloudentErprise.down/${USER_ID}"
+        ROOT_DIR_PATH=  getDeafultDownDir()
     }
+    Log.e("ok",ROOT_DIR_PATH)
     return   ROOT_DIR_PATH
 }
 
+fun getDeafultDownDir()= Environment.getExternalStorageDirectory().absolutePath+"/SaturnClound/${USER_PHONE}"
 //</editor-fold>
 
 fun main(){

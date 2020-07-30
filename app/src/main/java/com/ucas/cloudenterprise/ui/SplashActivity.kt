@@ -40,17 +40,6 @@ import kotlin.concurrent.thread
 class SplashActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        try {
-//            //设置坚屏 一定要放到try catch里面，否则会崩溃
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//        } catch ( e:Exception) {
-//        }
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
-//
-//        getWindow().setFlags(
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(R.layout.activity_splash)
         StatusBarUtil.setStatusDarkColor(window)
         if( checkPermission()){
@@ -61,6 +50,7 @@ class SplashActivity:AppCompatActivity() {
     }
 
     private fun startnextstep() {
+        stratDaemonService(this@SplashActivity)
         lifecycleScope.launchWhenResumed {
             Log.e("ok","1")
             delay(1*1000)
@@ -68,13 +58,15 @@ class SplashActivity:AppCompatActivity() {
             delay(1*1000)
             Log.e("ok","3")
                 if(IS_FIRSTRUN){
-                    //第一次运行app 条状引导页
+                    //第一次运行app 》》》 引导页
                     startActivity<WelcomeActivity>() }
                 else{
                     //判断Token是否为空
                     if(TextUtils.isEmpty(ACCESS_TOKEN)){
+                        // 》》》登陆页面
                         startActivity<LoginActivity>()
                     }else{
+                        // 》》》主页面
                         startActivity<MainActivity>()
                     }
 
@@ -89,27 +81,19 @@ class SplashActivity:AppCompatActivity() {
     }
 
 
-    fun checkPermission(): Boolean {
-
-
+    fun checkPermission(): Boolean  {
 
         var isGranted = true
         if (android.os.Build.VERSION.SDK_INT >= 23) {
-            if (this.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (this.checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 //如果没有写sd卡权限
                 isGranted = false
             }
-//            if (this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//                isGranted = false
-//            }
 
             if (!isGranted) {
                 this.requestPermissions(
                     arrayOf(
-//                        Manifest.permission.ACCESS_COARSE_LOCATION,
-//                        Manifest.permission.ACCESS_FINE_LOCATION,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                       WRITE_EXTERNAL_STORAGE
                     ),
                     102
                 )

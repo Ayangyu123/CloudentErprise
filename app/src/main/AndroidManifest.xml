@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
 
+
+
     <!--  MyApplication   usesCleartextTraffic 允许http请求   android:requestLegacyExternalStorage="true"   requestLegacyExternalStorage外部设备 -->
     <application
         android:name=".app.MyApplication"
@@ -22,6 +24,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.ucas.cloudenterprise.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
 
         <!-- 如果您项目中的所有页面都只需要以高或宽中的一个作为基准进行适配的话, 那就只需要填写高或宽中的一个设计图尺寸即可 -->
 

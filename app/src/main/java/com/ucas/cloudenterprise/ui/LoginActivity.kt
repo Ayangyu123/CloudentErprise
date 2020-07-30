@@ -35,7 +35,8 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         if(JSONObject(data).isNull("data")){
             return
         }
-            SaveToken(JSONObject(data).getJSONObject("data").toString())
+
+       SaveToken(JSONObject(data).getJSONObject("data").toString())
 
     }
 
@@ -45,7 +46,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         USER_ID = JSONObject(data).getString("user_id")
         COMP_ID = JSONObject(data).getString("company_id")
         IS_ROOT = USER_ID.equals(COMP_ID)
-
+        USER_PHONE =phone
         Log.e(TAG, "ACCESS_TOKEN=${ACCESS_TOKEN}")
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
 
@@ -75,11 +76,9 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     override fun InitView() {
         StatusBarUtil.setStatusDarkColor(window)
-//        stratDaemonService(this)
-
-
         getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).apply {
             phone =getString("last_login_user_name", "")
+            USER_PHONE =phone
             passwords=getString("last_login_user_password","")
             check_box_remember_password.isChecked = getBoolean("remember_password",true)
         }
@@ -95,7 +94,7 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
 
     override fun InitData() {}
 
-    override fun GetContentViewId(): Int = R.layout.activity_login
+    override fun GetContentViewId() = R.layout.activity_login
     fun Login(view: View) {
         phone= "${et_user_name.text.toString()}"
         if(TextUtils.isEmpty(phone)){
@@ -135,16 +134,32 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         NetRequest(URL_LOGIN, NET_POST,params,this,this)
     }
 
-    fun ToRegisterActivity(view: View) {
-        startActivity<RegisterActivity>()
+    fun ToRegisterActivity(view: View) =startActivity<RegisterActivity>()
 
-    }
 
-    fun ToForgetPassword(view: View) {
-        startActivity<ForgetPasswordActivity>()
 
-    }
+    fun ToForgetPassword(view: View) =  startActivity<ForgetPasswordActivity>()
+
 }
 fun main(){
-    println(MD5encode("${12345678}",true))
+//    println(MD5encode("${12345678}",true))
+    var  a=0
+    Thread{
+        for (i in 0 until 1000000){
+            Thread.sleep(1000)
+            a=a+1
+            println(Thread.currentThread().name+" number"+a)
+        }
+
+    }.start()
+
+
+    Thread{
+        for (i in 0 until 1000000){
+            Thread.sleep(1000)
+            a=a+1
+            println(Thread.currentThread().name+" number"+a)
+        }
+
+    }.start()
 }

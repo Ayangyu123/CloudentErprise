@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="10dp"
-
         android:background="@android:color/white"
         >
 
@@ -67,6 +66,19 @@
         <include
             layout="@layout/common_line"
             tools:visibility="gone" />
+        <TextView
+            android:id="@+id/tv_see_down_dest_dir"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingRight="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingLeft="16dp"
+            android:onClick="seedowndestdir"
+            android:text="查看下载目录"
+            />
+        <include layout="@layout/common_line"/>
         <LinearLayout
             android:id="@+id/ll_clear_cahe"
             android:layout_width="match_parent"
@@ -76,6 +88,7 @@
             android:paddingBottom="10dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
+            android:background="?android:attr/selectableItemBackground"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="0dp"
@@ -90,6 +103,25 @@
                tools:text="4.6KB"/>
 
         </LinearLayout>
+
+        <include layout="@layout/common_line"/>
+
+
+
+        <TextView
+            android:id="@+id/tv_clear_down_dest_dir"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:onClick="cleardowndestdir"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="清空下载目录"
+            android:drawableRight="@drawable/icon_more_normal"
+            />
+
         <include layout="@layout/common_line"/>
 
 
@@ -101,7 +133,10 @@
             android:paddingBottom="10dp"
             android:paddingRight="16dp"
             android:paddingLeft="16dp"
+            android:onClick="changedowndestdir"
             tools:text="就撒放很多卡两极分化"
+            android:background="?android:attr/selectableItemBackground"
+            android:drawableRight="@drawable/icon_more_normal"
             />
 
         <RelativeLayout

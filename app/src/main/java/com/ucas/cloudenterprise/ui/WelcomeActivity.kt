@@ -78,6 +78,8 @@ class WelcomeActivity :BaseActivity (){
     override fun InitData() { }
 
     override fun GetContentViewId(): Int = R.layout.activity_welcome
+
+    //<editor-fold desc="立即体验点击时间 跳转登陆页面">
     fun tologinactivity(view: View) {
         Log.e(TAG,"ToLoginActivity")
         IS_FIRSTRUN = false
@@ -86,6 +88,9 @@ class WelcomeActivity :BaseActivity (){
         startActivity<LoginActivity>()
         finish()
     }
+    //</editor-fold>
+
+    //<editor-fold desc="返回键">
     override fun onBackPressed() {
         if (vp_welcome.currentItem == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
@@ -96,4 +101,5 @@ class WelcomeActivity :BaseActivity (){
             vp_welcome.currentItem = vp_welcome.currentItem - 1
         }
     }
+    //</editor-fold>
 }

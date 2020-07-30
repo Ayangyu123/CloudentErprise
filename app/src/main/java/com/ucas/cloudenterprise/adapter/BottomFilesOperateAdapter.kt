@@ -160,12 +160,4 @@ class BottomFilesOperateAdapter(
 
 }
 
-private fun TextView.setCompoundDrawablesWithIntrinsicBounds(
-    nothing: Nothing?,
-    topdrawable: Drawable?,
-    nothing1: Nothing?,
-    nothing2: Nothing?,
-    nothing3: Nothing?
-) {
 
-}

@@ -236,7 +236,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
 
            setContentView(LayoutInflater.from(mContext).inflate(R.layout.item_bottom_del, null).apply {
                (this as TextView).apply {
-                   text="删除"
+                   text="删除记录"
                    gravity =Gravity.CENTER
                   setCompoundDrawablesWithIntrinsicBounds(null,topdrawable,null,null)
                    setOnClickListener {

@@ -70,6 +70,9 @@ class MyApplication:Application() {
                 USER_ID = getString("user_id","")
                 COMP_ID = getString("company_id","")
                 IS_ROOT = USER_ID.equals(COMP_ID)
+                USER_PHONE=getString("last_login_user_name", "")
+
+                ROOT_DIR_PATH = getString("downdestdir", "")
 
                 ACCESS_TOKEN=getString("access_token","" )
                 REFRESH_TOKEN  =getString("refresh_token","" )
