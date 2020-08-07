@@ -47,6 +47,9 @@ class LoginActivity :BaseActivity(),BaseActivity.OnNetCallback {
         COMP_ID = JSONObject(data).getString("company_id")
         IS_ROOT = USER_ID.equals(COMP_ID)
         USER_PHONE =phone
+
+        ROOT_DIR_PATH = getDeafultDownDir()
+
         Log.e(TAG, "ACCESS_TOKEN=${ACCESS_TOKEN}")
         Log.e(TAG, "refresh_token=${REFRESH_TOKEN}")
 
