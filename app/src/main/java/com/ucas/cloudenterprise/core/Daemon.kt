@@ -509,6 +509,7 @@ class DaemonService : Service() {
 
                             OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
                                 .params("hash", "${task.file_hash}")
+                                //.retryCount(60)
                                 .isMultipart(true)
                                 .execute(object :
                                     FileCallback(ROOT_DIR_PATH, task.file_name) {
