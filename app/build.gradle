@@ -100,6 +100,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
         //websocket
     implementation "org.java-websocket:Java-WebSocket:1.4.1"
+//    implementation "org.java-websocket:Java-WebSocket:1.5.1"
 
     implementation 'org.greenrobot:eventbus:3.2.0'
     implementation 'com.google.code.gson:gson:2.8.5'

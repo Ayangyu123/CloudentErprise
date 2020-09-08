@@ -332,6 +332,7 @@ class DaemonService : Service() {
             }
         })
     }
+
     //</editor-fold>
 
 
@@ -506,10 +507,11 @@ class DaemonService : Service() {
                                 destfile.delete()
                             }
 
+//                            OkGo.getInstance().okHttpClient=10000
 
                             OkGo.post<File>("http://127.0.0.1:9984/api/v0/unpack")
                                 .params("hash", "${task.file_hash}")
-                                //.retryCount(60)
+                                .retryCount(3)
                                 .isMultipart(true)
                                 .execute(object :
                                     FileCallback(ROOT_DIR_PATH, task.file_name) {
@@ -519,7 +521,7 @@ class DaemonService : Service() {
 
                                         var downloadprogress =
                                             ((progress!!.currentSize * 1.0f / task.file_size) * 100).toInt()
-                                        if (downloadprogress > task.progress) {
+                                        if (downloadprogress > task.file_progress) {
                                             task.file_progress = downloadprogress
                                         }
                                         Log.e(
@@ -581,6 +583,9 @@ class DaemonService : Service() {
                             Log.e("WebSocketClient", "reason is ${reason}")
                             Log.e("WebSocketClient", "code is ${code}")
                             Log.e("WebSocketClient", "remote is ${remote}")
+                            if(!remote){
+                                GetFile(task)
+                            }
 
 
                         }

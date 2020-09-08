@@ -118,8 +118,10 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
 
 
                         if(item.load_type_falg==DOWNLOAD){
-                        progress_download.secondaryProgress =item.progress
-                            progress_download.setProgress(item.file_progress,true)
+//                            progress_download.secondaryProgress =item.progress
+//                            progress_download.setProgress(item.file_progress,true)
+                            progress_download.setProgress(item.progress,true)
+                            progress_download.secondaryProgress =item.file_progress
                         }else{
                             progress_download.setProgress(item.progress,true)
                         }
