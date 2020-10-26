@@ -55,13 +55,12 @@ class BottomFilesOperateAdapter(
         "详细信息"
     )
     init {
+        //123
         /**
          *   1.判断是否为共享文件
          *   2.是否为文件加
          *   3.是否为根目录
          * */
-
-
         if(isfile){
             InfoList.remove(  "设置共享")
             DrawableList.remove( R.drawable.operate_share_dir_normal)
