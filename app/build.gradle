@@ -13,14 +13,17 @@ android {
             keyAlias 'ucas'
             keyPassword 'ucas@2020'
         }
+
+
     }
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.ucas.cloudenterprise"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 8
-        versionName = "1.1.5"
+        versionCode 9
+        versionName = "1.1.6"
 //        versionCode 2
 //        versionName= "0.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,16 +47,40 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
     }
+
+/*
+----------------------------------------------------
+**/
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                // apk_渠道名-版本号-版本名称-编译时间.apk
+                def fileName = "saturn-edisk-android-${defaultConfig.versionName}.apk"
+                outputFileName = fileName
+            }
+        }
+    }
+/*
+----------------------------------------------------
+ */
+
+
+
     buildTypes {
         release {
-            minifyEnabled  false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
             //ucas@2020
         }
     }
 }
-
+/*def buildTime() {     //在apk打包的时候获取时间
+    def date = new Date()
+    def formattedDate = date.format('yyyy_MM_dd--HH：mm')
+    return formattedDate
+}*/
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
