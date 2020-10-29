@@ -30,18 +30,11 @@ class MemberInfoAdapter(var context: Context?, var list:ArrayList<MemberInfo>) :
         if(mOnRecyclerItemClickListener!=null){
             mOnRecyclerItemClickListener!!.onItemClick(holder,position)
         }
-
-
-
-
-
     }
 
     class ViewHolder(itemView : View) :RecyclerView.ViewHolder(itemView){
         var ll_root=itemView.findViewById<LinearLayout>(com.ucas.cloudenterprise.R.id.ll_root)
         var tv_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_name)
         var tv_state =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_state)
-
-
     }
 }

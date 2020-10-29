@@ -24,7 +24,7 @@ import com.ucas.cloudenterprise.utils.Toastinfo
 @author simpler
 @create 2020年01月14日  08:51
  */
-class BottomFilesOperateAdapter(
+class BottomFilesOperateAdapter(    //底部四个按钮的监听适配器我的文件、内部共享、传输列表、个人中心
     val context: Context?,
     val item: File_Bean,
     val isfile: Boolean,
@@ -34,7 +34,8 @@ class BottomFilesOperateAdapter(
 ) :RecyclerView.Adapter<BottomFilesOperateAdapter.ViewHolder>(){
     val TAG ="BottomFilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
-    var DrawableList = arrayListOf<Int>(
+    //点击条目操作时的一些小功能图片  连接分享、下载、复制到、移动到、重命名、删除、详情信息
+    var DrawableList = arrayListOf<Int>(    //存入图片集合
         R.drawable.operate_share_dir_normal,
         R.drawable.operate_link_share_normal,
         R.drawable.operate_download_normal,
@@ -44,7 +45,7 @@ class BottomFilesOperateAdapter(
         R.drawable.operate_delete_normal,
         R.drawable.operate_detail_normal
        )
-    var InfoList = arrayListOf<String>(
+    var InfoList = arrayListOf<String>( //存入对应功能名字的集合
         "设置共享",
         "链接分享",
         "下载",
@@ -61,7 +62,7 @@ class BottomFilesOperateAdapter(
          *   2.是否为文件加
          *   3.是否为根目录
          * */
-        if(isfile){
+        if(isfile){ //isfile定义为布尔类型  默认为true
             InfoList.remove(  "设置共享")
             DrawableList.remove( R.drawable.operate_share_dir_normal)
         }else{
@@ -102,7 +103,7 @@ class BottomFilesOperateAdapter(
 //            }
 //        }
 
-        if(!isroot_file){
+        if(!isroot_file){ //  强制性在注册的时候将isroot_file设置为false   在判断的时候又强制性设置为True
             InfoList.remove(  "设置共享")
             DrawableList.remove( R.drawable.operate_share_dir_normal)
         }
@@ -150,7 +151,7 @@ class BottomFilesOperateAdapter(
         if(mOnRecyclerItemClickListener!=null){
             mOnRecyclerItemClickListener!!.onItemClick(holder,position)
         }
-        }
+    }
 
     class ViewHolder(itemView :View) :RecyclerView.ViewHolder(itemView){
 

@@ -8,8 +8,11 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.model.CompletedFile
-
-class CompletedAdapter(var context: Context?, var list:ArrayList<CompletedFile>) : RecyclerView.Adapter<CompletedAdapter.ViewHolder>(){
+//上传文件的一个适配器   比如说 要上传个图片或者文本  都可以通过这个适配器 来进行配置
+//实体类为CompletedFile
+class CompletedAdapter(var context: Context?,
+                       var list:ArrayList<CompletedFile>)
+    : RecyclerView.Adapter<CompletedAdapter.ViewHolder>() {
 
     val TAG ="FilesAdapter"
     var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
@@ -25,18 +28,12 @@ class CompletedAdapter(var context: Context?, var list:ArrayList<CompletedFile>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         if(mOnRecyclerItemClickListener!=null){
             mOnRecyclerItemClickListener!!.onItemClick(holder,position)
         }
-
-
-
-
-
     }
 
-    class ViewHolder(itemView :View) :RecyclerView.ViewHolder(itemView){
+    class ViewHolder(itemView :View) :RecyclerView.ViewHolder(itemView)  {
         var rl_file_item_root = itemView.findViewById<RelativeLayout>(com.ucas.cloudenterprise.R.id.rl_file_item_root)
         var iv_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_icon)
         var iv_right_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_right_icon)
@@ -44,9 +41,6 @@ class CompletedAdapter(var context: Context?, var list:ArrayList<CompletedFile>)
         var tv_file_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
         var tv_file_create_time =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_create_time)
         var end_line =itemView.findViewById<View>(com.ucas.cloudenterprise.R.id.end_line)
-
-
-
 
     }
 }

@@ -12,38 +12,39 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.model.BelongTeam
 
-class TeamAdapter(var context: Context?, var list:ArrayList<BelongTeam>) : RecyclerView.Adapter<TeamAdapter.ViewHolder>(){
+class TeamAdapter(var context: Context?, var list: ArrayList<BelongTeam>) :
+    RecyclerView.Adapter<TeamAdapter.ViewHolder>() {
 
-    val TAG ="FilesAdapter"
-    var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
+    val TAG = "FilesAdapter"
+    var mOnRecyclerItemClickListener: OnRecyclerItemClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        var view = LayoutInflater.from(parent.context).inflate(com.ucas.cloudenterprise.R.layout.item_team, parent,false)
+        var view = LayoutInflater.from(parent.context)
+            .inflate(com.ucas.cloudenterprise.R.layout.item_team, parent, false)
         return ViewHolder(view)
     }
-    fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){
-        this.mOnRecyclerItemClickListener =OnRecyclerItemClickListener
+
+    fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener: OnRecyclerItemClickListener) {
+        this.mOnRecyclerItemClickListener = OnRecyclerItemClickListener
     }
+
     override fun getItemCount(): Int {
-        return  list?.size
+        return list?.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        if(mOnRecyclerItemClickListener!=null){
-            mOnRecyclerItemClickListener!!.onItemClick(holder,position)
+        if (mOnRecyclerItemClickListener != null) {
+            mOnRecyclerItemClickListener!!.onItemClick(holder, position)
         }
-
-
-
 
 
     }
 
-    class ViewHolder(itemView : View) :RecyclerView.ViewHolder(itemView){
-        var fl_root=itemView.findViewById<FrameLayout>(com.ucas.cloudenterprise.R.id.fl_root)
-        var tv_team_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_team_name)
-        var iv_remove =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_remove)
-
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var fl_root = itemView.findViewById<FrameLayout>(com.ucas.cloudenterprise.R.id.fl_root)
+        var tv_team_name =
+            itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_team_name)
+        var iv_remove = itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_remove)
 
 
     }

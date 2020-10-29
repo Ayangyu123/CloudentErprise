@@ -21,44 +21,53 @@ import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 @author simpler
 @create 2020年01月14日  08:51
  */
-class FilesAdapter(var context: Context?, var list:ArrayList<File_Bean>) :RecyclerView.Adapter<FilesAdapter.ViewHolder>(){
-    val TAG ="FilesAdapter"
-    var mOnRecyclerItemClickListener : OnRecyclerItemClickListener ? = null
+//这个适配负责点击条目后的一些操作
+//在我们点击条目的时候 对后面的按钮弹出的功能进行操作
+/*
+  "设置共享",
+  "链接分享",
+  "下载",
+  "复制到",
+  "移动到",
+  "重命名",
+  "删除",
+  "详细信息"
+* */
+class FilesAdapter(var context: Context?, var list: ArrayList<File_Bean>) :
+    RecyclerView.Adapter<FilesAdapter.ViewHolder>() {
+    val TAG = "FilesAdapter"
+    var mOnRecyclerItemClickListener: OnRecyclerItemClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var view = LayoutInflater.from(context).inflate(R.layout.item_myfiles, null)
         return ViewHolder(view)
     }
-    fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){
-        this.mOnRecyclerItemClickListener =OnRecyclerItemClickListener
+
+    fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener: OnRecyclerItemClickListener) {
+        this.mOnRecyclerItemClickListener = OnRecyclerItemClickListener
     }
+
     override fun getItemCount(): Int {
-        return  list?.size
-       }
+        return list?.size
+    }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-         if(mOnRecyclerItemClickListener!=null){
-             mOnRecyclerItemClickListener!!.onItemClick(holder,position)
-            }
-
-
-
-
-
+        if (mOnRecyclerItemClickListener != null) {
+            mOnRecyclerItemClickListener!!.onItemClick(holder, position)
         }
-
-    class ViewHolder(itemView :View) :RecyclerView.ViewHolder(itemView){
-          var rl_file_item_root = itemView.findViewById<RelativeLayout>(com.ucas.cloudenterprise.R.id.rl_file_item_root)
-          var iv_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_icon)
-          var iv_right_icon =itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_right_icon)
-          var checkbox_is_checked =itemView.findViewById<CheckBox>(com.ucas.cloudenterprise.R.id.checkbox_is_checked)
-          var tv_file_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
-          var tv_file_create_time =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_create_time)
-
-
-
-
     }
 
-
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var rl_file_item_root =
+            itemView.findViewById<RelativeLayout>(com.ucas.cloudenterprise.R.id.rl_file_item_root)
+        var iv_icon = itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_icon)
+        var iv_right_icon =
+            itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_right_icon)
+        var checkbox_is_checked =
+            itemView.findViewById<CheckBox>(com.ucas.cloudenterprise.R.id.checkbox_is_checked)
+        var tv_file_name =
+            itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
+        var tv_file_create_time =
+            itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_create_time)
+    }
 }

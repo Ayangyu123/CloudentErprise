@@ -11,38 +11,44 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.model.MemberAuditInfo
 
-class MemberAuditAdapter(var context: Context?, var list:ArrayList<MemberAuditInfo>) : RecyclerView.Adapter<MemberAuditAdapter.ViewHolder>(){
+//在我们进行处理提交问题反馈的时候的一个操作判断
+class MemberAuditAdapter(var context: Context?, var list: ArrayList<MemberAuditInfo>) :
+    RecyclerView.Adapter<MemberAuditAdapter.ViewHolder>() {
 
-    val TAG ="FilesAdapter"
-    var mOnRecyclerItemClickListener : OnRecyclerItemClickListener? = null
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberAuditAdapter.ViewHolder {
-        var view = LayoutInflater.from(context).inflate(R.layout.item_members_aduit, parent,false)
+    val TAG = "FilesAdapter"
+    var mOnRecyclerItemClickListener: OnRecyclerItemClickListener? = null
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MemberAuditAdapter.ViewHolder {
+        var view = LayoutInflater.from(context).inflate(R.layout.item_members_aduit, parent, false)
         return MemberAuditAdapter.ViewHolder(view)
     }
-    fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener : OnRecyclerItemClickListener){
-        this.mOnRecyclerItemClickListener =OnRecyclerItemClickListener
+
+    fun SetOnRecyclerItemClickListener(OnRecyclerItemClickListener: OnRecyclerItemClickListener) {
+        this.mOnRecyclerItemClickListener = OnRecyclerItemClickListener
     }
+
     override fun getItemCount(): Int {
-        return  list?.size
+        return list?.size
     }
 
     override fun onBindViewHolder(holder: MemberAuditAdapter.ViewHolder, position: Int) {
 
-        if(mOnRecyclerItemClickListener!=null){
-            mOnRecyclerItemClickListener!!.onItemClick(holder,position)
+        if (mOnRecyclerItemClickListener != null) {
+            mOnRecyclerItemClickListener!!.onItemClick(holder, position)
         }
-
-
-
 
 
     }
 
-    class ViewHolder(itemView : View) :RecyclerView.ViewHolder(itemView){
-        var ll_root=itemView.findViewById<LinearLayout>(com.ucas.cloudenterprise.R.id.ll_root)
-        var tv_member_name =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_member_name)
-        var tv_reason_for_application =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_reason_for_application)
-        var tv_state =itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_state)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var ll_root = itemView.findViewById<LinearLayout>(com.ucas.cloudenterprise.R.id.ll_root)
+        var tv_member_name =
+            itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_member_name)
+        var tv_reason_for_application =
+            itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_reason_for_application)
+        var tv_state = itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_state)
 
 
     }
