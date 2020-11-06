@@ -16,6 +16,7 @@ import android.os.IBinder
 import android.text.TextUtils
 import android.text.format.Formatter
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.startForegroundService
 import com.google.gson.Gson
@@ -52,6 +53,7 @@ import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 import kotlin.collections.HashMap
+import kotlin.math.log
 
 fun stratDaemonService(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -133,6 +135,7 @@ class DaemonService : Service() {
         val UPLOADCOMPLETED = 4
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         mMyBinder = MyBinder(this)
@@ -278,10 +281,11 @@ class DaemonService : Service() {
         }
         /*********core install   完成  写入flag 下次直接执行 star*******/
 
+        //</editor-fold>
     }
-    //</editor-fold>
 
     //<editor-fold desc="开启底层服务">
+    @RequiresApi(Build.VERSION_CODES.O)
     fun start() {
         if (daemon != null) {
             stop()
@@ -353,7 +357,7 @@ class DaemonService : Service() {
         DaemonClosed = true
     }
     //</editor-fold>
-
+//---------------------------------------------
     //<editor-fold desc="停止文件加载">
     fun LoadFileStop(loadfile: LoadingFile) {
         Log.e("ok", "LoadFileStop")
@@ -374,9 +378,9 @@ class DaemonService : Service() {
 
                     }
                 }
+
+
                 TransferlistItemFragment.DOWNLOAD -> {// 下载
-
-
                     downtaskmap[loadfile.file_MD5]?.apply {
                         (downexecutor as ThreadPoolExecutor).apply {
                             remove(downtaskmap[loadfile.file_MD5])
@@ -384,10 +388,11 @@ class DaemonService : Service() {
                         }
                     }
                 }
+
             }
         }
     }
-
+    //---------------------------------------------
     //</editor-fold>
     //<editor-fold desc="文件重新加载">
     fun ReLoadFile(uptask: LoadingFile) {
@@ -457,11 +462,10 @@ class DaemonService : Service() {
             item.size,
             src_file_info = item
         )
-        GetFile(task)
-
+        GetFile_xiazai(task)
     }
 
-    fun GetFile(task: LoadingFile) {
+    fun GetFile_xiazai(task: LoadingFile) {
         if (daemon == null) {
             Toastinfo("daemon 未启动")
             return
@@ -471,6 +475,7 @@ class DaemonService : Service() {
             Toastinfo("pulgDaemon 未启动")
             return
         }
+
         if (!MyApplication.downLoad_Ing.contains(task)) {
             MyApplication.downLoad_Ing.add(task)
         }
@@ -480,17 +485,12 @@ class DaemonService : Service() {
         object : Runnable {
             override fun run() {
                 var downclient: WebSocketClient? = null
-
-                downclient =
-                    object : WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),
-                        Draft_6455()
-                        ,
+                downclient =object : WebSocketClient(URI.create("ws://127.0.0.1:9984/api/v0/ws/down"),
+                        Draft_6455(),
                         HashMap<String, String>().apply {
-                            put(
-                                "Origin",
-                                "http://www.bejson.com/"
-                            )
-                        }) {
+                            put("Origin", "http://www.bejson.com/")
+                        }){
+                        //握手
                         override fun onOpen(handshakedata: ServerHandshake?) {
                             Log.e("WebSocketClient", "onOpen")
                             send(JSONObject(HashMap<String, String>().apply {
@@ -524,9 +524,11 @@ class DaemonService : Service() {
                                         if (downloadprogress > task.file_progress) {
                                             task.file_progress = downloadprogress
                                         }
+                                        val fl = (progress!!.currentSize * 1.0f / task.file_size) * 100
+
                                         Log.e(
-                                            "ok",
-                                            "${(progress!!.currentSize * 1.0f / task.file_size) * 100}"
+                                            "ok123",
+                                            "${fl}"
                                         )
                                         //TODO 速度显示
                                         progress!!.speed.apply {
@@ -536,7 +538,6 @@ class DaemonService : Service() {
                                                     this
                                                 ).toUpperCase() + "/s"
                                         }
-
                                         Log.e("ok", "文件下载进度：${downloadprogress}")
                                     }
 
@@ -557,39 +558,38 @@ class DaemonService : Service() {
                                     }
 
                                     override fun onSuccess(response: Response<File>?) {
-
-                                        MyApplication.downLoad_completed.add(
+                                        //利用去重操作 进行对下载文件的一个判断
+                                      MyApplication.downLoad_completed.add(
                                             0, CompletedFile(
                                                 task.file_name,
                                                 SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
                                                     Date()
-                                                )
-                                                ,
-                                                task.file_size.toString(),
-                                                false
-                                            )
+                                                ), task.file_size.toString(), false)
                                         )
                                         savaspbyfalag(DOWNLOADCOMPLETED)
-
                                         Log.e("it", "文件路径 ${response?.body()?.absolutePath}")
                                         Toastinfo("${task.file_name} 下载完成")
+                                        Log.e("kk","onSuccess执行了")
+                                       // Thread.sleep(2000)//下载完后进行停止子线程 退出
+                                        Log.e("kk","onSuccess关闭了")
                                     }
-
                                 })
                         }
-
+                        //关闭
                         override fun onClose(code: Int, reason: String?, remote: Boolean) {
                             Log.e("WebSocketClient", "onClose")
                             Log.e("WebSocketClient", "reason is ${reason}")
                             Log.e("WebSocketClient", "code is ${code}")
                             Log.e("WebSocketClient", "remote is ${remote}")
-                            if(!remote){
-                                GetFile(task)
+
+
+                            if (!remote) { //remote  默认为true   当它不等于true的时候进行关闭
+                               // GetFile_xiazai(task)
+                                Log.e("AAA","我是Daemon里面的onClose1")
                             }
-
-
+                            Log.e("AAA","我是Daemon里面的onClose2")
                         }
-
+                        //接收消息
                         override fun onMessage(message: String?) {
                             Log.e("WebSocketClient", "onMessage ${message}")
                             if (task.Ingstatus != LoadIngStatus.TRANSFERING) {
@@ -604,7 +604,7 @@ class DaemonService : Service() {
                                 if (downloadprogress > task.progress) {
                                     task.progress = downloadprogress
                                 }
-//                                        Log.e("ok","${ (progress!!.currentSize * 1.0f / task.file_size)*100}")
+//                              Log.e("ok","${ (progress!!.currentSize * 1.0f / task.file_size)*100}")
                                 //TODO 速度显示
                                 getLong("Speed").apply {
                                     if (this != 0L)
@@ -613,17 +613,13 @@ class DaemonService : Service() {
                                             this
                                         ).toUpperCase() + "/s"
                                 }
-
-
                             }
-
                         }
-
+                        //异常错误
                         override fun onError(ex: java.lang.Exception?) {
                             Log.e("WebSocketClient", "onError")
                             Log.e("WebSocketClient", "ex is ${ex.toString()}")
                         }
-
                     }
                 downclient.setConnectionLostTimeout(0)
                 downclient.connect()
