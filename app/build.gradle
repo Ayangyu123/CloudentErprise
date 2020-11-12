@@ -13,8 +13,6 @@ android {
             keyAlias 'ucas'
             keyPassword 'ucas@2020'
         }
-
-
     }
 
     compileSdkVersion 28
@@ -22,8 +20,8 @@ android {
         applicationId "com.ucas.cloudenterprise"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 9
-        versionName = "1.1.6"
+        versionCode 11
+        versionName  "1.1.8"
 //        versionCode 2
 //        versionName= "0.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -64,9 +62,6 @@ android {
 /*
 ----------------------------------------------------
  */
-
-
-
     buildTypes {
         release {
             minifyEnabled false
