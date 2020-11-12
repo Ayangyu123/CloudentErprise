@@ -28,10 +28,8 @@ import kotlin.concurrent.thread
  */
 class MyApplication:Application() {
 
+
     val TAG ="MyApplication"
-
-
-
 
     companion object {
 //        @SuppressLint("StaticFieldLeak")
