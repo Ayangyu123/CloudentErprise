@@ -165,10 +165,14 @@ class FilePickerActivity : AppCompatActivity(), View.OnClickListener,
 
         btn_selected_all_file_picker.apply {
             // 单选模式时隐藏并且不初始化
+
             if (pickerConfig.singleChoice) {
                 visibility = View.GONE
                 return@apply
+            }else{ //如果说不是单选模式的时候可以初始化
+                visibility = View.GONE
             }
+
             setOnClickListener(this@FilePickerActivity)
             FilePickerManager.config.selectAllText.let {
                 text = it

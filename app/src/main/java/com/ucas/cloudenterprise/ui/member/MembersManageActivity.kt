@@ -24,7 +24,6 @@ import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 
 class MembersManageActivity: BaseActivity(), BaseActivity.OnNetCallback {
-
       var mMemberlist:ArrayList<MemberInfo> =ArrayList()
       lateinit   var adapter: MemberInfoAdapter
 

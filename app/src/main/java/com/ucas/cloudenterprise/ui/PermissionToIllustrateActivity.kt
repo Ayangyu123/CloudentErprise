@@ -13,6 +13,8 @@ import kotlinx.android.synthetic.main.activity_permission_to_illustrate.*
 import kotlinx.android.synthetic.main.activity_welcome.*
 
 class PermissionToIllustrateActivity : BaseActivity() {
+
+
     override fun GetContentViewId() = R.layout.activity_permission_to_illustrate
 
     override fun InitView() {
@@ -38,7 +40,7 @@ class PermissionToIllustrateActivity : BaseActivity() {
                }
 
                override fun getCount(): Int {
-                   return  WELCOME_GUIDES.size}
+                   return  WELCOME_GUIDES.size }
 
                override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
                    container.removeView(`object` as View)

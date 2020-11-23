@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.common_head.*
 @create 2020年03月23日  17:02
  */
 class SimpleFeedBackAcitivity:BaseActivity() {
+//意见反馈
     override fun GetContentViewId()= R.layout.activity_simple_feedback
 
     override fun InitView() {

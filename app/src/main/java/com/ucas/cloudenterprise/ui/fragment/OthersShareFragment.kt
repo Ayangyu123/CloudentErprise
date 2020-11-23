@@ -4,6 +4,10 @@ import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Dialog
 import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
+import android.os.Parcelable
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -41,14 +45,13 @@ import kotlinx.android.synthetic.main.swiperefreshlayout.*
 import kotlinx.android.synthetic.main.top_file_operate.*
 import org.json.JSONArray
 import org.json.JSONObject
-
+//
 /**
 @author simpler
 @create 2020年01月10日  14:31
  */
 
 class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
-
     companion object {
 
         private var instance: OthersShareFragment? = null
@@ -101,17 +104,16 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                         fileslist.addAll(Gson().fromJson<List<File_Bean>>(mdata.toString(),
                             object : TypeToken<List<File_Bean>>() {}.type) as ArrayList<File_Bean>)
                         adapter?.notifyDataSetChanged()
-
                     }
-
                 }
             }
             URL_ADD_File -> {
-
                 Toastinfo("添加文件列表成功")
                 //刷新列表
                 //TODO USER_ID ->PID
+
                 GetFileList()
+
             }
             URL_DELETE_FILE -> {
                 Toastinfo("删除文件成功")
@@ -121,7 +123,6 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
             URL_FILE_RENAME -> {
                 Toastinfo("文件重命名成功")
                 GetFileList()
-
             }
             URL_FILE_COPY -> {
                 Toastinfo("文件复制成功")
@@ -238,7 +239,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 
                         if (!isfile) {
                             iv_icon.setImageResource(R.drawable.icon_list_share_folder)
-//                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_folder)
+//                            iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.39.106.216.189)
                         } else {
                             iv_icon.setImageResource(com.ucas.cloudenterprise.R.drawable.icon_list_unknown)
 //                            var filetype = item.file_name.substringAfterLast(".")
@@ -419,6 +420,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
 //                    })
 
                                 if (DaemonService.daemon != null) {
+                                    //确认启动服务后进行调用下载
                                     mainActivity.myBinder as DaemonService.MyBinder
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
                                         ?.GetFile(item)
@@ -614,6 +616,7 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
     fun GetFileList() {
 //        GetFilesListForNet(URL_LIST_FILES +"$USER_ID/status/$IS_UNCOMMON_DIR/p/${pid}/dir/$ALL_FILE",this,this)
         GetFilesListForNet(URL_GET_FILE_JURIS_LIST + "$USER_ID" + "/p/${pid}", this, this)
+      //  GetFilesListForNet("" + "$USER_ID" + "/p/${pid}", this, this)
     }
 
     override fun initData() {
@@ -674,18 +677,12 @@ class OthersShareFragment : BaseFragment(),BaseActivity.OnNetCallback {
                         pid = item.file_id
                         GetFileList()
                     }
-
                 }
-
-
             }
             if (resultCode == RESULT_CANCELED) {
                 GetFileList()
             }
-
         }
-
-
     }
     override fun GetRootViewID() = R.layout.others_share_fragment
 }

@@ -34,7 +34,6 @@ import kotlin.collections.HashMap
  */
 class RegisterActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
-
     override fun GetContentViewId()=R.layout.activity_register
 
     override fun InitView() {

@@ -6,6 +6,7 @@ import com.ucas.cloudenterprise.base.BaseActivity
 import kotlinx.android.synthetic.main.common_head.*
 
 class EditMemberInviteLinkActivity: BaseActivity() {
+
     override fun GetContentViewId()= R.layout.activity_edit_member_invite_link
 
     override fun InitView() {

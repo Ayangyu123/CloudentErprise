@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.common_head.*
 import org.json.JSONObject
 
 class MemberInviteActivity: BaseActivity(), BaseActivity.OnNetCallback {
+
     var shared_url =""
     override fun GetContentViewId()= R.layout.activity_member_invite
 

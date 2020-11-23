@@ -37,6 +37,7 @@ import org.json.JSONObject
 import java.net.InterfaceAddress
 
 class MemberAddActivity: BaseActivity(), BaseActivity.OnNetCallback {
+
     var mTeamlist=ArrayList<BelongTeam>()
     lateinit var  mTeamsAdapter: TeamAdapter
     override fun GetContentViewId()= R.layout.activtity_member_add

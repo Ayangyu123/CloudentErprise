@@ -37,6 +37,7 @@ import kotlin.concurrent.thread
 @author simpler
 @create 2020年01月08日  13:32
  */
+//领导页Sp判断
 class SplashActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

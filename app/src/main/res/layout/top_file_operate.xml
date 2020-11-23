@@ -16,8 +16,9 @@
 
     <ImageView
         android:id="@+id/iv_show_up_file_type_dilaog"
-        android:src="@drawable/main_list_header_upload_normal"
-        style="@style/iv_myfiles_top" />
+        style="@style/iv_myfiles_top"
+        android:layout_height="wrap_content"
+        android:src="@drawable/main_list_header_upload_normal" />
 
     <ImageView
         android:id="@+id/iv_sort"

@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.item_team.view.*
 
 class MemberInfoActivity : BaseActivity() {
+
     lateinit  var mMemberInfo_Item :MemberInfo
     override fun GetContentViewId()= R.layout.activity_member_info
 

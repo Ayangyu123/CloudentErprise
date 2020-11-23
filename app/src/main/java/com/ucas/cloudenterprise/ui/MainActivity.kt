@@ -41,7 +41,6 @@ import org.json.JSONObject
 class MainActivity : BaseActivity() {
     var TAG = "MainActivity"
     var mLastFgIndex = 0
-
     var lastBackPressedAt: Long = 0
     lateinit var mFragments: ArrayList<BaseFragment>
     lateinit var mMyFilesFragment: MyFilesFragment
@@ -454,33 +453,6 @@ class MainActivity : BaseActivity() {
          mMyFilesFragment.CheckFileIsExists(cursorstr)
         return cursor.getString(columnIndexOrThrow)
     }
-
-
-//    //多选里面的方法
-//    fun getRealPathFromURI_List(
-//        mainActivity: MainActivity,
-//        uri2: List<Uri>
-//    ): String {
-//        Log.e("yy", "URI2: $uri2")
-//        Log.e("yy", "分享多个文件，即将调用分享方法")
-//        for (i in 0 until uri2.size) {
-//             get = uri2.get(i)
-//            Log.e("yy","第"+i+"个Uri:"+get)
-//        }
-//        val proj = arrayOf(MediaStore.Images.Media.DATA)
-//        val cursor: Cursor = managedQuery(get, proj, null, null, null)
-//        if (cursor == null) {
-//            val path = get.path
-//            Log.e("123456", "path:$path")
-//            return path
-//        }
-//
-//        //uploadFilenName = cursorstr
-//        Log.e("yy",cursorstr)
-//        // Toastinfo("~~~~~" +cursorstr)
-//        mMyFilesFragment.CheckFileIsExists(cursorstr)
-//        return cursor.getString(columnIndexOrThrow)
-//    }
 }
 
 

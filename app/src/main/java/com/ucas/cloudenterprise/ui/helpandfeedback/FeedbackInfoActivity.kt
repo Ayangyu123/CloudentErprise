@@ -4,6 +4,8 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.base.BaseActivity
 
 class FeedbackInfoActivity : BaseActivity() {
+
+
     override fun GetContentViewId()= R.layout.activity_feedback_info
 
     override fun InitView() {

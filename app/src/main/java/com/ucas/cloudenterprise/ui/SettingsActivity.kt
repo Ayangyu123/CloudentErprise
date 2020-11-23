@@ -34,6 +34,7 @@ import java.util.*
 import kotlin.concurrent.thread
 
 class SettingsActivity : BaseActivity() {
+//设置
 
     var mClearCache: Dialog? = null
 
@@ -209,7 +210,7 @@ class SettingsActivity : BaseActivity() {
 
         FilePickerManager
             .from(this)
-
+                //单选设置      个人中心 设置模式
             .enableSingleChoice()
             .filter(object : AbstractFileFilter() {
                 override fun doFilter(listData: ArrayList<FileItemBeanImpl>): ArrayList<FileItemBeanImpl> {

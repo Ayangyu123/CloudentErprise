@@ -6,6 +6,8 @@ import com.ucas.cloudenterprise.utils.startActivity
 import kotlinx.android.synthetic.main.common_head.*
 
 class HelpAndFeedbackActivity: BaseActivity() {
+
+
     override fun GetContentViewId()= R.layout.activity_help_and_feedback
 
     override fun InitView() {

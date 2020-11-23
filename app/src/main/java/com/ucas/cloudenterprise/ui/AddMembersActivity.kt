@@ -80,8 +80,6 @@ class AddMembersActivity : AppCompatActivity(){
 //                                object : TypeToken<List<Team>>(){}.type)
 ////                                Array<Team>::class.java).toMutableList())
 //                            Log.e(TAG,team_list.toString())
-
-
                         } else {
                             //TODO
                         }

@@ -17,6 +17,7 @@ import android.text.TextUtils
 import android.text.format.Formatter
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat.startForegroundService
 import com.google.gson.Gson
@@ -35,6 +36,7 @@ import com.ucas.cloudenterprise.model.CompletedFile
 import com.ucas.cloudenterprise.model.File_Bean
 import com.ucas.cloudenterprise.model.LoadIngStatus
 import com.ucas.cloudenterprise.model.LoadingFile
+import com.ucas.cloudenterprise.ui.ChooseDestDirActivity
 import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.ui.fragment.TransferlistItemFragment
 import com.ucas.cloudenterprise.utils.*
@@ -415,7 +417,6 @@ class DaemonService : Service() {
     fun clearcache() {
         stop()
         store.get("badgerds")
-
         start()
     }
 
@@ -853,6 +854,7 @@ class DaemonService : Service() {
                                 override fun onMessage(message: String?) {
                                     Log.e("WebSocketClient", "onMessage ${message}")
 //                                    Log.e("WebSocketClient","uptask.Ingstatus is  ${uptask.Ingstatus}")
+
                                     if (uptask.Ingstatus != LoadIngStatus.TRANSFERING) {
                                         close()
                                     }
@@ -1001,15 +1003,12 @@ class DaemonService : Service() {
         size: String,
         filehash: String
     ) { //type 0 没有调用up  1 从up接口
-
-
         OkGo.post<String>(URL_ADD_File).upJson(JSONObject(params))
             .tag(tag)
             .execute(object : StringCallback() {
                 override fun onSuccess(response: Response<String>?) {
                     response?.body()?.apply {
                         if (VerifyUtils.VerifyResponseData(this)) {
-
                             for (loadingFile in MyApplication.upLoad_Ing) {
                                 if (loadingFile.file_hash.equals(filehash)) {
                                     MyApplication.upLoad_Ing.remove(loadingFile)
@@ -1017,8 +1016,26 @@ class DaemonService : Service() {
                                     break
                                 }
                             }
-                            Toastinfo("${displayName} 上传完成")
+                            Toastinfo("${displayName} 上传完成!!")
+                         /*   startActivityForResult(
+                                Intent(this@DaemonService, ChooseDestDirActivity::class.java).apply {
+                                    putExtra("file", item)
+                                    putExtra("type", ChooseDestDirActivity.MOVE)
+                                }, ChooseDestDirActivity.MOVE)
+                                    */
+                            //上传完成进行跳转到指定的选择文件路径页面
+                          //  startActivity(Intent(this@DaemonService,ChooseDestDirActivity::class.java))
 
+
+
+                            //  startActivity(Intent.setClass(daemon.this,TransferlistItemFragment::class.java))
+                            //吐司查看参数
+                           /* Toastinfo("${params} : params: HashMap<String, Any>")
+                            Toastinfo("${tag} :  tag: Any,")
+                            Toastinfo("${displayName} : displayName: String")
+                            Toastinfo("${size} :   size: String")
+                            Toastinfo("${filehash} :     filehash: String")*/
+                            //把上传完成的文件进行添加到我的文件列表中进行显示
                             MyApplication.upLoad_completed.add(
                                 0,
 //                                CompletedFile("${displayName}",SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()),size, false)
@@ -1037,8 +1054,6 @@ class DaemonService : Service() {
                             Toastinfo("${JSONObject(this).getString("message")}")
                         }
                     }
-
-
                 }
             })
     }
@@ -1053,7 +1068,6 @@ class DaemonService : Service() {
                 logs.add(it)
             }
         }
-
     }
 
     //</editor-fold>
@@ -1141,7 +1155,7 @@ class DaemonService : Service() {
     }
 
 
-    //<editor-fold desc="保存数据到sp">
+    //<editor-fold desc="保存数据到sp   SharedPreferences  善德儿 怕分贼死">
     fun savaspbyfalag(flag: Int) {
         MyApplication.getInstance().GetSP().edit().apply {
             when (flag) {

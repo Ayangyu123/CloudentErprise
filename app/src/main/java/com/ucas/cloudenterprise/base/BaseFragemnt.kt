@@ -1,29 +1,28 @@
 package com.ucas.cloudenterprise.base
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.getIntent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
+import android.os.Parcelable
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.lzy.okgo.OkGo
-import com.lzy.okgo.request.base.Request
-import com.lzy.okgo.utils.HttpUtils
-import com.lzy.okgo.utils.HttpUtils.runOnUiThread
-import com.ucas.cloudenterprise.app.*
-import com.ucas.cloudenterprise.core.DaemonService
-import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
-import com.ucas.cloudenterprise.utils.FileCP
-import com.ucas.cloudenterprise.utils.Toastinfo
-import com.ucas.cloudenterprise.utils.get
-import com.ucas.cloudenterprise.utils.store
+import com.ucas.cloudenterprise.app.NET_GET
+import com.ucas.cloudenterprise.app.NET_PUT
+import com.ucas.cloudenterprise.app.URL_DELETE_FILE
+import com.ucas.cloudenterprise.app.USER_ID
+import com.ucas.cloudenterprise.ui.MainActivity
+import kotlin.collections.set
 
 
 abstract class BaseFragment : Fragment() {
-
     var NetTag: Any? = null
     var mContext: Context? = null
 
@@ -129,7 +128,45 @@ abstract class BaseFragment : Fragment() {
         NetRequest(URL_DELETE_FILE, NET_PUT, params, tag, onNetCallback)
 
     }
-    //</editor-fold>
 
+    /* fun GetFenXiangTuPian(){
+
+         val intent:Intent =getIntent()
+         val extras = intent.extras
+         val action = intent.action
+         if (Intent.ACTION_SEND == action) {
+             if (extras.containsKey(Intent.EXTRA_STREAM)) {
+                 try {
+                     // Get resource path from intent
+                     val uri2 = extras.getParcelable<Parcelable>(
+                         Intent.EXTRA_STREAM
+                     ) as Uri
+
+                     // 返回路径getRealPathFromURI
+                     val path: String = getRealPathFromURI(, uri2)
+                 } catch (e: Exception) {
+                     Log.e(this.javaClass.name, e.toString())
+                 }
+             }
+         }
+
+     }*/
+
+  /*   open fun getRealPathFromURI(
+        mainActivity: MainActivity,
+        uri2: Uri
+    ): String {
+        val proj = arrayOf(
+            MediaStore.Images.Media.DATA
+        )
+        val cursor: Cursor =
+            mainActivity.managedQuery(uri2, proj, null, null, null)
+                ?: return uri2.path
+        val columnIndexOrThrow = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        // mAba.setText(cursor.getString(columnIndexOrThrow));
+        Log.e("123456", "返回图片路径: " + cursor.getString(columnIndexOrThrow))
+        return cursor.getString(columnIndexOrThrow)
+    }*/
 
 }

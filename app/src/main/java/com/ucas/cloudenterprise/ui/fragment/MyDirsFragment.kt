@@ -39,8 +39,6 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
         request: Request<String, out Request<Any, Request<*, *>>>?,
         data: String
     ) {
-
-
              var showtype= (activity as ChooseDestDirActivity).viewpager_content.currentItem
 
 
@@ -86,26 +84,6 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
             }
 
         }
-
-        //获取我的文件列表
-
-//        if(showtype==0){
-//
-//             (activity as ChooseDestDirActivity).tv_dest_dir_commit.apply {
-//                 if(fileslist.isEmpty()){
-//                     setBackgroundColor(Color.GRAY)
-//                     isEnabled = false
-//                 }else{
-//                     setBackgroundColor(resources.getColor(R.color.app_color))
-//                     isEnabled = true
-//                 }
-//             }
-//
-//
-//
-//        }
-
-
     }
 
 
@@ -124,39 +102,34 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
 //        rc_myfiles.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
-                var item =fileslist[position]
+                var item = fileslist[position]
 
-                    holder as FilesAdapter.ViewHolder
-                    holder.apply {
-                        iv_icon.setImageResource( if(item.is_dir == IS_DIR) (if(item.pshare==0)R.drawable.icon_list_folder else R.drawable.icon_list_share_folder) else R.drawable.icon_list_unknown)
-                        tv_file_name.text = item.file_name
-                        tv_file_create_time.text = item.created_at
-                        rl_file_item_root.setOnClickListener {
-                            pid_stack.add(0,item.file_id)
-                            pid = item.file_id
-                            if(!pid.equals("root")){
-                                (activity as ChooseDestDirActivity).tv_path.apply {
-                                    if(text.equals("已选： 我的文件")){
-                                        text="已选： /${item.file_name}"
-                                    }else{
-                                        text="${text}/${item.file_name}"
-                                    }
-
+                holder as FilesAdapter.ViewHolder
+                holder.apply {
+                    iv_icon.setImageResource(if (item.is_dir == IS_DIR) (if (item.pshare == 0) R.drawable.icon_list_folder else R.drawable.icon_list_share_folder) else R.drawable.icon_list_unknown)
+                    tv_file_name.text = item.file_name
+                    tv_file_create_time.text = item.created_at
+                    rl_file_item_root.setOnClickListener {
+                        pid_stack.add(0, item.file_id)
+                        pid = item.file_id
+                        if (!pid.equals("root")) {
+                            (activity as ChooseDestDirActivity).tv_path.apply {
+                                if (text.equals("已选： 我的文件")) {
+                                    text = "已选： /${item.file_name}"
+                                } else {
+                                    text = "${text}/${item.file_name}"
                                 }
+
                             }
+                        }
 //                            else{
 //                                (activity as ChooseDestDirActivity).tv_path.text="已选： 我的文件"
 //                            }
 
-                            GetFileList()
-                        }
+                        GetFileList()
                     }
-
-
-
                 }
-
-
+            }
         })
         //</editor-fold >
 
@@ -166,11 +139,12 @@ class MyDirsFragment(var pid:String) : BaseFragment(),BaseActivity.OnNetCallback
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
         swipeRefresh.setOnRefreshListener {
 //            fileslist.clear()
-            GetFileList()
+              GetFileList()
             swipeRefresh.isRefreshing = false
         }
 
-
+        //分享图片
+        //GetFenXiangTuPian()
     }
 
      fun GetFileList() {

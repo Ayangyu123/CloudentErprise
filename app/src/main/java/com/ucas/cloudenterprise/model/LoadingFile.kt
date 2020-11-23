@@ -29,8 +29,8 @@ data class LoadingFile(
     ):Serializable
 object LoadIngStatus{
     val WAITING =0 //等待
-   val CONFIG =1 //配置
-   val TRANSFERING =2 //传输
-   val PACK =3  //加密压缩
-   val UNPACK =4 //解密解压
+    val CONFIG =1 //配置
+    val TRANSFERING =2 //传输
+    val PACK =3  //加密压缩
+    val UNPACK =4 //解密解压
 }

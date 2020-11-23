@@ -26,18 +26,16 @@ import kotlin.concurrent.thread
 @author simpler
 @create 2019年12月27日  12:57
  */
-class MyApplication:Application() {
-
-
-    val TAG ="MyApplication"
+class MyApplication : Application() {
+    val TAG = "MyApplication"
 
     companion object {
-//        @SuppressLint("StaticFieldLeak")
+        //        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
-        lateinit var downLoad_Ing:ArrayList<LoadingFile>
-        lateinit var downLoad_completed:ArrayList<CompletedFile>
-        lateinit var upLoad_Ing:ArrayList<LoadingFile>
-        lateinit var upLoad_completed:ArrayList<CompletedFile>
+        lateinit var downLoad_Ing: ArrayList<LoadingFile>
+        lateinit var downLoad_completed: ArrayList<CompletedFile>
+        lateinit var upLoad_Ing: ArrayList<LoadingFile>
+        lateinit var upLoad_completed: ArrayList<CompletedFile>
         private var instance: MyApplication? = null
 
         fun getInstance(): MyApplication {
@@ -51,69 +49,91 @@ class MyApplication:Application() {
             return instance!!
         }
     }
+
     override fun onCreate() {
         super.onCreate()
 //        startService<DaemonService>()
         context = this
 //        thread {
-            downLoad_Ing =ArrayList()
-            upLoad_Ing =ArrayList()
-            downLoad_completed =ArrayList()
-            upLoad_completed =ArrayList()
-            getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE).apply {
-                IS_FIRSTRUN = getBoolean(FIRSTRUN_NAME_FOR_PREFERENCE,true)
-                Log.e(TAG,"IS_FIRSTRUN=${IS_FIRSTRUN}")
-                IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE,true)
-                APP_LAST_VERSION_CODE = getInt("APP_LAST_VERSION_CODE",0)
-                USER_ID = getString("user_id","")
-                COMP_ID = getString("company_id","")
-                IS_ROOT = USER_ID.equals(COMP_ID)
-                USER_PHONE=getString("last_login_user_name", "")
-
-                ROOT_DIR_PATH = getString("downdestdir", "")
-
-                ACCESS_TOKEN=getString("access_token","" )
-                REFRESH_TOKEN  =getString("refresh_token","" )
-                downLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("downLoad_Ing",Gson().toJson(downLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
-                downLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("downLoad_completed",Gson().toJson(downLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
-                upLoad_Ing.addAll(Gson().fromJson<ArrayList<LoadingFile>>(getString("upLoad_Ing",Gson().toJson(upLoad_Ing)),object :TypeToken<ArrayList<LoadingFile>>(){}.type))
-                upLoad_completed.addAll(Gson().fromJson<ArrayList<CompletedFile>>(getString("upLoad_completed",Gson().toJson(upLoad_completed)),object :TypeToken<ArrayList<CompletedFile>>(){}.type))
-
-
-
-            }
-            downLoad_Ing.forEach {
-                it.Ingstatus =LoadIngStatus.WAITING
-            }
-            upLoad_Ing.forEach {
-                it.Ingstatus =LoadIngStatus.WAITING
-            }
+        downLoad_Ing = ArrayList()
+        upLoad_Ing = ArrayList()
+        downLoad_completed = ArrayList()
+        upLoad_completed = ArrayList()
+        getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE).apply {
+            IS_FIRSTRUN = getBoolean(FIRSTRUN_NAME_FOR_PREFERENCE, true)
+            Log.e(TAG, "IS_FIRSTRUN=${IS_FIRSTRUN}")
+            IS_NOT_INSTALLED = getBoolean(NOT_INSTALLEDE_FOR_PREFERENCE, true)
+            APP_LAST_VERSION_CODE = getInt("APP_LAST_VERSION_CODE", 0)
+            USER_ID = getString("user_id", "")
+            COMP_ID = getString("company_id", "")
+            IS_ROOT = USER_ID.equals(COMP_ID)
+            USER_PHONE = getString("last_login_user_name", "")
+            ROOT_DIR_PATH = getString("downdestdir", "")
+            ACCESS_TOKEN = getString("access_token", "")
+            REFRESH_TOKEN = getString("refresh_token", "")
+            downLoad_Ing.addAll(
+                Gson().fromJson<ArrayList<LoadingFile>>(
+                    getString(
+                        "downLoad_Ing",
+                        Gson().toJson(downLoad_Ing)
+                    ), object : TypeToken<ArrayList<LoadingFile>>() {}.type
+                )
+            )
+            downLoad_completed.addAll(
+                Gson().fromJson<ArrayList<CompletedFile>>(
+                    getString(
+                        "downLoad_completed",
+                        Gson().toJson(downLoad_completed)
+                    ), object : TypeToken<ArrayList<CompletedFile>>() {}.type
+                )
+            )
+            upLoad_Ing.addAll(
+                Gson().fromJson<ArrayList<LoadingFile>>(
+                    getString(
+                        "upLoad_Ing",
+                        Gson().toJson(upLoad_Ing)
+                    ), object : TypeToken<ArrayList<LoadingFile>>() {}.type
+                )
+            )
+            upLoad_completed.addAll(
+                Gson().fromJson<ArrayList<CompletedFile>>(
+                    getString(
+                        "upLoad_completed",
+                        Gson().toJson(upLoad_completed)
+                    ), object : TypeToken<ArrayList<CompletedFile>>() {}.type
+                )
+            )
+        }
+        downLoad_Ing.forEach {
+            it.Ingstatus = LoadIngStatus.WAITING
+        }
+        upLoad_Ing.forEach {
+            it.Ingstatus = LoadIngStatus.WAITING
+        }
 //        }
 
         AutoSizeConfig()
         initOKGO()
 
-        object :Thread.UncaughtExceptionHandler{
+        object : Thread.UncaughtExceptionHandler {
             override fun uncaughtException(t: Thread?, e: Throwable?) {
                 startActivity<LoginActivity>()
             }
-
         }
-
     }
 
     private fun initOKGO() {
         OkGo.getInstance().init(this);
-        if(!TextUtils.isEmpty(ACCESS_TOKEN)){
-            Log.e("ok","AddToken")
+        if (!TextUtils.isEmpty(ACCESS_TOKEN)) {
+            Log.e("ok", "AddToken")
             AddToken(ACCESS_TOKEN)
         }
 
     }
 
-     fun GetSP(): SharedPreferences {
-         return   context.getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE,Context.MODE_PRIVATE)
-     }
+    fun GetSP(): SharedPreferences {
+        return context.getSharedPreferences(PREFERENCE__NAME__FOR_PREFERENCE, Context.MODE_PRIVATE)
+    }
 
     private fun AutoSizeConfig() {
         /**
@@ -121,7 +141,7 @@ class MyApplication:Application() {
          * 使用前请一定记得跳进源码，查看方法的注释, 下面的注释只是简单描述!!!
          */
         AutoSizeConfig.getInstance().apply {
-            isCustomFragment =true
+            isCustomFragment = true
             setLog(false)
             setUseDeviceSize(true)
         }

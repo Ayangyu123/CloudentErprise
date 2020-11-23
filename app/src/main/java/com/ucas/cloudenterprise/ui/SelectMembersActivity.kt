@@ -73,7 +73,6 @@ class SelectMembersActivity:BaseActivity(), BaseActivity.OnNetCallback {
                        mSelectList.add(jurisItem)
                        when(jurisItem.juris_flag){
                            1->{//团队
-
                                teamcount++
                            }
                            else->{//个人

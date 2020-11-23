@@ -1,59 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.ChooseDestDirActivity"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <include
-        layout="@layout/common_head"/>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.ChooseDestDirActivity">
+    <include layout="@layout/common_head" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:visibility="gone"
         android:background="@color/app_color"
-        >
+        android:visibility="gone">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:background="#EBEEFD"
-            >
+            android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/tv_myfiles"
-                android:text="我的文件"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:text="我的文件"
                 android:textColor="#4F73DF"
-
                 />
+
             <TextView
                 android:id="@+id/tv_othercommom"
-                android:text="他人共享"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="#AAAFC0"
-                />
+                android:text="他人共享"
+                android:textColor="#AAAFC0" />
 
         </LinearLayout>
+
         <View
             android:id="@+id/view_select_bar"
             android:layout_width="94dp"
             android:layout_height="5dp"
             android:layout_gravity="bottom"
             android:layout_marginLeft="50dp"
-            android:background="@drawable/bg_choose_dest_dir_select_bar"
-            />
+            android:background="@drawable/bg_choose_dest_dir_select_bar" />
     </FrameLayout>
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewpager_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_weight="1" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -61,39 +62,38 @@
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="20dp"
-        >
+        android:paddingBottom="20dp">
+
         <TextView
             android:id="@+id/tv_path"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="已选：我的文件"
-            android:textSize="16dp"
-            />
+            android:textSize="16dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:layout_marginTop="8dp"
-            >
-        <ImageView
-            android:id="@+id/iv_create_dir"
-            android:layout_below="@id/tv_path"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/upload_new_folder_normal"
-            />
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/iv_create_dir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_path"
+                android:src="@drawable/upload_new_folder_normal" />
+
             <TextView
                 android:id="@+id/tv_dest_dir_commit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:text="选定"
-                android:textColor="@android:color/white"
                 android:background="@drawable/bg_choose_dest_dir_commit_tv"
                 android:gravity="center"
-                />
+                android:text="选定"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </LinearLayout>

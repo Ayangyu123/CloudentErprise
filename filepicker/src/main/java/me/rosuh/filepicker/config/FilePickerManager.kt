@@ -14,7 +14,6 @@ object FilePickerManager {
      * 启动 Launcher Activity 所需的 request code
      */
     const val REQUEST_CODE = 10401
-
     internal var contextRef: WeakReference<Activity>? = null
     internal var fragmentRef: WeakReference<Fragment>? = null
     internal lateinit var config: FilePickerConfig
@@ -34,6 +33,7 @@ object FilePickerManager {
     /**
      * 不能使用 fragmentRef.getContext()，因为无法保证外部的代码环境
      */
+
     fun from(fragment: Fragment): FilePickerConfig {
         reset()
         this.fragmentRef = WeakReference(fragment)
@@ -58,4 +58,5 @@ object FilePickerManager {
     fun obtainData(): List<String> {
         return dataList
     }
+
 }

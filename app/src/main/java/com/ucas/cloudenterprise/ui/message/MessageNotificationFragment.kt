@@ -4,6 +4,7 @@ import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.base.BaseFragment
 
 class MessageNotificationFragment : BaseFragment() {
+
     override fun initView() {
 
     }

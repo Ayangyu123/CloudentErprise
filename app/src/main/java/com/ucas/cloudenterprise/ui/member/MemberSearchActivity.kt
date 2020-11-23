@@ -35,8 +35,6 @@ import org.json.JSONObject
 
 class MemberSearchActivity : BaseActivity(), BaseActivity.OnNetCallback {
 
-
-
     var  mMemberlist= ArrayList<MemberInfo>()
     lateinit var mContext :Context
     lateinit var adapter :MemberSearchAdapter

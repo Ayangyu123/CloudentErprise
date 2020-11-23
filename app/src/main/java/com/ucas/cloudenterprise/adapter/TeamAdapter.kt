@@ -36,8 +36,6 @@ class TeamAdapter(var context: Context?, var list: ArrayList<BelongTeam>) :
         if (mOnRecyclerItemClickListener != null) {
             mOnRecyclerItemClickListener!!.onItemClick(holder, position)
         }
-
-
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -118,10 +118,7 @@ public class StatisticCodeLines {
 
                             break;
                         }
-
-
                     }
-
                 }
             }
             );

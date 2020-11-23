@@ -46,7 +46,8 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
                     var src_file_info: File_Bean?=null):Serializable,Runnable{
 
 
-        companion object{
+
+    companion object{
             val UP_LOAD_FLAG=0
             val DWON_LOAD_FLAG=1
             val  INIT=1001
@@ -116,7 +117,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
     // </editor-fold >
 
     // <editor-fold desc="上传文件信息">
-    private fun UploadFileMetaInfo() {
+     fun UploadFileMetaInfo() {
         OkGo.post<String>(URL_ADD_File).upJson(JSONObject().apply {
             put("file_name",file_name + "")
             put("is_dir",IS_FILE)
@@ -137,17 +138,14 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
                         ,file_size.toString(),
                         false)
                 )
-
                 for (loadingFile in MyApplication.upLoad_Ing) {
                     if(loadingFile.dest_file?.name.equals(file_name)){
                         MyApplication.upLoad_Ing.remove(loadingFile)
                         break
                     }
                 }
-
                 ChangeCurrSetpAndLoadfile(UpLoadTasKSetp.UPLOAD_META_INFO)
             }
-
         }
     }
 
@@ -267,7 +265,7 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
                 FileCallback(ROOT_DIR_PATH,file_name){
                 override fun onSuccess(response: Response<File>?) {
 
-                    MyApplication.downLoad_completed.add(CompletedFile(file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
+                   MyApplication.downLoad_completed.add(CompletedFile(file_name,SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(
                         Date()
                     )
                         ,file_size.toString(),
@@ -276,8 +274,8 @@ class LoadFiileTask(val load_type_falg:Int,  //0  up  1 down
                     Log.e("it","文件路径 ${response?.body()?.absolutePath}")
                     Toastinfo("${file_name} 下载完成")
                     ChangeCurrSetpAndLoadfile(DownLoadTasKSetp.UNPACK)
+                    Log.e("oo","我不会被执行")
                 }
-
             })
     }
 

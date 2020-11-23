@@ -51,7 +51,6 @@ import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONObject
 import java.io.File
 
-
 /**
 @author simpler
 @create 2020年01月10日  14:31
@@ -103,7 +102,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                             rl_file_item_root.setOnClickListener {
                                 item.is_checked = !item.is_checked
                                 checkbox_is_checked.isChecked = item.is_checked
-
                             }
                             checkbox_is_checked.setOnCheckedChangeListener { button, ischecked ->
                                 if (ischecked) {
@@ -155,12 +153,12 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             ShowCreateNewDirDialog()
         }
         //</editor-fold >
-        /*
-        *
-        * 点击上传进行从根目录下进行提取文件尽心展示
-        *
-        * */
-        //<editor-fold  desc ="显示上传文件Dialog">
+/*
+*
+* 点击上传进行从根目录下进行提取文件尽心展示
+*
+* */
+//<editor-fold  desc ="显示上传文件Dialog">
         iv_show_up_file_type_dilaog.setOnClickListener {
 
 //            if(UpFileTypeDialog == null){
@@ -211,8 +209,8 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
 //            }
 //            UpFileTypeDialog?.show()
         }
-        //</editor-fold >
-        //<editor-fold desc ="显示排序popwinod">
+//</editor-fold >
+//<editor-fold desc ="显示排序popwinod">
         iv_sort.setOnClickListener {
             if (SortPOPwiond == null) {
                 SortPOPwiond = GetSortPOPwiond(
@@ -244,20 +242,20 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             }
 
         }
-        //</editor-fold >
+//</editor-fold >
 
 
-        //<editor-fold desc ="swipeRefresh settings">
+//<editor-fold desc ="swipeRefresh settings">
         swipeRefresh.setColorSchemeResources(R.color.app_color)
         swipeRefresh.setOnRefreshListener {
             fileslist.clear()
             GetFileList()
             swipeRefresh.isRefreshing = false
         }
-        //</editor-fold >
+//</editor-fold >
 
 
-        //<editor-fold desc ="编辑按钮 设置">
+//<editor-fold desc ="编辑按钮 设置">
         tv_edit.setOnClickListener {
             var text = (it as android.widget.TextView).text.toString()
             when (text) {
@@ -288,12 +286,12 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             }
 
         }
-        //TODO 多选不显示
+//TODO 多选不显示
         tv_edit.visibility = View.INVISIBLE
-        //</editor-fold >
+//</editor-fold >
 
 
-        //<editor-fold  desc ="返回按钮 设置" >
+//<editor-fold  desc ="返回按钮 设置" >
         iv_back.visibility = View.GONE
         iv_back.setOnClickListener {
 
@@ -320,10 +318,10 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             }
 
         }
-        //</editor-fold >
+//</editor-fold >
 
 
-        //<editor-fold  desc ="搜索按钮 设置" >
+//<editor-fold  desc ="搜索按钮 设置" >
         iv_search.setOnClickListener {
             startActivityForResult(
                 Intent(mContext, SearchFileActivity::class.java).putExtra(
@@ -333,9 +331,9 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             )
         }  //</editor-fold >
 
-        //<editor-fold  desc ="刷新 设置" >
+//<editor-fold  desc ="刷新 设置" >
         tv_refresh.setOnClickListener { GetFileList() }
-        //</editor-fold >
+//</editor-fold >
 
         tv_edit.visibility = View.INVISIBLE
     }
@@ -371,11 +369,11 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
 
         CreateNewDirDialog?.show()
     }
-    //</editor-fold >
+//</editor-fold >
 
 
     //<editor-fold  desc ="底部操作 Dialog" >
-    //底部导航
+//底部导航
     private fun ShowBottomFilesOperateDialog(
         item: File_Bean,
         isfile: Boolean
@@ -553,7 +551,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         }
         BottomFilesOperateDialog?.show()
     }
-    //</editor-fold >
+//</editor-fold >
 
 
     //<editor-fold  desc ="重命名 Dialog" >
@@ -607,7 +605,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
 
         ReanmeDialog?.show()
     }
-    //</editor-fold >
+//</editor-fold >
 
     //<editor-fold  desc ="删除提示 Dialog" >
     fun ShowFileDeleteTipsDialog(file_id: String) {
@@ -621,7 +619,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             })
         FileDeleteTipsDialog?.show()
     }
-    //</editor-fold >
+//</editor-fold >
 
     override fun initData() {
 
@@ -644,7 +642,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             this
         )
     }
-    //</editor-fold >
+//</editor-fold >
 
 
     override fun GetRootViewID() = com.ucas.cloudenterprise.R.layout.my_files_fragment
@@ -756,7 +754,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             }
         }
     }
-    //</editor-fold>
+//</editor-fold>
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -818,13 +816,13 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     }
 
     //<editor-fold desc="检查文件是否已存在">
-    //现在  我要断点执行从SD卡进行分享数据   开始
-    //现在的流程是正确的一个流程   成功可以进行上传到服务器
-    //现在在进行通过从外界进行分享图片的时候一个流程
-    //val picPath: ArrayList<String> = java.util.ArrayList()
-    //单个文件调用
+//现在  我要断点执行从SD卡进行分享数据   开始
+//现在的流程是正确的一个流程   成功可以进行上传到服务器
+//现在在进行通过从外界进行分享图片的时候一个流程
+//val picPath: ArrayList<String> = java.util.ArrayList()
+//单个文件调用
     fun CheckFileIsExists(file_path: String) {
-        //  Toastinfo("传过来的路径" + file_path)
+//  Toastinfo("传过来的路径" + file_path)
         Log.e("yy", "传过来的路径：" + file_path)
         val destfile = File(file_path)   //把传过来的字符串进行转换为文件类型
         val destfile_length = destfile.length() * 1.0 / (1024 * 1024) //判断文件的长度
@@ -842,8 +840,8 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             put("user_id", USER_ID)
             put("file_size", destfile.length())
         }
-        //要想上传成功必须要走NetRequest 这个方法
-        //------------------------------------------------------------------------------------------
+//要想上传成功必须要走NetRequest 这个方法
+//------------------------------------------------------------------------------------------
         NetRequest(URL_FILE_UPLOADABLE, NET_POST, apply, this, object : OnNetCallback {
             override fun OnNetPostSucces(
                 request: Request<String, out Request<Any, Request<*, *>>>?,
@@ -873,7 +871,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         for (i in 0 until file_path.size) {
             get_path = file_path[i]
         }
-        //  Toastinfo("传过来的路径" + file_path)
+//  Toastinfo("传过来的路径" + file_path)
         Log.e("yy", "1传过来的路径：" + file_path)
         val destfile = File(get_path)   //把传过来的字符串进行转换为文件类型
         val destfile_length = destfile.length() * 1.0 / (1024 * 1024) //判断文件的长度
@@ -891,8 +889,8 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             put("user_id", USER_ID)
             put("file_size", destfile.length())
         }
-        //要想上传成功必须要走NetRequest 这个方法
-        //------------------------------------------------------------------------------------------
+//要想上传成功必须要走NetRequest 这个方法
+//------------------------------------------------------------------------------------------
         NetRequest(URL_FILE_UPLOADABLE, NET_POST, apply, this, object : OnNetCallback {
             override fun OnNetPostSucces(
                 request: Request<String, out Request<Any, Request<*, *>>>?,
@@ -937,7 +935,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: MessageEvent) {
         GetFileList()
-        /* Do something */
+/* Do something */
     };
 }
 

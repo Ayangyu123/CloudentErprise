@@ -2,147 +2,272 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ucas.cloudenterprise">
     <!--  网络权限 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <!--  储存卡 读 权限-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!--  储存卡 写 权限 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--  前台服务 权限 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!--创建与删除权限-->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
+    <!--
+    Android10.0 沙盒机制
+    -->
 
 
-
-
+    <!--
+android：usesCleartextTraffic 指示应用程序是否打算使用明文网络流量，例如明文HTTP。
+目标API级别为27或更低的应用程序的默认值为“ true”。面向API级别28或更高级别的应用默认为“ false”。
+     android:usesCleartextTraffic="true"
+    -->
     <!--  MyApplication   usesCleartextTraffic 允许http请求   android:requestLegacyExternalStorage="true"   requestLegacyExternalStorage外部设备 -->
     <application
         android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_icon_name"
-        android:usesCleartextTraffic="true"
-        android:sharedUserId="android.uid.system"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:sharedUserId="android.uid.system"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+      >
+        <!--
+         允许直接将 Apache HTTP client 的相关类打包进 APK 中。
+        -->
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+        <!--
+            android:authorities="com.mydomain.fileprovider"
+          android:authorities="com.ucas.cloudenterprise.fileprovider"
+        -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.ucas.cloudenterprise.fileprovider"
-            android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <!-- 如果您项目中的所有页面都只需要以高或宽中的一个作为基准进行适配的话, 那就只需要填写高或宽中的一个设计图尺寸即可 -->
+        <!-- 如果您项目中的所有页面都只需要以高或宽中的一个作为基准进行适配的话,
+        那就只需要填写高或宽中的一个设计图尺寸即可 -->
 
         <meta-data
             android:name="design_width_in_dp"
-            android:value="375"/>
+            android:value="375" />
 
         <!--  core   service  后台服务   -->
         <service
             android:name=".core.DaemonService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true"></service>
 
         <!--  第一个启动的   activity （页面）   -->
 
-        <activity android:name=".ui.PacaktestActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.LoginActivity"
-            android:screenOrientation="portrait"/>
-            <!--    注册页面     -->
-            <activity android:name=".ui.SplashActivity"
-                android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:theme="@style/splash_style"
-                >
-<!--        <activity android:name=".ui.MainActivity">-->
-<!--        <activity android:name=".ui.TeamAcitvity">-->
-<!--        <activity android:name=".ui.ChooseDestDirActivity">-->
-<!--        <activity android:name=".ui.message.MessageNotificationActivity">-->
+        <activity
+            android:name=".ui.PacaktestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.LoginActivity"
+            android:screenOrientation="portrait" />
+        <!--    注册页面     -->
+        <activity
+            android:name=".ui.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/splash_style">
+            <!--        <activity android:name=".ui.MainActivity">-->
+            <!--        <activity android:name=".ui.TeamAcitvity">-->
+            <!--        <activity android:name=".ui.ChooseDestDirActivity">-->
+            <!--        <activity android:name=".ui.message.MessageNotificationActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
         </activity>
-            <!--    Main     -->
-        <activity android:name=".ui.MainActivity" android:launchMode="singleTop"  android:screenOrientation="portrait"/>
+        <!--    Main
+                 android:launchMode="singleTask"
+                  android:launchMode="singleTask"
+          -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+            <!--
+                单张图片
+               -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <!--
+                多张图片
+                -->
+            <intent-filter>-->
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <!--            &lt;!&ndash;-->
+            <!--            PDF 文件-->
+            <!--            &ndash;&gt;-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.SEND" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--                <category android:name="android.intent.category.BROWSABLE" />-->
+            <!--                <data android:scheme="file" />-->
+            <!--                <data android:mimeType="*/*" />-->
+            <!--                <data android:pathPattern=".*\\.pdf" />-->
+            <!--                <data android:host="*" />-->
+            <!--            </intent-filter>-->
+
+
+            <!--                网址
+                               <intent-filter>-->
+            <!--                <action android:name="android.intent.action.SEND" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--                <data android:mimeType="text/html" />-->
+            <!--            </intent-filter>-->
+
+
+        </activity>
 
         <!-- 欢迎   页面-->
-        <activity android:name=".ui.WelcomeActivity"  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WelcomeActivity"
+            android:screenOrientation="portrait" />
         <!-- 注册   页面-->
-          <activity android:name=".ui.RegisterActivity"  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.RegisterActivity"
+            android:screenOrientation="portrait" />
         <!-- 文件详情        -->
-        <activity android:name=".ui.FileInfoActivity"  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.FileInfoActivity"
+            android:screenOrientation="portrait" />
         <!-- 文件搜索        -->
-        <activity android:name=".ui.SearchFileActivity"  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.SearchFileActivity"
+            android:screenOrientation="portrait" />
         <!-- 选择目标文件夹        -->
-        <activity android:name=".ui.ChooseDestDirActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.ChooseDestDirActivity"
+            android:screenOrientation="portrait" />
         <!-- 设置共享文件        -->
-        <activity android:name=".ui.SetCommonFileActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.SetCommonFileActivity"
+            android:screenOrientation="portrait" />
         <!-- 权限说明        -->
-        <activity android:name=".ui.PermissionToIllustrateActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.PermissionToIllustrateActivity"
+            android:screenOrientation="portrait" />
         <!-- 链接分享      -->
-        <activity android:name=".ui.LinkSharedActivity" android:screenOrientation="portrait"/>
-
+        <activity
+            android:name=".ui.LinkSharedActivity"
+            android:screenOrientation="portrait" />
 
 
         <!-- 成员管理      -->
-        <activity android:name=".ui.member.MembersManageActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MembersManageActivity"
+            android:screenOrientation="portrait" />
 
         <!-- 选择成员        -->
-        <activity android:name=".ui.SelectMembersActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.SelectMembersActivity"
+            android:screenOrientation="portrait" />
         <!-- 成员搜索        -->
-        <activity android:name=".ui.member.MemberSearchActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MemberSearchActivity"
+            android:screenOrientation="portrait" />
         <!-- 邀请成员        -->
-        <activity android:name=".ui.member.MemberInviteActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MemberInviteActivity"
+            android:screenOrientation="portrait" />
         <!-- 修改邀请成员链接        -->
-        <activity android:name=".ui.member.EditMemberInviteLinkActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.EditMemberInviteLinkActivity"
+            android:screenOrientation="portrait" />
 
 
         <!-- 成员审核        -->
-        <activity android:name=".ui.member.MemberAuditActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MemberAuditActivity"
+            android:screenOrientation="portrait" />
         <!-- 成员审核 详情       -->
-        <activity android:name=".ui.member.MemberAuditInfoActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MemberAuditInfoActivity"
+            android:screenOrientation="portrait" />
         <!-- 成员 详情 修改      -->
-        <activity android:name=".ui.member.MemberInfoActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.member.MemberInfoEditActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MemberInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.member.MemberInfoEditActivity"
+            android:screenOrientation="portrait" />
 
         <!-- 成员管理      -->
-        <activity android:name=".ui.member.MemberAddActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.member.MemberAddActivity"
+            android:screenOrientation="portrait" />
 
 
         <!-- 关于        -->
-        <activity android:name=".ui.AboutActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.AboutActivity"
+            android:screenOrientation="portrait" />
         <!-- 设置        -->
-        <activity android:name=".ui.SettingsActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:screenOrientation="portrait" />
         <!-- 消息通知        -->
-        <activity android:name=".ui.message.MessageNotificationActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.message.MessageNotificationActivity"
+            android:screenOrientation="portrait" />
 
         <!-- 帮助和反馈        -->
-        <activity android:name=".ui.helpandfeedback.HelpAndFeedbackActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.helpandfeedback.HelpAndFeedbackActivity"
+            android:screenOrientation="portrait" />
         <!-- 热门问题        -->
-        <activity android:name=".ui.helpandfeedback.HotIssueActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.helpandfeedback.HotIssueActivity"
+            android:screenOrientation="portrait" />
         <!-- 我的反馈       -->
-        <activity android:name=".ui.helpandfeedback.MyFeedbackActivity" android:screenOrientation="portrait"/>
-            <!--       意见、 反馈详情    -->
-        <activity android:name=".ui.helpandfeedback.FeedbackInfoActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.helpandfeedback.MyFeedbackActivity"
+            android:screenOrientation="portrait" />
+        <!--       意见、 反馈详情    -->
+        <activity
+            android:name=".ui.helpandfeedback.FeedbackInfoActivity"
+            android:screenOrientation="portrait" />
 
 
-
-    <!--       忘记密码 验证手机号    -->
-        <activity android:name=".ui.ForgetPasswordActivity" android:screenOrientation="portrait"/>
+        <!--       忘记密码 验证手机号    -->
+        <activity
+            android:name=".ui.ForgetPasswordActivity"
+            android:screenOrientation="portrait" />
         <!--      重置密码   -->
-        <activity android:name=".ui.EditPersonalInfoActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.CommonWebActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ui.SimpleFeedBackAcitivity" android:screenOrientation="portrait"/>
-
-
-
+        <activity
+            android:name=".ui.EditPersonalInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.CommonWebActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SimpleFeedBackAcitivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

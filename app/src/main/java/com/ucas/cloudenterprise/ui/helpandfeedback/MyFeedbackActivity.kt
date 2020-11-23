@@ -6,6 +6,7 @@ import com.ucas.cloudenterprise.base.BaseActivity
 import kotlinx.android.synthetic.main.common_head.*
 
 class MyFeedbackActivity: BaseActivity() {
+
     override fun GetContentViewId()= R.layout.activity_my_feedback
 
     override fun InitView() {

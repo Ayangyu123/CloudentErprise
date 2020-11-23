@@ -6,9 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.model.LoadingFile
-//首先LoadingFileAdapter是偏向于做一个文件下载
+//首先LoadingFileAdapter是偏向于做一个文件上传的一个适配器
 class LoadingFileAdapter(var context: Context?, var list: ArrayList<LoadingFile>) :
     RecyclerView.Adapter<LoadingFileAdapter.ViewHolder>() {
 
@@ -16,7 +17,7 @@ class LoadingFileAdapter(var context: Context?, var list: ArrayList<LoadingFile>
     var mOnRecyclerItemClickListener: OnRecyclerItemClickListener? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var view = LayoutInflater.from(parent.context)
-            .inflate(com.ucas.cloudenterprise.R.layout.item_down_ing, parent, false)
+            .inflate(R.layout.item_down_ing, parent, false)
         return ViewHolder(view)
     }
 
@@ -29,16 +30,15 @@ class LoadingFileAdapter(var context: Context?, var list: ArrayList<LoadingFile>
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         if (mOnRecyclerItemClickListener != null) {
             mOnRecyclerItemClickListener!!.onItemClick(holder, position)
         }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
         var tv_file_name =
             itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_file_name)
+        //文件下载的xml
         var tv_curr_size =
             itemView.findViewById<TextView>(com.ucas.cloudenterprise.R.id.tv_curr_size)
         var progress_download =
@@ -47,7 +47,5 @@ class LoadingFileAdapter(var context: Context?, var list: ArrayList<LoadingFile>
             itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_down_flag)
         var iv_show_del =
             itemView.findViewById<ImageView>(com.ucas.cloudenterprise.R.id.iv_show_del)
-
-
     }
 }

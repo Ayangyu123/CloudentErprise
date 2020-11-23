@@ -33,6 +33,7 @@ class LinkSharedActivity : BaseActivity(), BaseActivity.OnNetCallback {
     var  shareable =false
     var mDatePickerDialog:DatePickerDialog ?=null
      lateinit var  item : File_Bean
+
     override fun GetContentViewId()= R.layout.activity_link_shared
     override fun InitView() {
         intent.apply {

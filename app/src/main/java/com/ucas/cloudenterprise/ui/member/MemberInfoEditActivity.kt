@@ -33,6 +33,7 @@ import java.text.Format
 @create 2020年03月03日  13:28
  */
 class MemberInfoEditActivity: BaseActivity(), BaseActivity.OnNetCallback {
+
     lateinit var  item : MemberInfo
 
     override fun GetContentViewId()= R.layout.activity_member_info_edit

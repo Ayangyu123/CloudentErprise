@@ -13,6 +13,7 @@ import kotlinx.android.synthetic.main.common_head.*
 @create 2020年03月16日  17:06
  */
 class CommonWebActivity:BaseActivity(){
+
     override fun GetContentViewId() = R.layout.activity_commom_web
 
     override fun InitView() {

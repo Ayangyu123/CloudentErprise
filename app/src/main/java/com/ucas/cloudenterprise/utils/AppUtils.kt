@@ -14,7 +14,7 @@ object AppUtils {
 
     fun  getRandomString( length:Int):String
     {
-        var str ="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var str ="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ039.106.216.189789";
         var random =  Random();
         var sb =  StringBuffer();
         for (i in 0 until str.length){

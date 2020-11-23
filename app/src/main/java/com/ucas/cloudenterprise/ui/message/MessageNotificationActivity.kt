@@ -7,6 +7,7 @@ import kotlinx.android.synthetic.main.activity_message_notification.*
 import kotlinx.android.synthetic.main.common_head.*
 
 class MessageNotificationActivity : BaseActivity() {
+
     override fun GetContentViewId()= R.layout.activity_message_notification
 
     override fun InitView() {

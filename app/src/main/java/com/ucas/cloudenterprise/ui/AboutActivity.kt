@@ -2,7 +2,8 @@ package com.ucas.cloudenterprise.ui
 
 import android.content.pm.PackageManager
 import android.view.View
-import com.ucas.cloudenterprise.BuildConfig
+import androidx.databinding.library.BuildConfig
+//import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.utils.startActivity
@@ -10,6 +11,7 @@ import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.personal_center_fragment.*
 
 class AboutActivity: BaseActivity() {
+
     override fun GetContentViewId()= R.layout.activity_about
 
     override fun InitView() {

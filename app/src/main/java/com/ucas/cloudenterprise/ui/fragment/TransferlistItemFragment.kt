@@ -1,18 +1,25 @@
 package com.ucas.cloudenterprise.ui.fragment
 
 import android.content.Context
+import android.content.Intent
+import android.database.Cursor
+import android.net.Uri
+import android.os.Build
 import android.os.CountDownTimer
+import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Adapter
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.gson.Gson
 import com.ucas.cloudenterprise.R
 import com.ucas.cloudenterprise.`interface`.OnRecyclerItemClickListener
 import com.ucas.cloudenterprise.adapter.CompletedAdapter
@@ -21,12 +28,11 @@ import com.ucas.cloudenterprise.app.MyApplication
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.core.DaemonService
 import com.ucas.cloudenterprise.model.LoadIngStatus
-import com.ucas.cloudenterprise.model.LoadingFile
 import com.ucas.cloudenterprise.ui.MainActivity
 import com.ucas.cloudenterprise.utils.Toastinfo
 import kotlinx.android.synthetic.main.fragment_transfer_list_item.*
-import me.rosuh.filepicker.config.FilePickerManager
-
+import java.io.File
+//传输列表
 /**
 @author simpler
 @create 2020年02月29日  13:30
@@ -42,58 +48,53 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
         override fun onFinish() {
 
         }
-
         override fun onTick(millisUntilFinished: Long) {
             mIngAdapter?.apply {
                 if(!list.isEmpty()){
                     notifyDataSetChanged()
                 }
-
             }
-
             mCompletedAdapter?.apply {
                 if(!list.isEmpty()){
                     notifyDataSetChanged()
                 }
             }
-
             ll_ing.visibility = if(mIngAdapter.list.isEmpty()) View.GONE else View.VISIBLE
             ll_completed.visibility = if(mCompletedAdapter.list.isEmpty()) View.GONE else View.VISIBLE
             if(mIngAdapter.list.isEmpty()&&mCompletedAdapter.list.isEmpty()){
                 //没有任务   TODO
                 tv_no_task_info.visibility = View.VISIBLE
-                when(type){
-                    DOWNLOAD->{tv_no_task_info.text= "暂无下载任务"}
+                /*when(type){
+                    DOWNLOAD->{ tv_no_task_info.text= "暂无下载任务"}
                     UPLOAD->{tv_no_task_info.text= "暂无上传任务"}
+                }*/
+                if(type == DOWNLOAD){
+                    tv_no_task_info.text= "暂无下载任务"
+                }else if(type == UPLOAD){
+                    tv_no_task_info.text= "暂无上传任务"
                 }
-
             }else{
                 tv_no_task_info.visibility = View.GONE
-
             }
-
-
         }
-
     }
     lateinit var  mIngAdapter :LoadingFileAdapter
     lateinit var mCompletedAdapter:CompletedAdapter
 
     override fun initView() {
-          when(type){
-              DOWNLOAD->{
+          if(type == DOWNLOAD){ //当值为0的时候进行下载
                   tv_ing_title.text = "正在下载"
-//                  +"${1}"
+                    //+"${1}"
                   tv_completed_title.text ="下载完成"
+                  //下载文件的适配器
                   mIngAdapter   = LoadingFileAdapter(context,MyApplication.downLoad_Ing)
                   mCompletedAdapter = CompletedAdapter(context,MyApplication.downLoad_completed)
-              }
-              UPLOAD->{
-                  tv_ing_title.text = "正在上传"
-                  tv_completed_title.text ="上传完成"
-                  mIngAdapter   = LoadingFileAdapter(context,MyApplication.upLoad_Ing)
-                  mCompletedAdapter = CompletedAdapter(context,MyApplication.upLoad_completed)
-              }
+          }else if(type == UPLOAD){//当值为1的时候进行下载
+              tv_ing_title.text = "正在上传"
+              tv_completed_title.text ="上传完成"
+              //上传文件的适配器
+              mIngAdapter   = LoadingFileAdapter(context,MyApplication.upLoad_Ing)
+              mCompletedAdapter = CompletedAdapter(context,MyApplication.upLoad_completed)
           }
 
 
@@ -107,6 +108,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
             adapter=mIngAdapter
             addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
             mIngAdapter.SetOnRecyclerItemClickListener(object :OnRecyclerItemClickListener{
+                @RequiresApi(Build.VERSION_CODES.N)
                 override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
                     (holder as LoadingFileAdapter.ViewHolder).apply {
                         var item= mIngAdapter.list[position]
@@ -114,12 +116,12 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                             Log.e("ok","onclik")
                             showDelBootomDialog(item.load_type_falg,position,ING)
                         }
-                        tv_file_name.text =item.file_name
+                        tv_file_name.text = item.file_name
 
 
                         if(item.load_type_falg==DOWNLOAD){
-//                            progress_download.secondaryProgress =item.progress
-//                            progress_download.setProgress(item.file_progress,true)
+                           // progress_download.secondaryProgress =item.progress
+                           // progress_download.setProgress(item.file_progress,true)
                             progress_download.setProgress(item.progress,true)
                             progress_download.secondaryProgress =item.file_progress
                         }else{
@@ -138,13 +140,8 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                     (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(item)
                                 }
                             }
-
-
-
                             mIngAdapter.notifyDataSetChanged()
                         }
-
-
                         when(item.Ingstatus){
                             LoadIngStatus.WAITING->{
                                 tv_curr_size.text="等待中"
@@ -160,18 +157,13 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                 tv_curr_size.text=item.Speed
                             }
                         }
-
                     }
                 }
-
             })
-
         }
         rc_completed.apply {
             layoutmanager =layoutmanager
             adapter =mCompletedAdapter
-
-
 //            addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
             mCompletedAdapter.SetOnRecyclerItemClickListener( object :OnRecyclerItemClickListener{
                 override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
@@ -192,6 +184,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
             })
 
         }
+
         tv_all_switch.setOnClickListener {
             if(tv_all_switch.text.equals("全部继续")){
                 if(type== DOWNLOAD){
@@ -228,8 +221,18 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                 tv_all_switch.text="全部继续"
             }
         }
-
     }
+
+    private fun managedQuery(
+        uri2: Uri,
+        proj: Array<String>,
+        nothing: Nothing?,
+        nothing1: Nothing?,
+        nothing2: Nothing?
+    ): Cursor {
+        TODO("Not yet implemented")
+    }
+
 
     private fun showDelBootomDialog(type:Int,position:Int,status:Int) {
         val topdrawable = mContext!!.resources.getDrawable( R.drawable.operate_delete_normal)
@@ -251,11 +254,11 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                             ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.LoadFileStop(this[position])
                                             remove(this[position])
                                             ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.DOWNLOADING)
+                                            mIngAdapter.notifyDataSetChanged()
                                         }
-                                        mIngAdapter.notifyDataSetChanged()
-
                                     }
                                     COMPLETED->{
+                                        //删除条目
                                         MyApplication.downLoad_completed.removeAt(position)
                                         ((activity as MainActivity).myBinder as DaemonService.MyBinder)?.GetDaemonService()?.savaspbyfalag(DaemonService.DOWNLOADCOMPLETED)
                                         mCompletedAdapter.notifyDataSetChanged()
@@ -283,9 +286,7 @@ class TransferlistItemFragment(var type:Int,mContext:Context) :BaseFragment(){
                                         mCompletedAdapter.notifyDataSetChanged()
                                         Toastinfo("该记录已删除")
                                     }
-
                                 }
-
                             }
                         }
                        dismiss()

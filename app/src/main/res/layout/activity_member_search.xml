@@ -66,5 +66,5 @@
 
     </LinearLayout>
 
-    <include layout="@layout/swiperefreshlayout"/>
+    <include layout="@layout/swiperefreshlayout" />
 </LinearLayout>

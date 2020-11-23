@@ -15,8 +15,9 @@ android {
         }
     }
 
-    compileSdkVersion 28
+
     defaultConfig {
+        compileSdkVersion 28
         applicationId "com.ucas.cloudenterprise"
         minSdkVersion 22
         targetSdkVersion 28

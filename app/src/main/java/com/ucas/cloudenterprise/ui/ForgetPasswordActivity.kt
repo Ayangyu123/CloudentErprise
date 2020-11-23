@@ -19,6 +19,8 @@ class ForgetPasswordActivity : BaseActivity(), BaseActivity.OnNetCallback {
     var VerifcationCode="" //验证码
     var phone =""
      var mCountDownTimer :CountDownTimer? =null
+
+
     override fun GetContentViewId()= R.layout.activity_forget_password
 
 

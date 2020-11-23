@@ -28,11 +28,11 @@ val REQUEST_SUCCESS_CODE_NODATA = 5000 //4004 //请求成功没有数据
 
 //<editor-fold desc=" 网络请求link  ">
 val ACCESS_PORT = 6016
-//val Get_Token_Port = 6019 //开发
-val Get_Token_Port = 6018  //测试
+//val Get_Token_Port = 6019 //开发39
+val Get_Token_Port = 6018  //测试47
 val VERSION_CHECK_Port = 6012  //测试
 //val HOST = "10.0.130.172"   // 本地
-//val HOST = "39.106.216.189" //开发
+//val HOST = "39.106.216.189" //开发·
 val HOST = "47.95.145.45"   //测试
 val BASE_HOST = "http://${HOST}:"   //测试
 

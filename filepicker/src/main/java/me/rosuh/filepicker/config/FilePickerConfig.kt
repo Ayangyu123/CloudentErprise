@@ -35,8 +35,9 @@ class FilePickerConfig(private val pickerManager: FilePickerManager) {
     var singleChoice = false
     /**
      * 最大可被选中数量
+     *    var maxSelectable = Int.MAX_VALUE
      */
-    var maxSelectable = Int.MAX_VALUE
+    var maxSelectable = 10
     /**
      * 存储类型
      */
@@ -48,7 +49,7 @@ class FilePickerConfig(private val pickerManager: FilePickerManager) {
     @get:StorageMediaType
     @set:StorageMediaType
     var mediaStorageType: String = STORAGE_EXTERNAL_STORAGE
-    /**
+    /**STORAGE_EXTERNAL_STORAGE
      * 自定义根目录路径，需要先设置 [mediaStorageType] 为 [STORAGE_CUSTOM_ROOT_PATH]
      */
     var customRootPath: String = ""
@@ -142,21 +143,21 @@ class FilePickerConfig(private val pickerManager: FilePickerManager) {
         this.singleChoice = true
         return this
     }
-
     /**
-     * 设置界面的字符串，包括：
      * 选中全部[selectAllString]
+     * 设置界面的字符串，包括：
      * 取消选中[unSelectAllString]
      * 已选择[hadSelectedStrRes]
      * 确认[confirmText]
      * 多选限制提示：“您只能选择 1 个条目”[maxSelectCountTipsStrRes]
      * 空试图体视：“空空如也”[emptyListTips]
      * 注意：
-     * [hadSelectedStrRes] 和 [maxSelectCountTipsStrRes] 是 String format 限制的字符串，你需要传入 [R.string.file_picker_selected_count] 类似的
-     * 中的 id，并且包含一个可传入 Int 类型参数的占位符
+     * [hadSelectedStrRes] 和 [maxSelectCountTipsStrRes] 是 String format 限制的字符串，
+     * 你需要传入 [R.string.file_picker_selected_count] 类似的中的 id，
+     * 并且包含一个可传入 Int 类型参数的占位符
      *----------------------------------------------------------------------------------------------
-     * Set the string of the interface, including:
-     * Select all [selectAllString]
+     * Set the string of the interafce, including:
+     * Select all [selectAllStnrig]
      * Uncheck [unSelectAllString]
      * Selected [hadSelectedStrRes]
      * Confirm [confirmText]

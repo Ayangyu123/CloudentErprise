@@ -78,7 +78,6 @@ public class FileUtils {
                 filePath = getDataColumn(context, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection, selectionArgs);
             } else if (isDownloadsDocument(uri)) {
                 // DownloadsProvider
-
 //                String[] contentUriPrefixesToTry = new String[]{
 //                        "content://downloads/public_downloads",
 //                        "content://downloads/my_downloads",
@@ -106,7 +105,8 @@ public class FileUtils {
 //            Log.e("documentId","documentId="+documentId);
                 try{
                     Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads/"), Long.valueOf(documentId));
-                    filePath = getDataColumn(context, contentUri, null, null);}catch (Exception e){
+                    filePath = getDataColumn(context, contentUri, null, null);
+                }catch (Exception e){
                     List<String> segments = (List<String>) uri.getPathSegments();
                     if(segments.size() > 1) {
                         String rawPath = segments.get(1);

@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
-    <root-path name="root" path="" />
-    <files-path name="name" path="path" />
-    <cache-path name="name" path="path" />
-    <external-path name="name" path="path" />
-    <external-files-path name="name" path="path" />
-    <external-cache-path name="name" path="path" />
+    <root-path name="root" path="" /><!--根目录-->
+    <files-path name="name" path="path" /><!--表示 content.getFileDir() 获取到的目录-->
+    <cache-path name="name" path="path" /><!--表示 content.getCacheDir() 获取到的目录-->
+    <external-path name="name" path="path" /><!--表示Environment.getExternalStorageDirectory() 指向的目录-->
+    <external-files-path name="name" path="path" /><!--表示 ContextCompat.getExternalFilesDirs() 获取到的目录-->
+    <external-cache-path name="name" path="path" /><!--表示 ContextCompat.getExternalCacheDirs() 获取到的目录-->
+    <external-path  name="images"  path="DCIM/IMAGE" />
+
+
 </paths>
+
+
+
