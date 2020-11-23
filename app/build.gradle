@@ -20,8 +20,8 @@ android {
         applicationId "com.ucas.cloudenterprise"
         minSdkVersion 22
         targetSdkVersion 28
-        versionCode 12
-        versionName  "1.1.9"
+        versionCode 13
+        versionName  "1.2.0"
 //        versionCode 2
 //        versionName= "0.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
