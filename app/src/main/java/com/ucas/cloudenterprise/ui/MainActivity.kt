@@ -20,36 +20,43 @@ import com.king.app.updater.AppUpdater
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
+import com.lzy.okgo.request.base.Request
 import com.ucas.cloudenterprise.BuildConfig
 import com.ucas.cloudenterprise.R
+import com.ucas.cloudenterprise.app.NET_POST
 import com.ucas.cloudenterprise.app.URLS_GET_VERSION_CHECK
+import com.ucas.cloudenterprise.app.URL_FILE_MOV
+import com.ucas.cloudenterprise.app.USER_ID
 import com.ucas.cloudenterprise.base.BaseActivity
 import com.ucas.cloudenterprise.base.BaseFragment
 import com.ucas.cloudenterprise.model.File_Bean
-import com.ucas.cloudenterprise.ui.fragment.MyFilesFragment
-import com.ucas.cloudenterprise.ui.fragment.OthersShareFragment
-import com.ucas.cloudenterprise.ui.fragment.PersonalCenterFragment
-import com.ucas.cloudenterprise.ui.fragment.TransferListFragment
+import com.ucas.cloudenterprise.ui.fragment.*
 import com.ucas.cloudenterprise.utils.Toastinfo
 import com.ucas.cloudenterprise.utils.VerifyUtils
-import com.ucas.cloudenterprise.utils.intent
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.dialog_updater.view.*
 import org.json.JSONObject
+import java.io.File
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), BaseActivity.OnNetCallback {
     var TAG = "MainActivity"
     var mLastFgIndex = 0
     var lastBackPressedAt: Long = 0
+    lateinit var item: File_Bean
+
+    var fileslist = ArrayList<File_Bean>()
+    lateinit var pid_stack: ArrayList<String>
+    lateinit var pid_name_maps: HashMap<String, String>
     lateinit var mFragments: ArrayList<BaseFragment>
+    lateinit var cursorstr: String
     lateinit var mMyFilesFragment: MyFilesFragment
+    lateinit var mMyFilesDirFragment: MyDirsFragment
     lateinit var mOthersShareFragment: OthersShareFragment
     lateinit var mTransferListFragment: TransferListFragment
     lateinit var mPersonalCenterFragment: PersonalCenterFragment
     var pid = "root"
     lateinit var ft: FragmentTransaction
-
     override fun GetContentViewId() = R.layout.activity_main
     override fun InitView() {
         mFragments = ArrayList()
@@ -319,8 +326,6 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
-
-
         if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - lastBackPressedAt > 2000) {
                 Toastinfo("再按一次退出程序")
@@ -337,50 +342,36 @@ class MainActivity : BaseActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-//    override fun onRestart() {
-//        super.onRestart()
-//        if (checkPermission()) {
-//            FenXiangTUpian() //单个图片分享
-//            Log.e("yy", "222+++++++++")
-//        }
-//    }
-
     //采用单例设计模式进项对OnNewIntent进行判断   在进行单个上传文件的时候只有一个文件进行上传不会出现重复
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (checkPermission()) {
-            FenXiangTUpian(intent!!) //单个图片分享
+            // Toastinfo("39.106.216.189")
             Log.e("yy", "222+++++++++")
+            //回调完后在进行调用  上传
+            FenXiangTUpian(intent!!) //单个图片分享
         } else {
             Toastinfo("请检查权限是否开启")
         }
     }
 
+    val picPath: ArrayList<String> = java.util.ArrayList()
+    var intenta: Intent? = null
 
-    /*override fun onStart() {
-        super.onStart()
-        if (checkPermission()) {
-            FenXiangTUpian() //单个图片分享
-            Log.e("yy", "222+++++++++")
-        }else{
-            Toastinfo("请检查权限是否开启")
-        }
-    }*/
-    //分享单张图片
+    //分享图片
     fun FenXiangTUpian(intent: Intent) {
         //-----进行获取分享过来的图片的uri
-        //实现单个分享图片 分享到文件根目录下
-        // 更改需求  需要实现多个图片分享并指定文件路径
-        // val intent: Intent = intent
-        val extras = intent.extras
-        val action = intent.action
-        val picPath: ArrayList<String> = java.util.ArrayList()
+        //实现单个分享图片分享到文件根目录下
+        // 更改需求需要实现多个图片分享并指定文件路径
+        intenta = intent
+        val extras = intenta?.extras
+        val action = intenta?.action
         //判断Intent是不是分享功能
         //分享单个图片
         if (Intent.ACTION_SEND == action) {
             //判断从别的App上面拿到的值   是否存在
-            if (extras.containsKey(Intent.EXTRA_STREAM)) {  //如果存在执行单个文件的分享
-                Log.e("yy", "执行了进行单个文件的分享")
+            if (extras?.containsKey(Intent.EXTRA_STREAM)!!) {  //如果存在执行单个文件的分享
+                Log.e("ayy", "执行了进行单个文件的分享")
                 try {
                     val parcelable = extras.getParcelable<Uri>(Intent.EXTRA_STREAM)
                     // 返回路径getRealPathFromURI
@@ -393,40 +384,66 @@ class MainActivity : BaseActivity() {
         }
         //分享多个图片
         if (Intent.ACTION_SEND_MULTIPLE == action) { //用来处理多个文件的分享
-            /* //分享进来的时候进行跳到指定文件目录
-             startActivityForResult(
-                 Intent(
-                     this,
-                     ChooseDestDirActivity::class.java
-                 ).apply {
-                     putExtra("file", "")
-                     putExtra("type", ChooseDestDirActivity.MOVE)
-                 }, ChooseDestDirActivity.MOVE
-             )*/
-
-            Log.e("yy", "执行了进行多个文件的分享")
+            Log.e("ayy", "执行了进行多个文件的分享")
             var imageUris: MutableList<Uri> =
                 intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM)//获取从外界分享进来的图片
-            //  val uri2 = extras.getParcelable<Uri>(Intent.EXTRA_STREAM)
             if (imageUris != null) {
                 for (i in 0 until imageUris.size) {
                     val get = imageUris.get(i)
-                    Log.e("yy", "第" + i + "个Uri:" + get)
+                    Log.e("ayy", "第" + i + "个Uri:" + get)
                     val proj = arrayOf(MediaStore.Images.Media.DATA)
                     val cursor: Cursor = managedQuery(get, proj, null, null, null)
-                    val columnIndexOrThrow =
-                        cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    val columnIndexOrThrow = 0
+                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     cursor.moveToFirst()
                     val cursorstr = cursor.getString(columnIndexOrThrow)
                     picPath.add(cursorstr)
                     Log.e("yy", "路径:" + cursorstr)
+//-----------------------------------
+                    val destfile = File(cursorstr)   //把路径进行转换为文件类型
+                    Log.e("ayy", "第" + i + "个图片名字:" + destfile.name)
+                    //把路径存入集合在传入item中进行发送过去   循环一次添加一次
+                    fileslist.add(
+                        File_Bean(
+                            "", destfile.name, 0, "",
+                            "", "", "", "", "", "",
+                            0, 0, 0, 0, 0, "", "",
+                            "", false, false, 0
+                        )
+                    )
+
+                    Log.e("yy", "字符串集合的长度:" + picPath.size)
+                    //mMyFilesFragment.CheckFileIsExists_list(picPath)
+                    for (i in 0 until fileslist.size) {
+                        if (fileslist[i] != null) {
+                            item = fileslist[i]
+                        } else {
+                            Toastinfo("值为空")
+                        }
+                    }
                 }
-                Log.e("yy", "字符串集合的长度:" + picPath.size)
-                mMyFilesFragment.CheckFileIsExists_list(picPath)
+                //  var itema:File_Bean= mMyFilesFragment.adapter
+                //获取图片路径的时候进行跳转
+                startActivityForResult(
+                    Intent(
+                        this,
+                        ChooseDestDirActivity::class.java
+                    ).apply {
+                        putExtra("file", item) //item为File_Bean的实体类
+                        putExtra("type", ChooseDestDirActivity.MOVE)
+                    }, ChooseDestDirActivity.MOVE  //1  移动
+                )
             } else {
                 Log.e("yy", "imageUris === null")
             }
         }
+    }
+
+    //<editor-fold desc=" 网络请求回调  ">
+    override fun OnNetPostSucces(
+        request: Request<String, out Request<Any, Request<*, *>>>?,
+        data: String
+    ) {
     }
 
     //单选里面的方法
@@ -445,13 +462,100 @@ class MainActivity : BaseActivity() {
         }
         val columnIndexOrThrow = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         cursor.moveToFirst()
-
-        val cursorstr = cursor.getString(columnIndexOrThrow)
-        //uploadFilenName = cursorstr
+        cursorstr = cursor.getString(columnIndexOrThrow)
         Log.e("yy", cursorstr)
+
+        val destfile = File(cursorstr)   //把路径进行转换为文件类型
+        Log.e("yyaa", "图片名字:" + destfile.name)
+        /*   val destfile_length = destfile.length() * 1.0 / (1024 * 1024) as Long//判断文件的长度
+             Log.e("ok", "当前文件大小: " + destfile_length)  //打印文件大小*/
+        Toastinfo("图片路径:" + cursorstr)
+        /*    //获取myfiles的页面的点击事件
+            mMyFilesFragment.adapter.SetOnRecyclerItemClickListener(object :
+                OnRecyclerItemClickListener {
+                override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
+                    item = fileslist[position]
+                    Log.e("yangyu","点击的item:"+item)
+                }
+            })*/
+        //把路径存入集合在传入item中进行发送过去
+        fileslist.add(
+            File_Bean(
+                "", destfile.name, 0, "",
+                "", "", "", "", "", "",
+                0, 0, 0, 0, 0, "", "",
+                "", false, false, 0
+            )
+        )
+        for (i in 0 until fileslist.size) {
+            if (fileslist[i] != null) {
+                item = fileslist[i]
+            } else {
+                Toastinfo("值为空")
+            }
+        }
+        //  var itema:File_Bean= mMyFilesFragment.adapter
+        //获取图片路径的时候进行跳转
+        startActivityForResult(
+            Intent(
+                this,
+                ChooseDestDirActivity::class.java
+            ).apply {
+                putExtra("file", item) //item为File_Bean的实体类
+                putExtra("type", ChooseDestDirActivity.MOVE)
+            }, ChooseDestDirActivity.MOVE  //1  移动
+        )
         // Toastinfo("~~~~~" +cursorstr)
-         mMyFilesFragment.CheckFileIsExists(cursorstr)
         return cursor.getString(columnIndexOrThrow)
+    }
+
+    //方法回调  单/多
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val SEARCH_CODE = 10009
+        val SET_PSHARE_CODE: Int = 384
+        super.onActivityResult(requestCode, resultCode, data)
+        //因为分享图片的时候  会有单分享和多分享
+        if (Intent.ACTION_SEND == intenta?.action) {  //单
+            if (data != null) {
+                when (requestCode) {
+                    //文件移动
+                    ChooseDestDirActivity.MOVE -> {
+                        var file_id = data.getStringExtra("file_id")
+                        var pid = data.getStringExtra("pid")
+                        var params = HashMap<String, Any>().apply {
+                            put("user_id", "${USER_ID}")
+                            put("file_id", file_id)
+                            put("pid", pid)
+                        }
+                        NetRequest(URL_FILE_MOV, NET_POST, params, this, this)
+                        Toastinfo("即将进行上传")
+                        //把Uri通过发送到ChekFileIsExists 方法
+                        //当选择完路径后进行上传
+                        mMyFilesFragment.CheckFileIsExists(cursorstr)
+                    }
+                }
+            }    //单
+        } else {  //多
+            if (data != null) {
+                when (requestCode) {
+                    //文件移动
+                    ChooseDestDirActivity.MOVE -> {
+                        var file_id = data.getStringExtra("file_id")
+                        var pid = data.getStringExtra("pid")
+                        var params = HashMap<String, Any>().apply {
+                            put("user_id", "${USER_ID}")
+                            put("file_id", file_id)
+                            put("pid", pid)
+                        }
+                        NetRequest(URL_FILE_MOV, NET_POST, params, this, this)
+                        Toastinfo("即将进行上传")
+                        //把Uri通过发送到ChekFileIsExists 方法
+                        //当选择完路径后进行上传
+                        mMyFilesFragment.CheckFileIsExists_list(picPath)
+                    }
+                }
+            }  //多
+        }
     }
 }
 
