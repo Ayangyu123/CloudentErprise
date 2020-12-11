@@ -14,11 +14,11 @@
         style="@style/iv_myfiles_top"
         android:src="@drawable/main_list_header_create_folder_normal" />
 
-    <ImageView
+<!--    <ImageView
         android:id="@+id/iv_show_up_file_type_dilaog"
         style="@style/iv_myfiles_top"
         android:layout_height="wrap_content"
-        android:src="@drawable/main_list_header_upload_normal" />
+        android:src="@drawable/main_list_header_upload_normal" />-->
 
     <ImageView
         android:id="@+id/iv_sort"

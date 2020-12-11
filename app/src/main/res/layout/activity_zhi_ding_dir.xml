@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.ChooseDestDirActivity">
+    tools:context=".ui.ZhiDingDirActivity">
 
     <include layout="@layout/common_head" />
 
@@ -37,6 +38,7 @@
                 android:gravity="center"
                 android:text="他人共享"
                 android:textColor="#AAAFC0" />
+
         </LinearLayout>
 
         <View

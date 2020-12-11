@@ -8,11 +8,6 @@
     tools:context=".ui.fragment.MyFilesFragment"
     >
     <include layout="@layout/common_head"/>
-
-
-    <include layout="@layout/top_file_operate" />
-
-    <include layout="@layout/swiperefreshlayout" />
-
-
+    <include layout="@layout/top_file_operate"/>
+    <include layout="@layout/swiperefreshlayout_myfilesfragment"/>
 </LinearLayout>

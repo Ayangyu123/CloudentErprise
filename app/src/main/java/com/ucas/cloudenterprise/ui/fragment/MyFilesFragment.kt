@@ -3,14 +3,16 @@ package com.ucas.cloudenterprise.ui.fragment
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Intent
+import android.database.Cursor
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.RadioGroup
@@ -39,7 +41,11 @@ import com.ucas.cloudenterprise.utils.*
 import kotlinx.android.synthetic.main.common_head.*
 import kotlinx.android.synthetic.main.dialog_create_new_dir.*
 import kotlinx.android.synthetic.main.dialog_create_new_dir.view.*
-import kotlinx.android.synthetic.main.swiperefreshlayout.*
+import kotlinx.android.synthetic.main.swiperefreshlayout.ll_empty
+import kotlinx.android.synthetic.main.swiperefreshlayout.rc_myfiles
+import kotlinx.android.synthetic.main.swiperefreshlayout.swipeRefresh
+import kotlinx.android.synthetic.main.swiperefreshlayout.tv_refresh
+import kotlinx.android.synthetic.main.swiperefreshlayout_myfilesfragment.*
 import kotlinx.android.synthetic.main.top_file_operate.*
 import me.rosuh.filepicker.config.FilePickerManager
 import org.greenrobot.eventbus.EventBus
@@ -64,6 +70,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     var FileDeleteTipsDialog: Dialog? = null
     var ReanmeDialog: Dialog? = null
     var BottomFilesOperateDialog: BottomSheetDialog? = null
+
     var pid = "root"
     var item_file_id: String? = null
     var File_path_yy: String? = null
@@ -86,7 +93,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         rc_myfiles.adapter = adapter
 //       rc_myfiles.addItemDecoration(DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL))
 
-
         //对获取的条目进行监听，主要是做条目后面图片的一个监听效果
         adapter.SetOnRecyclerItemClickListener(object : OnRecyclerItemClickListener {
             override fun onItemClick(holder: RecyclerView.ViewHolder, position: Int) {
@@ -103,7 +109,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                 }
                 //打印点击的信息 从信息中获取fild_id  然后传送给addFile
                 // holder.itemView.
-
 
                 holder.apply {
                     holder as FilesAdapter.ViewHolder
@@ -177,68 +182,64 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             }
         })
         //</editor-fold >
-
-
         //<editor-fold  desc ="显示新建文件夹Dialog">
         iv_create_dir.setOnClickListener {
             ShowCreateNewDirDialog()
         }
         //</editor-fold >
-/*
-*
-* 点击上传进行从根目录下进行提取文件尽心展示
-*
-* */
+        /*
+        * 点击上传进行从根目录下进行提取文件尽心展示*/
         //<editor-fold  desc ="显示上传文件Dialog">
-        iv_show_up_file_type_dilaog.setOnClickListener {
-//            if(UpFileTypeDialog == null){
+//        //点击状态   进入到SD
+//        iv_show_up_file_type_dilaog.setOnClickListener {
+////            if(UpFileTypeDialog == null){
+////
+////                UpFileTypeDialog = GetUploadFileTypeDialog(mContext!!,View.OnClickListener{
+////
+////                    UpFileTypeDialog?.dismiss()
+////                }
+////                    ,View.OnClickListener{
 //
-//                UpFileTypeDialog = GetUploadFileTypeDialog(mContext!!,View.OnClickListener{
-//
-//                    UpFileTypeDialog?.dismiss()
-//                }
-//                    ,View.OnClickListener{
-
-            if (checkPermission(activity!!)!! == false) {
-                Toastinfo("没有sd卡读取权限")
-                return@setOnClickListener
-            }
-            //进入到SD卡页面
-            FilePickerManager
-                .from(this)
-                //.setTheme(getRandomTheme())  //主题
-                .enableSingleChoice()//是否启用单选模式
-                .forResult(FilePickerManager.REQUEST_CODE)
-//                        var mintent =  Intent(Intent.ACTION_GET_CONTENT)
-//                        mintent.addCategory(Intent.CATEGORY_OPENABLE)
-//
-//                       when(it.id){
-//                           R.id.tv_image->{
-//                               //TODO
-//                               Toastinfo("图片")
-//                               mintent.setType("image/*")
-//                           }
-//                           R.id.tv_doc->{
-//                               //TODO
-//                               Toastinfo("文档")
-//                               mintent.setType("*/*")
-//
-//                           }
-//                           R.id.tv_video->{
-//                               Toastinfo("视频")
-//                               mintent.setType("video/*")
-//                           }
-//                           R.id.tv_all->{
-//                               Toastinfo("全部")
-//                               mintent.setType("*/*")
-//                           }
-//                       }
-//                        startActivityForResult(Intent.createChooser(mintent,"文件选择"),FILE_CHOOSER_RESULT_CODE)
-//                        UpFileTypeDialog?.dismiss()
-//                    })
+//            if (checkPermission(activity!!)!! == false) {
+//                Toastinfo("没有sd卡读取权限")
+//                return@setOnClickListener
 //            }
-//            UpFileTypeDialog?.show()
-        }
+//            //进入到SD卡页面
+//            FilePickerManager
+//                .from(this)
+//                //.setTheme(getRandomTheme())  //主题
+//                .enableSingleChoice()//是否启用单选模式
+//                .forResult(FilePickerManager.REQUEST_CODE)
+////                        var mintent =  Intent(Intent.ACTION_GET_CONTENT)
+////                        mintent.addCategory(Intent.CATEGORY_OPENABLE)
+////
+////                       when(it.id){
+////                           R.id.tv_image->{
+////                               //TODO
+////                               Toastinfo("图片")
+////                               mintent.setType("image/*")
+////                           }
+////                           R.id.tv_doc->{
+////                               //TODO
+////                               Toastinfo("文档")
+////                               mintent.setType("*/*")
+////
+////                           }
+////                           R.id.tv_video->{
+////                               Toastinfo("视频")
+////                               mintent.setType("video/*")
+////                           }
+////                           R.id.tv_all->{
+////                               Toastinfo("全部")
+////                               mintent.setType("*/*")
+////                           }
+////                       }
+////                        startActivityForResult(Intent.createChooser(mintent,"文件选择"),FILE_CHOOSER_RESULT_CODE)
+////                        UpFileTypeDialog?.dismiss()
+////                    })
+////            }
+////            UpFileTypeDialog?.show()
+//        }
         //</editor-fold >
         //<editor-fold desc ="显示排序popwinod">
         iv_sort.setOnClickListener {
@@ -259,21 +260,78 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                                 adapter.notifyDataSetChanged()
                             }
                         }
-
-
                         SortPOPwiond?.dismiss()
                     })
-
             }
             if (SortPOPwiond!!.isShowing) {
                 SortPOPwiond!!.dismiss()
             } else {
                 SortPOPwiond!!.showAsDropDown(iv_sort, 0, 20, Gravity.CENTER)
             }
-
         }
         //</editor-fold >
-
+        //MyFilesFragment 页面的悬浮按钮的监听-
+        image_yy_files.setOnClickListener {
+            //获取pupopwindow 布局
+            var root: View = LayoutInflater.from(context).inflate(R.layout.pop_view, null)
+            //获取Pupopwindow对象
+            var popupWindow: PopupWindow = PopupWindow(
+                root, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, true
+            )
+            popupWindow.setContentView(root)
+            //获取contentView  对象
+            var contentView: View = popupWindow.contentView
+            //获取contentView 的监听
+            contentView.setOnClickListener {
+                if (popupWindow.isShowing) {
+                    popupWindow.dismiss()
+                }
+            }
+            //获取弹窗里面的控件
+            val tv1 = root.findViewById<View>(R.id.pop_computer) as TextView
+            val tv2 = root.findViewById<View>(R.id.pop_financial) as TextView
+            val tv3 = root.findViewById<View>(R.id.pop_manage) as TextView
+            //相机监听
+            tv1.setOnClickListener { //打开相机
+                Toastinfo("您点击了相机    飞速赶往·····")
+                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, "")
+                startActivityForResult(intent, 200)
+            }
+            //相册监听
+            tv2.setOnClickListener { //打开相册
+                Toastinfo("您点击了相册 飞速赶往·····")
+                val intenta = Intent(Intent.ACTION_PICK)
+                intenta.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+                startActivityForResult(intenta, 300)
+            }
+            //SD卡监听
+            tv3.setOnClickListener { //SD
+                Toastinfo("您点击了SD 飞速赶往·····")
+                if (checkPermission(activity!!)!! == false) {
+                    Toastinfo("没有sd卡读取权限")
+                    return@setOnClickListener
+                }
+                //进入到SD卡页面
+                FilePickerManager
+                    .from(this)
+                    //.setTheme(getRandomTheme())  //主题
+                    .enableSingleChoice()//是否启用单选模式
+                    .forResult(FilePickerManager.REQUEST_CODE)
+            }
+            //设置弹窗的宽高  都是自适应
+            //设置弹窗的宽高  都是自适应
+            popupWindow.width = ViewGroup.LayoutParams.MATCH_PARENT
+            popupWindow.height = ViewGroup.LayoutParams.MATCH_PARENT
+            //点击PoPup外
+            popupWindow.isOutsideTouchable = true
+            //显示PopupWindow
+            popupWindow.showAtLocation(root, Gravity.BOTTOM, 0, 0)
+            popupWindow.showAsDropDown(root)
+            //设置背景 操作完退出
+            popupWindow.setBackgroundDrawable(ColorDrawable())
+        }
 
         //<editor-fold desc ="swipeRefresh settings">
         swipeRefresh.setColorSchemeResources(R.color.app_color)
@@ -283,8 +341,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             swipeRefresh.isRefreshing = false
         }
         //</editor-fold >
-
-
 //<editor-fold desc ="编辑按钮 设置">
         tv_edit.setOnClickListener {
             var text = (it as android.widget.TextView).text.toString()
@@ -314,17 +370,13 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                     adapter.notifyDataSetChanged()
                 }
             }
-
         }
 //TODO 多选不显示
         tv_edit.visibility = View.INVISIBLE
-//</editor-fold >
-
-
-//<editor-fold  desc ="返回按钮 设置" >
+        //</editor-fold >
+        //<editor-fold  desc ="返回按钮 设置" >
         iv_back.visibility = View.GONE
         iv_back.setOnClickListener {
-
             if (tv_edit.text.equals("编辑") && pid_name_maps.containsValue(tv_title.text) && pid_stack.size > 1) { //选择文件夹显示返回
                 pid_name_maps.remove(pid_stack[0])
                 pid_stack.remove(pid_stack[0])
@@ -336,7 +388,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                     Toastinfo("pid不等于root:" + pid)
                 }
                 GetFileList()
-
             } else { //多选操作显示
                 tv_title.text = pid_name_maps[pid_stack[0]]//"我的文件"
                 tv_edit.text = "编辑"
@@ -348,10 +399,9 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                 Is_Checked_Sum = 0
                 adapter.notifyDataSetChanged()
             }
-
         }
-//</editor-fold >
-//<editor-fold  desc ="搜索按钮 设置" >
+        //</editor-fold >
+        //<editor-fold  desc ="搜索按钮 设置" >
         iv_search.setOnClickListener {
             startActivityForResult(
                 Intent(mContext, SearchFileActivity::class.java).putExtra(
@@ -360,17 +410,11 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                 ), SEARCH_CODE
             )
         }  //</editor-fold >
-//<editor-fold  desc ="刷新 设置" >
+        //<editor-fold  desc ="刷新 设置" >
         tv_refresh.setOnClickListener { GetFileList() }
-//</editor-fold >
+        //</editor-fold >
         tv_edit.visibility = View.INVISIBLE
-
-
-        /* var id: String? =mMyDirsFragment.item_file_id_mydirsfragment
-         var name: String? =mMyDirsFragment.item_file_name_mydirsfragment
-           Log.e("yyy","传过来的:"+id+"---"+name)*/
     }
-
 
     //<editor-fold  desc ="新建文件夹 Dialog" >
     val SEARCH_CODE = 10009
@@ -399,7 +443,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                 CreateNewDirDialog?.dismiss()
             })
 //        }
-
         CreateNewDirDialog?.show()
     }
 
@@ -663,7 +706,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     }
 //</editor-fold >
 
-
+    //MyFilesFragment 的xml文件
     override fun GetRootViewID() = com.ucas.cloudenterprise.R.layout.my_files_fragment
 
     companion object {
@@ -726,7 +769,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                             ) as ArrayList<File_Bean>
                         )
                         Log.e("我的文件  列表信息", toString)
-
                         adapter?.notifyDataSetChanged()
                         //startActivity(Intent.setClass(context,TransferlistItemFragment::class.java))
                         Toastinfo("刷新完")
@@ -769,6 +811,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         }
     }
 
+
     //</editor-fold>  回调方法
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -808,6 +851,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                     }
                     NetRequest(URL_FILE_MOV, NET_POST, params, this, this)
                 }
+                //新建文件夹
                 SEARCH_CODE -> {
                     //TODO
                     if (resultCode == RESULT_OK && data != null) {
@@ -820,7 +864,48 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                         GetFileList()
                     }
                 }
+
             }
+        }
+        //回调  拿到相册  相机照片  然后走单张分享方法   直接存方到当前的一个目录下
+        if (requestCode == 200) {   //200 等于相机
+            if (requestCode == 200 && resultCode == RESULT_OK) {
+                val bitmap = data!!.getParcelableExtra<Bitmap>("data")
+                //将获取的bitmap转换成Uri
+                val parse = Uri.parse(
+                    MediaStore.Images.Media.insertImage(
+                        context?.getContentResolver(), bitmap, null, null
+                    )
+                )
+                val path1: String? = null
+                val proj1 = arrayOf(MediaStore.Images.Media.DATA)
+                val cursor1: Cursor = activity!!.managedQuery(parse, proj1, null, null, null)
+                if (cursor1 != null && cursor1.moveToFirst()) {
+                    var column_index1 = cursor1.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    var stra1 = cursor1.getString(column_index1)
+                    Toastinfo("即将进行上传-MyFilesFrangment——相机")
+                    CheckFileIsExists_Xiangji_Xiangce(stra1)
+                }
+            }
+            Toastinfo("我是相机")
+        } else if (requestCode == 300) { //300 等于相册
+            Toastinfo("我是相册")
+            val data1 = data!!.data
+            val path: String? = null
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            // 获取选中图片的路径
+            // 外界的程序访问ContentProvider所提供数据 可以通过ContentResolver接口
+            val cursor: Cursor = activity!!.managedQuery(data1, proj, null, null, null)
+            if (cursor != null && cursor.moveToFirst()) {
+                var column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                var stra = cursor.getString(column_index)
+                CheckFileIsExists_Xiangji_Xiangce(stra)
+                // 第二个参数是想要获取的数据
+                Log.e("yyy", "相册返回的字符串:$stra")
+            }
+        } else {
+            Toastinfo("回调请求码为:" + requestCode)
+            Log.e("yyy", "回调请求码为:" + requestCode)
         }
     }
 
@@ -829,9 +914,65 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     //现在的流程是正确的一个流程   成功可以进行上传到服务器
     //现在在进行通过从外界进行分享图片的时候一个流程
     //val picPath: ArrayList<String> = java.util.ArrayList()
+    //相机  相册
+    fun CheckFileIsExists_Xiangji_Xiangce(file_path: String) {
+        Log.e("yyy", "相机拍照后的照片发送到了CheckFileIsExists_Xiangji_Xiangce")
+        Log.e("yyy", "传过来的路径：" + file_path)
+        val destfile = File(file_path)   //把传过来的字符串进行转换为文件类型
+        val destfile_length = destfile.length() * 1.0 / (1024 * 1024) //判断文件的长度
+        Log.e("ok", "当前文件大小: " + destfile_length)  //打印文件大小
+        if (destfile_length >= (4 * 1024)) {
+            Toastinfo("该文件超过4G，不支持app传输")
+            return
+        }
+        if (!CheckFreeSpace(destfile.length() * 1.5.toLong())) {
+            Toastinfo("存储空间不足，无法完成上传操作")
+            return
+        }
+        val apply = HashMap<String, Any>().apply {
+            put("user_id", USER_ID)
+            put("file_size", destfile.length())
+        }
+//要想上传成功必须要走NetRequest 这个方法
+//------------------------------------------------------------------------------------------
+        NetRequest(URL_FILE_UPLOADABLE, NET_POST, apply, this, object : OnNetCallback {
+            override fun OnNetPostSucces(
+                request: Request<String, out Request<Any, Request<*, *>>>?,
+                data: String
+            ) {
+                Log.e("yy", "我是OnNetPostSucces")
+                if (VerifyUtils.VerifyResponseData(data)) {
+                    var mainActivity = activity as MainActivity
+                    if (!(File_path_yy == null)) {
+                        Toastinfo("即将进行上传")
+                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
+                            ?.AddFile(file_path, File_path_yy)//root  替换成了 文件夹的file_id
+                        //将从MydirsFragment 获取的file_id  进行上传
+                        Log.e(
+                            "yyy",
+                            "要进行分享的文件夹id1（File_path_yy）:" + File_path_yy + "--" + File_path_yy_name
+                        )
+                        //  Log.e("yyy","要进行分享的文件夹id1（id-name）:" + id + "--" +name)
+                    } else {
+                        (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
+                            ?.AddFile(file_path, pid)//文件夹的file_id  替换成了 root
+                        Log.e("yyy", "要进行分享的文件夹id1（pid）:" + pid)
+                    }
+                    Log.e("yyy", "判断走没走相机上传方法1")
+                } else {
+                    Log.e("yy", "VerifyUtils.VerifyResponseData(data)  不符合需求")
+                    Toastinfo(JSONObject(data).getString("message"))
+                }
+            }
+        })
+        var Memory = getMemory()
+        Log.e("ok", "当前内存: $Memory")
+    }
+
     //单个文件调用
     fun CheckFileIsExists(file_path: String) {
-        Log.e("yy", "传过来的路径：" + file_path)
+        Log.e("yyy", "相机拍照后的照片发送到了ChekFileISEXists")
+        Log.e("yyy", "传过来的路径：" + file_path)
         val destfile = File(file_path)   //把传过来的字符串进行转换为文件类型
         val destfile_length = destfile.length() * 1.0 / (1024 * 1024) //判断文件的长度
         Log.e("ok", "当前文件大小: " + destfile_length)  //打印文件大小
@@ -867,12 +1008,6 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                            Log.e("yangyu", "item_path2:" + item_file_id)
                        } else {}*/
                     //pid= item_file_id.toString()
-
-
-                    /*     //从MyDirsFragment中获取点击条目的fileid和Filename
-                         var id = mMyDirsFragment.item_file_id_mydirsfragment
-                         var name = mMyDirsFragment.item_file_name_mydirsfragment
-                         Log.e("MyDirsFragment传过来的id和name",id+"----"+name)*/
                     if (!(File_path_yy == null)) {
                         (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
                             ?.AddFile(file_path, File_path_yy)//root  替换成了 文件夹的file_id
@@ -903,14 +1038,16 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     //多个文件调用
     fun CheckFileIsExists_list(file_path: ArrayList<String>) {
         for (i in 0 until file_path.size) {
+            Log.e("aaa", "Main传到Files的集合数量:" + file_path.size)
             get_path = file_path[i]
             Log.e("ayy", "传过来第" + i + "张图片:" + get_path)
         }
+        //file_path.clear()
+        Log.e("aaa", "Files中的集合数量:" + file_path.size)
         //  Toastinfo("传过来的路径" + file_path)
         Log.e("yy", "1传过来的路径：" + file_path)
         val destfile = File(get_path)   //把传过来的字符串进行转换为文件类型
         val destfile_length = destfile.length() * 1.0 / (1024 * 1024) //判断文件的长度
-
         Log.e("yy", "1当前文件大小: " + destfile_length)  //打印文件大小
         if (destfile_length >= (4 * 1024)) {
             Toastinfo("该文件超过4G，不支持app传输")
@@ -938,7 +1075,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                     //目前是分享几个 可以上传几个  因为上面有一个循环  这里又加了一个循环
                     for (i in 0 until file_path.size) {
                         val get_path = file_path[i]
-                        Log.e("ayy", "第" + i + "个路径:" + get_path)
+                        Log.e("aaa", "第" + i + "个路径:" + get_path)
                         if (!(File_path_yy == null)) {
                             (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
                                 ?.AddFile(file_path[i], File_path_yy)//root  替换成了 文件夹的file_id
@@ -947,13 +1084,21 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                                 "yyy",
                                 "要进行分享的文件夹id1（File_path_yy）:" + File_path_yy + "--" + File_path_yy_name
                             )
+                            Log.e("aaa", "看看是否上传(File_path_yy):" + file_path[i])
                             //  Log.e("yyy","要进行分享的文件夹id1（id-name）:" + id + "--" +name)
-                        } else {
+                        }else {
                             (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
                                 ?.AddFile(file_path[i], pid)//文件夹的file_id  替换成了 root
+                            //Log.e("aaa", "集合清空前:"+file_path.size)
+                            //  file_path.clear()
+                            // Log.e("aaa", "集合清空后:"+file_path.size)
                             Log.e("yyy", "要进行分享的文件夹id1（pid）:" + pid)
+                            Log.e("aaa", "看看是否上传(pid):" + file_path[i])
                         }
+                        Log.e("aaa","")
                     }
+                    /*  file_path.clear()
+                      Log.e("aaa","Files的集合数量（清空后）:"+file_path.size)*/
                     Log.e("yy", "1我通过服务Service进行把拿过来的路径存入AddFile")
                 } else {
                     Log.e("yy", "1VerifyUtils.VerifyResponseData(data)  不符合需求")
@@ -963,7 +1108,8 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         })
         var Memory = getMemory()
         Log.e("ok", "当前内存: $Memory")
-        Log.e("yy", "传过来的集合数量：" + file_path.size)
+        Log.e("aaa", "MyFiles传过来的集合数量：" + file_path.size)
+        /* Log.e("aaa", "MyFiles的集合数量：" + file_path.size)*/
     }
 
     //</editor-fold>

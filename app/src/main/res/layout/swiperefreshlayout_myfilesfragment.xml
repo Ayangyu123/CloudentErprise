@@ -61,4 +61,25 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <View
+            android:id="@+id/vie"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true" />
+
+        <ImageView
+            android:id="@+id/image_yy_files"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignTop="@id/vie"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_add_circle_black_24dp" />
+    </RelativeLayout>
+
 </FrameLayout>
