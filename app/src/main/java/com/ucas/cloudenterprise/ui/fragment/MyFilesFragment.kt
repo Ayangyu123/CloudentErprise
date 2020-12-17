@@ -66,6 +66,9 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     var CreateNewDirDialog: Dialog? = null
 
     var UpFileTypeDialog: Dialog? = null
+    var ina: String? = null
+    var recompose_name: String? = null
+    var namea: String? = null
     var SortPOPwiond: PopupWindow? = null
     var FileDeleteTipsDialog: Dialog? = null
     var ReanmeDialog: Dialog? = null
@@ -591,6 +594,10 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                             "重命名" -> {
                                 Toastinfo("重命名")
                                 ShowRenameDialog(item)
+                                ina = item.file_id
+                                namea = item.file_name
+                                Log.e("vv", "id：" + ina)
+                                Log.e("vv", "name：" + namea)
                             }
                             "删除" -> {
                                 Toastinfo("删除")
@@ -658,6 +665,8 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                     }, this, this@MyFilesFragment)
                     ReanmeDialog?.dismiss()
                 }
+                var stra = item.file_id
+                Log.e("vv", "上传后进行获取了文件的一个FIle_id:" + stra)
             }
             setContentView(contentview)
             window.setLayout(
@@ -762,13 +771,13 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                          }*/
                         // Toastinfo("即将执行把分享过来的数据进行添加到列表")
                         val toString = JSONObject(data).getJSONArray("data").toString()
-
                         fileslist.addAll(
                             Gson().fromJson(
                                 toString, object : TypeToken<List<File_Bean>>() {}.type
                             ) as ArrayList<File_Bean>
                         )
-                        Log.e("我的文件  列表信息", toString)
+                        Log.e("vv", "我的文件,列表信息:" + toString)
+
                         adapter?.notifyDataSetChanged()
                         //startActivity(Intent.setClass(context,TransferlistItemFragment::class.java))
                         Toastinfo("刷新完")
@@ -825,8 +834,8 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                         Toastinfo("没有选择文件")
                         return
                     }
-                    Log.e("ok", "file  path" + FilePickerManager.obtainData()[0])
-                    //调用成功后会进行返回到  调用下载的内个方法   在进行从外界分享图片的时候分享是走不到这里的
+                    Log.e("ok", "file  path:" + FilePickerManager.obtainData()[0])
+                    //调用成功后会进行返回到  调用上传的内个方法   在进行从外界分享图片的时候分享是走不到这里的
                     CheckFileIsExists(FilePickerManager.obtainData()[0]) //检查文件是否存在
                 }
                 //文件复制
@@ -877,19 +886,92 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                         context?.getContentResolver(), bitmap, null, null
                     )
                 )
-                val path1: String? = null
+                //val path1: String? = null
                 val proj1 = arrayOf(MediaStore.Images.Media.DATA)
                 val cursor1: Cursor = activity!!.managedQuery(parse, proj1, null, null, null)
+
                 if (cursor1 != null && cursor1.moveToFirst()) {
                     var column_index1 = cursor1.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     var stra1 = cursor1.getString(column_index1)
-                    Toastinfo("即将进行上传-MyFilesFrangment——相机")
-                    CheckFileIsExists_Xiangji_Xiangce(stra1)
+                    var uriid = Uri.parse(stra1).getQueryParameter("file_id")
+                    val filesFragment = File(stra1)   //把路径进行转换为文件类型
+                    //拍照后的一个文件name
+                    var filename = filesFragment.name
+                    //  Toastinfo("即将进行上传-MyFilesFrangment——相机")
+                    //弹出修改file_name 弹窗
+                    ReanmeDialog = Dialog(mContext!!).apply {
+                        //获取弹窗控件
+                        var contentview =
+                            LayoutInflater.from(mContext).inflate(R.layout.dialog_file_rename, null)
+                        //控件的一个监听效果
+                        contentview.apply {
+                            et_dir_name.text = SetEt_Text("${filename}")
+                            Log.e("vv", "文件返回的名字:" + et_dir_name.text)
+                            //判断输入的名字和重新定义的名字是否一样
+                            if (et_dir_name.text.toString().equals(filename)) {
+                                var stra_et = et_dir_name.text.toString()
+                                Log.e("vv", "输入的名称为:" + stra_et)
+                                //我设置为 如果不进行更改后点击确定会返回原来的名称
+                                tv_commit.isEnabled = false
+                                tv_commit.setTextColor(Color.parseColor("#999999"))
+                                /*  tv_commit.isEnabled = true
+                                  tv_commit.setTextColor(Color.parseColor("#2864DE"))*/
+                                //adapter?.notifyDataSetChanged()
+                            } else {
+                                tv_commit.isEnabled = true
+                                tv_commit.setTextColor(Color.parseColor("#2864DE"))
+                            }
+                            et_dir_name.addTextChangedListener {
+                                if (et_dir_name.text.toString().equals(filename)) {
+                                    tv_commit.isEnabled = false
+                                    tv_commit.setTextColor(Color.parseColor("#999999"))
+                                } else {
+                                    tv_commit.isEnabled = true
+                                    tv_commit.setTextColor(Color.parseColor("#2864DE"))
+                                }
+                            }
+                            tv_cancle.setOnClickListener {
+                                ReanmeDialog?.dismiss()
+                            }
+                            //修改按钮   点击后把修改好的名字进行传值发送过去
+                            //目前现在 最大问题是获取下载完的条目id  然后进行传送过来，放在file_id空位置上
+                            // var file_id = data.getStringExtra("file_id")
+                            tv_commit.setOnClickListener {
+                                //   Log.e("vv", "修改后的file_id:" + )
+                                Log.e("vv", "获取输入后的file_name:" + et_dir_name.text.toString())
+                                /*  NetRequest(
+                                  "${URL_FILE_RENAME}",
+                                  NET_POST,
+                                  HashMap<String, Any>().apply {
+                                     // put("user_id", "${USER_ID}")
+                                      //put("file_id", "${uriid}")
+                                      put("file_name", "${et_dir_name.text}")
+                                  },
+                                  this,
+                                  this@MyFilesFragment
+                              )*/
+                                recompose_name = et_dir_name.text.toString()
+                                Log.e("vv", "修改后的name:" + recompose_name)
+                                Log.e("vv", "对应的File_id:" + uriid)
+
+                                ReanmeDialog?.dismiss()
+                                //上传拍照后文件
+                                CheckFileIsExists_Xiangji_Xiangce(stra1)
+                            }
+                        }
+                        setContentView(contentview)
+                        window.setLayout(
+                            WindowManager.LayoutParams.MATCH_PARENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT
+                        )
+                        setCancelable(true)
+                    }
+                    ReanmeDialog?.show()
                 }
             }
-            Toastinfo("我是相机")
+            // Toastinfo("我是相机")
         } else if (requestCode == 300) { //300 等于相册
-            Toastinfo("我是相册")
+            //Toastinfo("我是相册")
             val data1 = data!!.data
             val path: String? = null
             val proj = arrayOf(MediaStore.Images.Media.DATA)
@@ -902,6 +984,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                 CheckFileIsExists_Xiangji_Xiangce(stra)
                 // 第二个参数是想要获取的数据
                 Log.e("yyy", "相册返回的字符串:$stra")
+
             }
         } else {
             Toastinfo("回调请求码为:" + requestCode)
@@ -946,7 +1029,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                     if (!(File_path_yy == null)) {
                         Toastinfo("即将进行上传")
                         (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
-                            ?.AddFile(file_path, File_path_yy)//root  替换成了 文件夹的file_id
+                            ?.AddFile(file_path, File_path_yy,recompose_name.toString())//root  替换成了 文件夹的file_id
                         //将从MydirsFragment 获取的file_id  进行上传
                         Log.e(
                             "yyy",
@@ -954,8 +1037,9 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                         )
                         //  Log.e("yyy","要进行分享的文件夹id1（id-name）:" + id + "--" +name)
                     } else {
+                        //上传操作
                         (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
-                            ?.AddFile(file_path, pid)//文件夹的file_id  替换成了 root
+                            ?.AddFile(file_path, pid,recompose_name.toString())//文件夹的file_id  替换成了 root
                         Log.e("yyy", "要进行分享的文件夹id1（pid）:" + pid)
                     }
                     Log.e("yyy", "判断走没走相机上传方法1")
@@ -1072,31 +1156,37 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
                 if (VerifyUtils.VerifyResponseData(data)) {
                     var mainActivity = activity as MainActivity
                     //成功的时候就会走AddFile
+
                     //目前是分享几个 可以上传几个  因为上面有一个循环  这里又加了一个循环
                     for (i in 0 until file_path.size) {
                         val get_path = file_path[i]
                         Log.e("aaa", "第" + i + "个路径:" + get_path)
                         if (!(File_path_yy == null)) {
                             (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
-                                ?.AddFile(file_path[i], File_path_yy)//root  替换成了 文件夹的file_id
+                                ?.AddFile(get_path, File_path_yy)//root  替换成了 文件夹的file_id
                             //将从MydirsFragment 获取的file_id  进行上传
                             Log.e(
                                 "yyy",
                                 "要进行分享的文件夹id1（File_path_yy）:" + File_path_yy + "--" + File_path_yy_name
                             )
                             Log.e("aaa", "看看是否上传(File_path_yy):" + file_path[i])
+                            //file_path.remove(get_path)
+                            //Log.e("aaa", "清空后的集合(MyFilesFragment):" + file_path.size)
+                            Log.e("aaa", "AddFile分享的集合数量(File_path_yy):" + file_path.size)
                             //  Log.e("yyy","要进行分享的文件夹id1（id-name）:" + id + "--" +name)
-                        }else {
+                            //file_path.clear()
+                            //Log.e("aaa", "上传后进行集合清空:"+file_path.size)
+                        } else {
                             (mainActivity.myBinder as DaemonService.MyBinder)?.GetDaemonService()
                                 ?.AddFile(file_path[i], pid)//文件夹的file_id  替换成了 root
-                            //Log.e("aaa", "集合清空前:"+file_path.size)
-                            //  file_path.clear()
-                            // Log.e("aaa", "集合清空后:"+file_path.size)
                             Log.e("yyy", "要进行分享的文件夹id1（pid）:" + pid)
                             Log.e("aaa", "看看是否上传(pid):" + file_path[i])
+                            // file_path.removeAll(file_path)
+                            // Log.e("aaa", "清空后的集合(MyFilesFragment):" + file_path.size)
                         }
-                        Log.e("aaa","")
+                        // file_path.clear()
                     }
+                    Log.e("aaa", "AddFile分享的集合数量(pid):" + file_path.size)
                     /*  file_path.clear()
                       Log.e("aaa","Files的集合数量（清空后）:"+file_path.size)*/
                     Log.e("yy", "1我通过服务Service进行把拿过来的路径存入AddFile")
