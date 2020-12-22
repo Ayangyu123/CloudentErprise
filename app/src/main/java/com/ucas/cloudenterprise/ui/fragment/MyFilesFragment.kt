@@ -872,6 +872,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
             }
         }
         //回调  拿到相册  相机照片  然后走单张分享方法   直接存方到当前的一个目录下
+        //判断相机相册 的返回码状态
         if (requestCode == 200) {   //200 等于相机
             if (requestCode == 200 && resultCode == RESULT_OK) {
                 val bitmap = data!!.getParcelableExtra<Bitmap>("data")
@@ -981,7 +982,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
     //现在的流程是正确的一个流程   成功可以进行上传到服务器
     //现在在进行通过从外界进行分享图片的时候一个流程
     //val picPath: ArrayList<String> = java.util.ArrayList()
-    //相机
+    //相机 上传功能
     fun CheckFileIsExists_Xiangji(file_path: String) {
         Log.e("yyy", "相机拍照后的照片发送到了CheckFileIsExists_Xiangji_Xiangce")
         Log.e("yyy", "传过来的路径：" + file_path)
@@ -1045,7 +1046,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         Log.e("ok", "当前内存: $Memory")
     }
 
-    //相册
+    //相册 上传功能
     fun CheckFileIsExists_Xiangce(file_path: String) {
         Log.e("yyy", "相机拍照后的照片发送到了CheckFileIsExists_Xiangji_Xiangce")
         Log.e("yyy", "传过来的路径：" + file_path)
@@ -1101,7 +1102,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         Log.e("ok", "当前内存: $Memory")
     }
 
-    //单个文件调用
+    //单个文件调用 上传功能
     fun CheckFileIsExists(file_path: String) {
         Log.e("yyy", "相机拍照后的照片发送到了ChekFileISEXists")
         Log.e("yyy", "传过来的路径：" + file_path)
@@ -1167,7 +1168,7 @@ class MyFilesFragment : BaseFragment(), OnNetCallback {
         Log.e("ok", "当前内存: $Memory")
     }
 
-    //多个文件调用
+    //多个文件调用 上传功能
     fun CheckFileIsExists_list(file_path: ArrayList<String>) {
         for (i in 0 until file_path.size) {
             Log.e("aaa", "Main传到Files的集合数量:" + file_path.size)
