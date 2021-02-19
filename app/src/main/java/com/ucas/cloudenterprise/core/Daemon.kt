@@ -943,7 +943,7 @@ class DaemonService : Service() {
                                             "Yy2:" + JSONObject().apply { array }.toString()
                                         )
                                         Log.e("ceshi", "Yy3:" + array)
-                                         Log.e("ceshi", "Yy4:" + array.Files)
+                                        Log.e("ceshi", "Yy4:" + array.Files)
                                         var toJson = Gson().toJson(array)
                                         Log.e("ceshi", "Yy5:" + toJson)
                                         Log.e("ceshi","Yy6:" + JSONObject().apply { toJson }.toString())
